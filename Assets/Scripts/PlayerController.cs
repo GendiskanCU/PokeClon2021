@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using UnityEditorInternal;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -121,6 +122,9 @@ public class PlayerController : MonoBehaviour
         transform.position = destination;
 
         isMoving = false; //Se finaliza el movimiento
+        
+        //Al terminar un movimiento comprueba si se ha entrado en una zona pokemon
+        CheckForPokemon();
     }
 
     /// <summary>
@@ -141,5 +145,20 @@ public class PlayerController : MonoBehaviour
             return false;
 
         return true;
+    }
+
+    /// <summary>
+    /// Comprueba si el player se encuentra en una zona pokemon y en caso afirmativo lanza la
+    /// generación aleatoria de aparición de un pokemon y por tanto una batalla
+    /// </summary>
+    private void CheckForPokemon()
+    {
+        if (Physics2D.OverlapCircle(transform.position, 0.2f, pokemonLayer) != null)
+        {
+            if (Random.Range(0, 100) < 10) //% de probabilidad de aparición de un pokemon
+            {
+                Debug.Log("Aparece un Pokemon. Comienza la batalla pokemon");
+            }
+        }
     }
 }
