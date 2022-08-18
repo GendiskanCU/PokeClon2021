@@ -9,10 +9,16 @@ public class Pokemon
 {
     //Propiedades y estadísticas base del pokemon
     private PokemonBase _base;
+    public PokemonBase Base => _base;
 
     //Nivel actual del pokemon (en función del nivel, las estadísticas base variarán)
     private int _level;
-    
+    public int Level
+    {
+        get => _level;
+        set => _level = value;
+    }
+
     //Vida actual del pokemon
     private int _hp;
     public int Hp
