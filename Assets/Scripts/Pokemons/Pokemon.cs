@@ -40,8 +40,8 @@ public class Pokemon
     public int SpDefense => Mathf.FloorToInt((_base.SpDefense * _level) / 100) + 2;
     public int Speed => Mathf.FloorToInt((_base.Speed * _level) / 100) + 3;
     
-    //Vida máxima del pokemon. Similar, pero asegurando al menos 10 puntos
-    public int MaxHP => Mathf.FloorToInt((_base.MaxHp * _level) / 100) + 10;
+    //Vida máxima del pokemon. Similar, pero asegurando al menos 10 puntos y dividiendo por una cantidad menor
+    public int MaxHP => Mathf.FloorToInt((_base.MaxHp * _level) / 20) + 10;
 
 
     //Ataques o movimientos que tiene el Pokemon
@@ -57,7 +57,7 @@ public class Pokemon
     {
         _base = pokemonBase;
         _level = pokemonLevel;
-        //Inicializa la vida actual
+        //Inicializa la vida actual con la máxima calculada en función del nivel inicial
         _hp = MaxHP;
         
         //Inicializa la lista de ataques

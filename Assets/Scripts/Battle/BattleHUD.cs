@@ -23,11 +23,11 @@ public class BattleHUD : MonoBehaviour
     /// <summary>
     /// Actualiza la información del nombre, nivel y tamaño de la barra de vida de un pokemon en el HUD de batalla
     /// </summary>
-    /// <param name="pokemon">Pokemon</param>
+    /// <param name="pokemon">El Pokemon del que se va a mostrar información en el HUD</param>
     public void SetPokemonData(Pokemon pokemon)
     {
         pokemonName.text = pokemon.Base.PokemonName;
-        pokemonLevel.text = String.Format("Lv: {0}", pokemon.Level);
+        pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
 
         pokemonHealth.text = String.Format("{0}/{1}", pokemon.Hp, pokemon.MaxHP);
         

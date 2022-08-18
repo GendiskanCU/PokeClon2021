@@ -70,10 +70,12 @@ public class PokemonBase : ScriptableObject
 
     [SerializeField] [Tooltip("Sprite delantero del Pokemon")]
     private Sprite frontSprite;
+    public Sprite FrontSprite => frontSprite;
 
     [SerializeField] [Tooltip("Sprite trasero del Pokemon")]
     private Sprite  backSprite;
-    
+    public Sprite BackSprite => backSprite;
+
     //Estadísticas (privadas con una propiedad pública para su lectura)
     [SerializeField] [Tooltip("Puntos de vida máximos del Pokemon")]
     private int maxHP;
