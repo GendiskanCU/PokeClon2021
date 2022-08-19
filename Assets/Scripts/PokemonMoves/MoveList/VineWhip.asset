@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: VineWhip
   m_EditorClassIdentifier: 
-  attackName: Vine Whip
-  description: "L\xE1tigo Cepa que inflinge da\xF1o al enemigo"
+  attackName: "L\xE1tigo cepa"
+  description: "Inflinge da\xF1o al enemigo"
   type: 5
   power: 45
   accuracy: 100

@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: Growl
   m_EditorClassIdentifier: 
-  attackName: Growl
-  description: "Gru\xF1ido. No inflinge da\xF1o pero reduce el que puede ocasionar
-    el enemigo"
+  attackName: "Gru\xF1ido"
+  description: "No inflinge da\xF1o pero reduce el que puede ocasionar el enemigo"
   type: 1
   power: 0
   accuracy: 100

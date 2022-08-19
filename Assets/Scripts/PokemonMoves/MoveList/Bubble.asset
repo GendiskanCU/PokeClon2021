@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: Bubble
   m_EditorClassIdentifier: 
-  attackName: Bubble
+  attackName: Burbuja
   description: "Burbujas en espray que son lanzadas al enemigo infligi\xE9ndole da\xF1o"
   type: 3
   power: 40

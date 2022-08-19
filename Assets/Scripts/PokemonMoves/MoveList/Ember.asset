@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: Ember
   m_EditorClassIdentifier: 
-  attackName: Ember
-  description: "Ascuas. Peque\xF1as llamas que prenden al enemigo"
+  attackName: Ascuas
+  description: "Peque\xF1as llamas que prenden al enemigo"
   type: 2
   power: 40
   accuracy: 100

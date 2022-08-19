@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: Tackle
   m_EditorClassIdentifier: 
-  attackName: Tackle
-  description: "Placaje. Ataque f\xEDsico cargando contra el enemigo"
+  attackName: Placaje
+  description: "Ataque f\xEDsico cargando contra el enemigo"
   type: 1
   power: 40
   accuracy: 100

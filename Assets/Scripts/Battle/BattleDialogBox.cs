@@ -94,4 +94,23 @@ public class BattleDialogBox : MonoBehaviour
             actionTexts[i].color = i == selectedAction ? selectedColor : Color.black;
         }
     }
+
+    /// <summary>
+    /// Rellena el panel de elección de movimientos o ataques con el nombre de los que puede ejecutar el pokemon
+    /// </summary>
+    /// <param name="moves">Lista de movimientos que el pokemon puede ejecutar</param>
+    public void SetPokemonMovements(List<Move> moves)
+    {
+        for (int i = 0; i < movementTexts.Count; i++)
+        {
+            if (i < moves.Count)//Solo añadirá los movimientos del pokemon, que pueden ser menos que los que puede tener el panel
+            {
+                movementTexts[i].text = moves[i].Base.AttackName;
+            }
+            else
+            {
+                movementTexts[i].text = "---";//Los demás huecos se representarán como vacíos con unas rayas
+            }
+        }
+    }
 }

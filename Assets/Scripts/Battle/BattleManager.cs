@@ -41,7 +41,8 @@ public class BattleManager : MonoBehaviour
    private int currentSelectedAction;
    //Para controlar que no se pueda cambiar de acción seleccionada hasta pasado un lapso aunque se mantenga pulsado
    private float timeSinceLastClick;
-   [SerializeField] private float timeBetweenClicks = 1.0f;
+   [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción y ataque")]
+   private float timeBetweenClicks = 1.0f;
 
 
    private void Start()
@@ -70,6 +71,8 @@ public class BattleManager : MonoBehaviour
       playerUnit.SetupPokemon();
       //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
+      //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
+      battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
       
       //Configura el pokemon del enemigo
       enemyUnit.SetupPokemon();
@@ -107,8 +110,13 @@ public class BattleManager : MonoBehaviour
 
       StartCoroutine(battleDialogogBox.SetDialog("Selecciona una acción..."));
       
+      //Muestra/oculta los paneles correspondientes de la UI
+      //Muestra el diálogo de batalla
+      battleDialogogBox.ToggleDialogText(true);
       //Muestra el panel de selección de acciones
       battleDialogogBox.ToggleActions(true);
+      //Oculta el panel de selección de ataque
+      battleDialogogBox.ToggleMovements(false);
       
       //Se reinicia y resalta la acción por defecto
       currentSelectedAction = 0;
@@ -125,27 +133,55 @@ public class BattleManager : MonoBehaviour
       
       if (timeSinceLastClick < timeBetweenClicks)
          return;
-      if (Input.GetAxisRaw("Vertical") != 0)
+      
+      if (Input.GetAxisRaw("Vertical") != 0)//Al pulsar hacia arriba/abajo
       {
+         //Reinicia el tiempo desde la última selección
          timeSinceLastClick = 0;
          
-         if (currentSelectedAction == 0)
-         {
-            currentSelectedAction++;
-         }
-         else
-         {
-            currentSelectedAction = 0;
-         }
-         
+         //Solo se puede escoger entre dos acciones (0 y 1), por lo que irá alternando entre ellas al pulsar arr/abj
+         currentSelectedAction = (currentSelectedAction + 1) % 2;
+
          //Se resalta la acción seleccionada en el panel de la UI
          battleDialogogBox.SelectAction(currentSelectedAction);
       }
-      
+
+      if (Input.GetAxisRaw("Submit") != 0)//Al pulsar el botón de acción
+      {
+         timeSinceLastClick = 0;
+
+         //Ejecuta la acción seleccionada
+         switch (currentSelectedAction)
+         {
+            case 0:
+               //El player ataca
+               PlayerMovement();
+               break;
+            case 1:
+               //El player huye
+               break;
+            default:
+               break;
+         }
+      }
    }
 
    /// <summary>
-   /// Inicia las acciones de ataque del enemigo
+   /// Implementa la acción de ataque por parte del player
+   /// </summary>
+   private void PlayerMovement()
+   {
+      //Cambia al estado correspondiente
+      state = BattleState.PlayerMove;
+      
+      //Muestra/oculta los paneles correspondientes de la UI
+      battleDialogogBox.ToggleDialogText(false);
+      battleDialogogBox.ToggleActions(false);
+      battleDialogogBox.ToggleMovements(true);
+   }
+
+   /// <summary>
+   /// Implementa las acciones de ataque del enemigo
    /// </summary>
    private void EnemyAction()
    {
