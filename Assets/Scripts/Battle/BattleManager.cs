@@ -43,6 +43,9 @@ public class BattleManager : MonoBehaviour
    private float timeSinceLastClick;
    [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción y ataque")]
    private float timeBetweenClicks = 1.0f;
+   
+   //Para controlar el ataque seleccionado por el player en el panel de selección de ataques o movimientos
+   private int currentSelectedMovement;
 
 
    private void Start()
@@ -52,10 +55,14 @@ public class BattleManager : MonoBehaviour
 
    private void Update()
    {
-      //Cuando esté activo el estado de selección de una acción por parte del player
-      if (state == BattleState.PlayerSelectAction)
+     
+      if (state == BattleState.PlayerSelectAction)//Estado: selección de una acción por parte del player
       {
          HandlePlayerActionSelection();
+      }
+      else if (state == BattleState.PlayerMove)//Estado: ejecución de un ataque por parte del player
+      {
+         HandlePlayerMovementSelection();
       }
    }
 
@@ -128,7 +135,7 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    private void HandlePlayerActionSelection()
    {
-      //Se cambiará de acción pulsando arriba/abajo, dejando un lapso de tiempo mínimo para poder ir cambiando
+      //Se cambiará de acción pulsando arriba/abajo, estableciendo un lapso de tiempo mínimo para poder ir cambiando
       timeSinceLastClick += Time.deltaTime;
       
       if (timeSinceLastClick < timeBetweenClicks)
@@ -167,7 +174,7 @@ public class BattleManager : MonoBehaviour
    }
 
    /// <summary>
-   /// Implementa la acción de ataque por parte del player
+   /// Inicializa la acción de ataque por parte del player
    /// </summary>
    private void PlayerMovement()
    {
@@ -178,6 +185,53 @@ public class BattleManager : MonoBehaviour
       battleDialogogBox.ToggleDialogText(false);
       battleDialogogBox.ToggleActions(false);
       battleDialogogBox.ToggleMovements(true);
+      
+      //Establece el ataque seleccionado por defecto
+      currentSelectedMovement = 0;
+      //Se resalta el ataque seleccionado en el panel de la UI
+      battleDialogogBox.SelectMovement(currentSelectedMovement);
+   }
+
+   /// <summary>
+   /// Implementa la lógica de acción de ataque del player
+   /// </summary>
+   private void HandlePlayerMovementSelection()
+   {
+      //Se cambiará el ataque seleccionado presionando arriba/abajo derecha/izquierda,
+      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
+      timeSinceLastClick += Time.deltaTime;
+      if (timeSinceLastClick < timeBetweenClicks)
+         return;
+      
+      /*Representación de las posiciones del panel en las que hay que desplazarse:
+        0    1
+        2    3 */
+      
+      if (Input.GetAxisRaw("Vertical") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+         //El desplazamiento en vertical cambiará la selección moviendo dos posiciones
+         currentSelectedMovement = (currentSelectedMovement + 2) % 4;
+         //Se resalta el ataque seleccionado en el panel de la UI
+         battleDialogogBox.SelectMovement(currentSelectedMovement);
+      }
+      else if (Input.GetAxisRaw("Horizontal") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+         //El desplazamiento en horizontal cambia la selección moviendo una posición
+         if (currentSelectedMovement <= 1)//Fila superior
+         {
+            currentSelectedMovement = (currentSelectedMovement + 1) % 2;
+         }
+         else//Fila inferior
+         {
+            currentSelectedMovement = (currentSelectedMovement + 1) % 2 + 2;
+         }
+         //Se resalta el ataque seleccionado en el panel de la UI
+         battleDialogogBox.SelectMovement(currentSelectedMovement);
+      }
    }
 
    /// <summary>

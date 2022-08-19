@@ -86,7 +86,7 @@ public class BattleDialogBox : MonoBehaviour
     /// <summary>
     ///  Resalta en un color diferente la acción seleccionada por el player en el panel de acciones
     /// </summary>
-    /// <param name="selectedAction">Número entero de la acción seleccionada</param>
+    /// <param name="selectedAction">Posición de la acción seleccionada en la lista de posiciones</param>
     public void SelectAction(int selectedAction)
     {
         for (int i = 0; i < actionTexts.Count; i++)
@@ -111,6 +111,18 @@ public class BattleDialogBox : MonoBehaviour
             {
                 movementTexts[i].text = "---";//Los demás huecos se representarán como vacíos con unas rayas
             }
+        }
+    }
+    
+    /// <summary>
+    /// Resalta en un color diferente el ataque seleccionado por el player en el panel de movimientos o ataques
+    /// </summary>
+    /// <param name="selectedMovement">Posición del ataque seleccionado en la lista de movimientos</param>
+    public void SelectMovement(int selectedMovement)
+    {
+        for (int i = 0; i < movementTexts.Count; i++)
+        {
+            movementTexts[i].color = i == selectedMovement ? selectedColor : Color.black;
         }
     }
 }
