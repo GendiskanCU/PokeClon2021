@@ -9,13 +9,39 @@ public class BattleDialogBox : MonoBehaviour
 {
     [SerializeField] [Tooltip("Texto que contendrá el diálogo")]
     private Text dialogText;
+
+    [SerializeField] [Tooltip("Área de selección de la acción (luchar, huir)")]
+    private GameObject actionSelect;
+
+    [SerializeField] [Tooltip("Área de selección de movimiento o ataque")]
+    private GameObject moveSelect;
+
+    [SerializeField] [Tooltip("Área de descripción del movimiento o ataque")]
+    private GameObject moveDescription;
+    
+    
+    
+    [SerializeField] [Tooltip("Textos de las acciones disponibles")]
+    private List<Text> actionTexts;
+
+    [SerializeField] [Tooltip("Textos de los movimientos disponibles")]
+    private List<Text> movementTexts;
+
+    [SerializeField] [Tooltip("Texto que mostrará los PP disponibles/totales del movimiento seleccionado")]
+    private Text ppText;
+    
+    [SerializeField] [Tooltip("Texto descriptivo del movimiento seleccionado")]
+    private Text typeText;
     
     [SerializeField] [Tooltip("Velocidad a la que se irán mostrando los mensajes, en caracteres/segundo")]
     private float charactersPerSecond;
+    
+    [SerializeField] [Tooltip("Color para resaltar la acción seleccionada por el player en el panel")]
+    private Color selectedColor = Color.blue;
 
 
     /// <summary>
-    /// Muestra un mensaje letra a letra en la caja de texto de la batalla pokemon
+    /// Muestra un mensaje letra a letra en la caja de texto del diálogo de la batalla pokemon
     /// </summary>
     /// <param name="message">Mensaje a mostrar</param>
     /// <returns></returns>
@@ -26,6 +52,46 @@ public class BattleDialogBox : MonoBehaviour
         {
             dialogText.text += character;
             yield return new WaitForSeconds(1 / charactersPerSecond);
+        }
+    }
+
+    /// <summary>
+    /// Activa/desactiva el panel de texto del diálogo de batalla
+    /// </summary>
+    /// <param name="activated">Nuevo estado del panel de texto (true:activado/false:desactivado)</param>
+    public void ToggleDialogText(bool activated)
+    {
+        dialogText.enabled = activated;
+    }
+
+    /// <summary>
+    /// Activa/desactiva el panel de acciones en la batalla
+    /// </summary>
+    /// <param name="activated">Nuevo estado del panel (true:activado/false:desactivado)</param>
+    public void ToggleActions(bool activated)
+    {
+        actionSelect.SetActive(activated);
+    }
+
+    /// <summary>
+    /// Activa/desactiva el panel de movimientos o ataques en la batalla, así como el de su descripción
+    /// </summary>
+    /// <param name="activated">Nuevo estado del panel (true:activado/false:desactivado)</param>
+    public void ToggleMovements(bool activated)
+    {
+        moveSelect.SetActive(activated);
+        moveDescription.SetActive(activated);
+    }
+
+    /// <summary>
+    ///  Resalta en un color diferente la acción seleccionada por el player en el panel de acciones
+    /// </summary>
+    /// <param name="selectedAction">Número entero de la acción seleccionada</param>
+    public void SelectAction(int selectedAction)
+    {
+        for (int i = 0; i < actionTexts.Count; i++)
+        {
+            actionTexts[i].color = i == selectedAction ? selectedColor : Color.black;
         }
     }
 }
