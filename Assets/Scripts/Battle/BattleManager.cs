@@ -12,6 +12,15 @@ public class BattleManager : MonoBehaviour
    
    [SerializeField] [Tooltip("Battle HUD del pokemon del player")]
    private BattleHUD playerHUD;
+   
+   [SerializeField] [Tooltip("Battle Unit / Unidad (pokemon) del enemigo que participa en la batalla")]
+   private BattleUnit enemyUnit;
+   
+   [SerializeField] [Tooltip("Battle HUD del pokemon del enemigo")]
+   private BattleHUD enemyHUD;
+
+   [SerializeField] [Tooltip("Contenedor de la caja de texto del diálogo de batalla")]
+   private BattleDialogBox battleDialogogBox;
 
    private void Start()
    {
@@ -23,9 +32,18 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    public void SetupBattle()
    {
-      //Configura el pokemon
+      //Configura el pokemon del player
       playerUnit.SetupPokemon();
-      //Configura el HUD
+      //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
+      
+      //Configura el pokemon del enemigo
+      enemyUnit.SetupPokemon();
+      //Configura el HUD del enemigo
+      enemyHUD.SetPokemonData(enemyUnit.Pokemon);
+      
+      //Muestra el primer mensaje en la caja de diálogo de la batalla
+      StartCoroutine(battleDialogogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
+         , enemyUnit.Pokemon.Base.PokemonName)));
    }
 }
