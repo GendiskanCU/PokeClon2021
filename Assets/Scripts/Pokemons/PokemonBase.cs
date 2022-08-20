@@ -9,25 +9,25 @@ using UnityEngine;
 //Tipos de Pokemon que puede haber
 public enum PokemonType
 {
-    None,
-    Normal,
-    Fire,
-    Water,
-    Electric,
-    Grass,
-    Fight,
-    Ice,
-    Poison,
-    Ground,
-    Fly,
-    Psychic,
-    Rock,
-    Bug,
-    Ghost,
-    Dragon,
-    Dark,
-    Fairy,
-    Steel
+    NINGUNO,
+    NORMAL,
+    FUEGO,
+    AGUA,
+    ELECTRICO,
+    HIERBA,
+    LUCHA,
+    HIELO,
+    VENENO,
+    TIERRA,
+    AEREO,
+    PSIQUICO,
+    ROCA,
+    BICHO,
+    FANTASMA,
+    DRAGON,
+    OSCURO,
+    HADA,
+    ACERO
 }
 
 //Tipos de ataque (o movimiento) que los pokemon pueden aprender en cada nivel

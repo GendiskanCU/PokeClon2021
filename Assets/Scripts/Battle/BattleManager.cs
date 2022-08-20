@@ -188,8 +188,9 @@ public class BattleManager : MonoBehaviour
       
       //Establece el ataque seleccionado por defecto
       currentSelectedMovement = 0;
-      //Se resalta el ataque seleccionado en el panel de la UI
-      battleDialogogBox.SelectMovement(currentSelectedMovement);
+      //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
+      battleDialogogBox.SelectMovement(currentSelectedMovement,
+         playerUnit.Pokemon.Moves[currentSelectedMovement]);
    }
 
    /// <summary>
@@ -211,15 +212,27 @@ public class BattleManager : MonoBehaviour
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
+
+         int oldSelectedMovement = currentSelectedMovement;//Guarda el actual movimiento
+         
          //El desplazamiento en vertical cambiará la selección moviendo dos posiciones
          currentSelectedMovement = (currentSelectedMovement + 2) % 4;
-         //Se resalta el ataque seleccionado en el panel de la UI
-         battleDialogogBox.SelectMovement(currentSelectedMovement);
+         
+         //Si el nuevo movimiento se "sale" de la lista de movimientos disponibles, se deja el que había
+         if (currentSelectedMovement >= playerUnit.Pokemon.Moves.Count)
+            currentSelectedMovement = oldSelectedMovement;
+         
+         //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
+         battleDialogogBox.SelectMovement(currentSelectedMovement,
+            playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
       else if (Input.GetAxisRaw("Horizontal") != 0)
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
+         
+         int oldSelectedMovement = currentSelectedMovement;//Guarda el actual movimiento
+         
          //El desplazamiento en horizontal cambia la selección moviendo una posición
          if (currentSelectedMovement <= 1)//Fila superior
          {
@@ -229,8 +242,14 @@ public class BattleManager : MonoBehaviour
          {
             currentSelectedMovement = (currentSelectedMovement + 1) % 2 + 2;
          }
-         //Se resalta el ataque seleccionado en el panel de la UI
-         battleDialogogBox.SelectMovement(currentSelectedMovement);
+         
+         //Si el nuevo movimiento se "sale" de la lista de movimientos disponibles, se deja el que había
+         if (currentSelectedMovement >= playerUnit.Pokemon.Moves.Count)
+            currentSelectedMovement = oldSelectedMovement;
+         
+         //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
+         battleDialogogBox.SelectMovement(currentSelectedMovement,
+            playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
    }
 

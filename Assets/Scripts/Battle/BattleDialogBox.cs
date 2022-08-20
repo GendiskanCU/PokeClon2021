@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -116,13 +117,21 @@ public class BattleDialogBox : MonoBehaviour
     
     /// <summary>
     /// Resalta en un color diferente el ataque seleccionado por el player en el panel de movimientos o ataques
+    /// y actualiza la información con los PP y tipo del movimiento seleccionado en el HUD
     /// </summary>
     /// <param name="selectedMovement">Posición del ataque seleccionado en la lista de movimientos</param>
-    public void SelectMovement(int selectedMovement)
+    /// <param name="move">Movimiento o ataque seleccionado</param>
+    public void SelectMovement(int selectedMovement, Move move)
     {
         for (int i = 0; i < movementTexts.Count; i++)
         {
             movementTexts[i].color = i == selectedMovement ? selectedColor : Color.black;
         }
+        
+        //Actualiza la información con los PP y tipo
+        ppText.text = String.Format("PP {0}/{1}", move.Pp, move.Base.PP);
+        typeText.text = move.Base.Type.ToString();
     }
+
+    
 }
