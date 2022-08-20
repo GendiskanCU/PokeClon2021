@@ -90,9 +90,6 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
       
-      //Hace una pausa de 1 segundo
-      yield return new WaitForSeconds(1.0f);
-      
       //Inicia las acciones del player o del enemigo. Se comparan las velocidades de ambos contendientes
       //(enemyUnit, playerUnit) para decidir quién atacará primero
       if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
@@ -251,13 +248,58 @@ public class BattleManager : MonoBehaviour
          battleDialogogBox.SelectMovement(currentSelectedMovement,
             playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
+      //Si se pulsa el botón de acción, se ejecutará el ataque seleccionado por el player
+      if (Input.GetAxisRaw("Submit") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+         //Oculta el panel de movimientos
+         battleDialogogBox.ToggleMovements(false);
+         //Muestra el diálogo
+         battleDialogogBox.ToggleDialogText(true);
+
+         StartCoroutine(PerformPlayerMovement());
+      }
    }
 
    /// <summary>
+   /// Ejecuta el ataque seleccionado por el player mostrando los mensajes poco a poco
+   /// </summary>
+   /// <returns></returns>
+   private IEnumerator PerformPlayerMovement()
+   {
+      //Movimiento que se debe ejecutar
+      Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
+
+      //Muestra el mensaje del ataque ejecutado y espera a que finalice de ser mostrado
+      yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
+         playerUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
+      
+      //Daña al pokemon enemigo comprobando si ha sido vencido
+      bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(move, playerUnit.Pokemon);
+
+      if (pokemonFainted)
+      {
+         //El player vence
+         yield return battleDialogogBox.SetDialog(String.Format("{0} se ha debilitado",
+            enemyUnit.Pokemon.Base.PokemonName));
+      }
+      else
+      {
+         //El enemigo sobrevive y lanza su ataque  
+         StartCoroutine(EnemyAction());
+      }
+   }
+
+   
+   
+   
+   /// <summary>
    /// Implementa las acciones de ataque del enemigo
    /// </summary>
-   private void EnemyAction()
+   private IEnumerator EnemyAction()
    {
-      StartCoroutine(battleDialogogBox.SetDialog("El enemigo ataca primero..."));
+      state = BattleState.EnemyMove;
+      yield return StartCoroutine(battleDialogogBox.SetDialog("El enemigo ataca..."));
    }
 }

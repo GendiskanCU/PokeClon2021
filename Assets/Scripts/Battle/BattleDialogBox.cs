@@ -54,6 +54,9 @@ public class BattleDialogBox : MonoBehaviour
             dialogText.text += character;
             yield return new WaitForSeconds(1 / charactersPerSecond);
         }
+        
+        //Hace una pausa final de un segundo
+        yield return new WaitForSeconds(1.0f);
     }
 
     /// <summary>

@@ -76,4 +76,39 @@ public class Pokemon
         
         
     }
+
+    /// <summary>
+    /// Implementa el daño que sufre un pokemon al recibir el ataque de otro pokemon
+    /// </summary>
+    /// <param name="move">Movimiento o ataque que recibe el pokemon</param>
+    /// <param name="attacker">Pokemon atacante</param>
+    /// <returns>true si el pokemon es vencido al ataque, false si sobrevive</returns>
+    public bool ReceiveDamage(Move move, Pokemon attacker)
+    {
+        //Se utilizará una fórmula para calcular el daño, a la que afectarán también
+        //Modificadores, como:
+        float modifiers = Random.Range(0.85f, 1.0f);//% de acierto aleatorio entre 85-100%
+        
+        //Cálculo del daño base, basada en la fórmula que se puede ver
+        //en la web https://bulbapedia.bulbagarden.net/wiki/Damage
+        float baseDamage = ((2f * attacker.Level / 5f + 2) * move.Base.Power * (attacker.Attack / (float) Defense)) / 50f + 2;
+        
+        //Cálculo de daño efectivo, aplicándole los modificadores y conviertiéndolo a Entero:
+        int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
+        
+        //Aplica el daño al pokemon
+        Hp -= totalDamage;
+        
+        //Comprueba el resultado 
+        if (Hp <= 0)
+        {
+            Hp = 0;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
 }
