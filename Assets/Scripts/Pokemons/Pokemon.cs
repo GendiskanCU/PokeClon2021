@@ -110,5 +110,17 @@ public class Pokemon
             return false;
         }
     }
+
+    /// <summary>
+    /// Devuelve un movimiento (ataque) aleatorio de entre los que el pokemon tiene disponibles en su lista
+    /// Se utilizará para implementar el ataque del pokemon enemigo
+    /// </summary>
+    /// <returns></returns>
+    public Move RandoMove()
+    {
+        int randId = Random.Range(0, _moves.Count);
+
+        return Moves[randId];
+    }
     
 }

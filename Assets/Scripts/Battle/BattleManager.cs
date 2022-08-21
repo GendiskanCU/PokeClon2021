@@ -300,6 +300,25 @@ public class BattleManager : MonoBehaviour
    private IEnumerator EnemyAction()
    {
       state = BattleState.EnemyMove;
-      yield return StartCoroutine(battleDialogogBox.SetDialog("El enemigo ataca..."));
+      
+      //El enemigo decide el ataque a ejecutar aleatoriamente
+      Move move = enemyUnit.Pokemon.RandoMove();
+      
+      //Muestra el movimiento en pantalla
+      yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
+         enemyUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
+      
+      //El ataque produce daño al pokemon del player y se comprueba el resultado
+      bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(move, enemyUnit.Pokemon);
+
+      if (pokemonFainted)//Si el pokemon del player ha sido vencido
+      {
+         yield return battleDialogogBox.SetDialog(String.Format("{0} ha sido debilitado",
+            playerUnit.Pokemon.Base.PokemonName));
+      }
+      else//En caso contrario, el player, vuelve a escoger acción a realizar
+      {
+         PlayerAction();
+      }
    }
 }
