@@ -277,6 +277,8 @@ public class BattleManager : MonoBehaviour
       
       //Daña al pokemon enemigo comprobando si ha sido vencido
       bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(move, playerUnit.Pokemon);
+      
+      enemyHUD.UpdatePokemonData();//Actualiza la información de la vida en el HUD
 
       if (pokemonFainted)
       {
@@ -310,7 +312,9 @@ public class BattleManager : MonoBehaviour
       
       //El ataque produce daño al pokemon del player y se comprueba el resultado
       bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(move, enemyUnit.Pokemon);
-
+      
+      playerHUD.UpdatePokemonData();//Actualiza la información de la vida en el HUD
+      
       if (pokemonFainted)//Si el pokemon del player ha sido vencido
       {
          yield return battleDialogogBox.SetDialog(String.Format("{0} ha sido debilitado",

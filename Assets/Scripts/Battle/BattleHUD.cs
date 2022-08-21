@@ -20,18 +20,34 @@ public class BattleHUD : MonoBehaviour
     [SerializeField] [Tooltip("Script que gestiona la barra de vida del Pokemon")]
     private HealthBarUI healthBar;
 
+    //Referencia al pokemon que contenga este script
+    private Pokemon _pokemon;
+
     /// <summary>
-    /// Actualiza la información del nombre, nivel y tamaño de la barra de vida de un pokemon en el HUD de batalla
+    /// Inicializa la información con  nombre, nivel y tamaño de la barra de vida de un pokemon en el HUD de batalla
     /// </summary>
     /// <param name="pokemon">El Pokemon del que se va a mostrar información en el HUD</param>
     public void SetPokemonData(Pokemon pokemon)
     {
+        //Guarda el pokemon recibido para poder ser utilizado a partir de ahora en otros métodos de esta misma clase
+        _pokemon = pokemon;
+        
         pokemonName.text = pokemon.Base.PokemonName;
         pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
-
-        pokemonHealth.text = String.Format("{0}/{1}", pokemon.Hp, pokemon.MaxHP);
         
+        UpdatePokemonData();
+    }
+
+    /// <summary>
+    /// Actualiza la vida y la barra de vida del pokemon en el HUD
+    /// </summary>
+    public void UpdatePokemonData()
+    {
         //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
-        healthBar.SetHP(pokemon.Hp / pokemon.MaxHP);
+        //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
+        healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
+        pokemonHealth.text = String.Format("{0}/{1}", _pokemon.Hp, _pokemon.MaxHP);
+        
+        
     }
 }
