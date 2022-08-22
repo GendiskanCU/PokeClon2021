@@ -40,6 +40,9 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] [Tooltip("Color para resaltar la acción seleccionada por el player en el panel")]
     private Color selectedColor = Color.blue;
 
+    private bool isWriting = false;
+    public bool IsWriting => isWriting;
+
 
     /// <summary>
     /// Muestra un mensaje letra a letra en la caja de texto del diálogo de la batalla pokemon
@@ -48,6 +51,10 @@ public class BattleDialogBox : MonoBehaviour
     /// <returns></returns>
     public IEnumerator SetDialog(string message)
     {
+        //Indica que se está "escribiendo" en el texto de diálogo, para evitar que se intente otra escritura
+        //hasta que la actual haya finalizado
+        isWriting = true;
+        
         dialogText.text = "";
         foreach (var character in message)
         {
@@ -57,6 +64,9 @@ public class BattleDialogBox : MonoBehaviour
         
         //Hace una pausa final de un segundo
         yield return new WaitForSeconds(1.0f);
+        
+        //Indica que la escritura ya ha finalizado
+        isWriting = false;
     }
 
     /// <summary>

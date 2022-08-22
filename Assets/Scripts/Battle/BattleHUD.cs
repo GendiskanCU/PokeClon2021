@@ -34,7 +34,7 @@ public class BattleHUD : MonoBehaviour
         
         pokemonName.text = pokemon.Base.PokemonName;
         pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
-        
+        //Nota: si con el Update se ve mal, podría ser necesario actualizar vida aquí al inicio de batalla
         UpdatePokemonData();
     }
 
@@ -45,7 +45,10 @@ public class BattleHUD : MonoBehaviour
     {
         //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
         //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
-        healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
+        //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
+
+        StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
+        
         pokemonHealth.text = String.Format("{0}/{1}", _pokemon.Hp, _pokemon.MaxHP);
         
         

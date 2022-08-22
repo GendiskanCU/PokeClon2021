@@ -55,7 +55,11 @@ public class BattleManager : MonoBehaviour
 
    private void Update()
    {
-     
+
+      //No se realizará ninguna acción nueva mientras se esté escribiendo algo en el texto de diálogo de la batalla
+      if (battleDialogogBox.IsWriting)
+         return;
+      
       if (state == BattleState.PlayerSelectAction)//Estado: selección de una acción por parte del player
       {
          HandlePlayerActionSelection();
