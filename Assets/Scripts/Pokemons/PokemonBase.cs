@@ -15,19 +15,48 @@ public enum PokemonType
     AGUA,
     ELECTRICO,
     HIERBA,
-    LUCHA,
     HIELO,
+    LUCHA,
     VENENO,
     TIERRA,
     AEREO,
     PSIQUICO,
-    ROCA,
     BICHO,
+    ROCA,
     FANTASMA,
     DRAGON,
     OSCURO,
-    HADA,
-    ACERO
+    ACERO,
+    HADA
+}
+
+//Matriz de tipos. Para establecer el daño que cada tipo de ataque hace a cada tipo de defensa
+//0 no hace daño, 1 hace daño normal, 0.5 hace la mitad de daño, 2 hace el doble de daño
+//Nota: solo se han quedado ajustados los cinco primeros tipos, habría que finalizar los demás
+public class TypeMatrix
+{
+    private float[][] matrix =
+    {
+        //                    NOR  FUE  AGU  ELE  HIE  HIE  LUC  VEN  TIE  AER  PSI  BIC  ROC  FAN  DRA  OSC  ACE  HAD
+        /*NOR*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f, 0.5f, 1f,  1f,  0f, 0.5f, 1f },
+        /*FUE*/ new float[] { 1f, 0.5f,0.5f, 1f,  2f,  2f,  1f,  1f,  1f,  1f,  1f,  2f, 0.5f, 1f, 0.5f, 1f,  2f,  1f },
+        /*AGU*/ new float[] { 1f,  2f, 0.5f, 1f,  1f, 0.5f, 1f,  1f,  2f,  1f,  1f,  1f,  1f,  1f, 0.5f, 1f,  1f,  1f },
+        /*ELE*/ new float[] { 1f,  1f,  2f, 0.5f,0.5f, 1f,  1f,  1f,  0f,  2f,  1f,  1f,  1f,  1f, 0.5f, 1f,  1f,  1f },
+        /*HIE*/ new float[] { 1f, 0.5f, 2f,  1f, 0.5f, 1f,  1f, 0.5f, 2f, 0.5f, 1f, 0.5f, 2f,  1f, 0.5f, 1f, 0.5f, 1f },
+        /*HIE*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*LUC*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*VEN*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*TIE*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*AER*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*PSI*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*BIC*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*ROC*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*FAN*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*DRA*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*OSC*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*ACE*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
+        /*HAD*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f }
+    };
 }
 
 //Tipos de ataque (o movimiento) que los pokemon pueden aprender en cada nivel
