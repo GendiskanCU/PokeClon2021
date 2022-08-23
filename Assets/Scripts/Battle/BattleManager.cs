@@ -279,10 +279,22 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
          playerUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
       
+      //Guarda la vida del pokemon enemigo antes de ser atacado
+      int oldHPValue = enemyUnit.Pokemon.Hp;
+      
+      //Reproduce la animación de ataque
+      playerUnit.PlayAttackAnimation();
+
+      //Hace una pausa para dejar que la animación termine
+      yield return new WaitForSeconds(1f);
+      
+      //Reproduce la animación de recibir daño por parte del enemigo
+      enemyUnit.PlayReceiveAttackAnimation();
+      
       //Daña al pokemon enemigo comprobando si ha sido vencido
       bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(move, playerUnit.Pokemon);
       
-      enemyHUD.UpdatePokemonData();//Actualiza la información de la vida en el HUD
+      enemyHUD.UpdatePokemonData(oldHPValue);//Actualiza la información de la vida en el HUD
 
       if (pokemonFainted)
       {
@@ -314,10 +326,22 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
          enemyUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
       
+      //Guarda la vida del pokemon de player antes de ser atacado
+      int oldHPValue = playerUnit.Pokemon.Hp;
+      
+      //Reproduce la animación de ataque
+      enemyUnit.PlayAttackAnimation();
+
+      //Hace una pausa para dejar que la animación termine
+      yield return new WaitForSeconds(1f);
+      
+      //Reproduce la animación de recibir daño por parte del player
+      playerUnit.PlayReceiveAttackAnimation();
+      
       //El ataque produce daño al pokemon del player y se comprueba el resultado
       bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(move, enemyUnit.Pokemon);
       
-      playerHUD.UpdatePokemonData();//Actualiza la información de la vida en el HUD
+      playerHUD.UpdatePokemonData(oldHPValue);//Actualiza la información de la vida en el HUD
       
       if (pokemonFainted)//Si el pokemon del player ha sido vencido
       {
