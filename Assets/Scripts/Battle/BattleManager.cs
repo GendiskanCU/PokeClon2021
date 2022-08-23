@@ -301,6 +301,9 @@ public class BattleManager : MonoBehaviour
          //El player vence
          yield return battleDialogogBox.SetDialog(String.Format("{0} se ha debilitado",
             enemyUnit.Pokemon.Base.PokemonName));
+         
+         //Reproduce la animación de derrota del enemigo
+         enemyUnit.PlayLoseAnimation();
       }
       else
       {
@@ -347,6 +350,9 @@ public class BattleManager : MonoBehaviour
       {
          yield return battleDialogogBox.SetDialog(String.Format("{0} ha sido debilitado",
             playerUnit.Pokemon.Base.PokemonName));
+         
+         //Reproduce la animación de derrota del player
+         playerUnit.PlayLoseAnimation();
       }
       else//En caso contrario, el player, vuelve a escoger acción a realizar
       {

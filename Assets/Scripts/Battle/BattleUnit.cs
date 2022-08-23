@@ -121,8 +121,12 @@ public class BattleUnit : MonoBehaviour
     /// </summary>
     public void PlayLoseAnimation()
     {
-        
+        //Reproduce dos animaciones simultáneamente
+        var sequence = DOTween.Sequence();
+        //Una de las animaciones desplaza el pokemon hacia abajo
+        sequence.Append(pokemonImage.transform.DOLocalMoveY(initialPosition.y - 200, loseTimeAnimation));
+        //La otra hace un "Fade out". Como queremos que se reproduzca simultáneamente, se utiliza Joint, no Append
+        sequence.Join(pokemonImage.DOFade(0f, loseTimeAnimation));
     }
-    
 }   
 
