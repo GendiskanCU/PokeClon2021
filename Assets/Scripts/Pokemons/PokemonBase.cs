@@ -35,7 +35,7 @@ public enum PokemonType
 //Nota: solo se han quedado ajustados los cinco primeros tipos, habría que finalizar los demás
 public class TypeMatrix
 {
-    private float[][] matrix =
+    private static float[][] matrix =
     {
         //                    NOR  FUE  AGU  ELE  HIE  HIE  LUC  VEN  TIE  AER  PSI  BIC  ROC  FAN  DRA  OSC  ACE  HAD
         /*NOR*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f, 0.5f, 1f,  1f,  0f, 0.5f, 1f },
@@ -57,7 +57,31 @@ public class TypeMatrix
         /*ACE*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f },
         /*HAD*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f }
     };
+
+    /// <summary>
+    /// Devuelve el multiplicador efectivo de un ataque pokemon en base a los datos de la matriz de tipos pokemon
+    /// </summary>
+    /// <param name="attackType">Tipo de ataque del pokemon atacante</param>
+    /// <param name="pokemonDefenderType">Tipo del pokemon defensor</param>
+    /// <returns></returns>
+    public static float GetMultiplierEfectiveness(PokemonType attackType, PokemonType pokemonDefenderType)
+    {
+        //Si alguno de los pokemon es de tipo "ninguno" se devuelve el multiplicador estándar
+        if (attackType == PokemonType.NINGUNO || pokemonDefenderType == PokemonType.NINGUNO)
+        {
+            return 1.0f;
+        }
+        
+        //Cálculo de la fila del array bidimensional de la que extraer el multiplicador
+        int row = (int) attackType - 1;
+        //Cálculo de la columna del array bidimensional de la que extraer el multiplicador
+        int col = (int) pokemonDefenderType - 1;
+
+        return matrix[row][col];
+    }
 }
+
+
 
 //Tipos de ataque (o movimiento) que los pokemon pueden aprender en cada nivel
 //Es una clase [Serializable] para que luego pueda mostrarse en el editor de Unity

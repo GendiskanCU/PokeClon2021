@@ -82,33 +82,56 @@ public class Pokemon
     /// </summary>
     /// <param name="move">Movimiento o ataque que recibe el pokemon</param>
     /// <param name="attacker">Pokemon atacante</param>
-    /// <returns>true si el pokemon es vencido al ataque, false si sobrevive</returns>
-    public bool ReceiveDamage(Move move, Pokemon attacker)
+    /// <returns>Estructura DamageDescription con los valores descriptivos del daño recibido</returns>
+    public DamageDescription ReceiveDamage(Move move, Pokemon attacker)
     {
         //Se utilizará una fórmula para calcular el daño, a la que afectarán también
         //Modificadores, como:
+        
+        //Primer modificador: % de acierto
         float modifiers = Random.Range(0.85f, 1.0f);//% de acierto aleatorio entre 85-100%
+        
+        //2º modificador: multiplicador de efectividad de la matriz de tipos y combinando los dos tipos del defensor
+        float Type1 = TypeMatrix.GetMultiplierEfectiveness(move.Base.Type, this.Base.Type1);
+        float Type2 = TypeMatrix.GetMultiplierEfectiveness(move.Base.Type, this.Base.Type2);
+        float Type = Type1 * Type2;
+        
+        modifiers *= Type;
+        
+        //Tercer modificador: probabilidad de crítico (que multiplicará el daño por 2) de un 6%
+        float critical = 1f;
+        if (Random.Range(0, 100) < 6)
+            critical *= 2;
+
+        modifiers *= critical;
+
+        //Creamos una estructura describiendo del daño con los valores obtenidos (la estructura está definida más abajo)
+        DamageDescription damageDesc = new DamageDescription()
+        {
+            Critical = critical,
+            AttackType = Type,
+            Fainted = false
+        };
         
         //Cálculo del daño base, basada en la fórmula que se puede ver
         //en la web https://bulbapedia.bulbagarden.net/wiki/Damage
         float baseDamage = ((2f * attacker.Level / 5f + 2) * move.Base.Power * (attacker.Attack / (float) Defense)) / 50f + 2;
         
-        //Cálculo de daño efectivo, aplicándole los modificadores y conviertiéndolo a Entero:
+        //Cálculo de daño efectivo, aplicándole los modificadores 
         int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
-        
+
         //Aplica el daño al pokemon
         Hp -= totalDamage;
         
-        //Comprueba el resultado 
+        //Comprueba el resultado y se marca si el pokemon ha sido vencido
         if (Hp <= 0)
         {
             Hp = 0;
-            return true;
+            damageDesc.Fainted = true;
         }
-        else
-        {
-            return false;
-        }
+    
+        //Devuelve el resultado describiendo el daño recibido
+        return damageDesc;
     }
 
     /// <summary>
@@ -123,4 +146,13 @@ public class Pokemon
         return Moves[randId];
     }
     
+}
+
+
+//Estructura para describir las causas que provocan el daño (el tipo de ataque, si es crítico, y si provoca la derrota)
+public struct DamageDescription
+{
+    public float Critical { get; set; }
+    public float AttackType { get; set; }
+    public bool Fainted { get; set; }
 }

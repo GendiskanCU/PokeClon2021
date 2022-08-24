@@ -53,7 +53,11 @@ public class BattleManager : MonoBehaviour
       StartCoroutine(SetupBattle());
    }
 
-   private void Update()
+   
+   /// <summary>
+   /// Método que iniciará una batalla en el update cuando sea invocado desde el GameManager
+   /// </summary>
+   public void HandleUpdate()
    {
 
       //No se realizará ninguna acción nueva mientras se esté escribiendo algo en el texto de diálogo de la batalla
@@ -291,12 +295,14 @@ public class BattleManager : MonoBehaviour
       //Reproduce la animación de recibir daño por parte del enemigo
       enemyUnit.PlayReceiveAttackAnimation();
       
-      //Daña al pokemon enemigo comprobando si ha sido vencido
-      bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(move, playerUnit.Pokemon);
+      //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
+      DamageDescription damageDesc = enemyUnit.Pokemon.ReceiveDamage(move, playerUnit.Pokemon);
       
       enemyHUD.UpdatePokemonData(oldHPValue);//Actualiza la información de la vida en el HUD
 
-      if (pokemonFainted)
+      yield return ShowDamageDescription(damageDesc);//Muestra información adiciional en el HUD
+
+      if (damageDesc.Fainted)
       {
          //El player vence
          yield return battleDialogogBox.SetDialog(String.Format("{0} se ha debilitado",
@@ -341,12 +347,14 @@ public class BattleManager : MonoBehaviour
       //Reproduce la animación de recibir daño por parte del player
       playerUnit.PlayReceiveAttackAnimation();
       
-      //El ataque produce daño al pokemon del player y se comprueba el resultado
-      bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(move, enemyUnit.Pokemon);
+      //El ataque produce daño al pokemon del player y se obtiene el resultado
+      DamageDescription damageDesc = playerUnit.Pokemon.ReceiveDamage(move, enemyUnit.Pokemon);
       
       playerHUD.UpdatePokemonData(oldHPValue);//Actualiza la información de la vida en el HUD
       
-      if (pokemonFainted)//Si el pokemon del player ha sido vencido
+      yield return ShowDamageDescription(damageDesc);//Muestra información adiciional en el HUD
+      
+      if (damageDesc.Fainted)//Si el pokemon del player ha sido vencido
       {
          yield return battleDialogogBox.SetDialog(String.Format("{0} ha sido debilitado",
             playerUnit.Pokemon.Base.PokemonName));
@@ -357,6 +365,29 @@ public class BattleManager : MonoBehaviour
       else//En caso contrario, el player, vuelve a escoger acción a realizar
       {
          PlayerAction();
+      }
+   }
+
+   
+   /// <summary>
+   /// Muestra en la UI un mensaje si el daño recibido es más o menos efectivo de lo normal y si ha sido crítico
+   /// </summary>
+   /// <param name="damageDesc">Estructura con los valores del daño recibido</param>
+   /// <returns></returns>
+   private IEnumerator ShowDamageDescription(DamageDescription damageDesc)
+   {
+      if (damageDesc.Critical > 1)
+      {
+         yield return battleDialogogBox.SetDialog("¡Golpe crítico!");
+      }
+
+      if (damageDesc.AttackType > 1)
+      {
+         yield return battleDialogogBox.SetDialog("¡Ataque superefectivo!");
+      }
+      else if (damageDesc.AttackType < 1)
+      {
+         yield return battleDialogogBox.SetDialog("No es muy efectivo");
       }
    }
 }
