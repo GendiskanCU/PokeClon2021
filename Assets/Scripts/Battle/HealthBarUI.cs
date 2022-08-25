@@ -30,6 +30,7 @@ public class HealthBarUI : MonoBehaviour
    }
 
    
+   
 
    /// <summary>
    /// Actualiza la barra de vida a partir del valor normalizado (entre 0 y 1) de la misma
@@ -39,13 +40,16 @@ public class HealthBarUI : MonoBehaviour
    {
       //Modifica el tamaño de la barra de vida escalándola
       healthBar.transform.localScale = new Vector3(normalizedValue, 1, 1);
+      
+      //Cambia el color de la barra en función de su tamaño actual
+      healthBar.GetComponent<Image>().color = BarColor;
    }
 
 
    /// <summary>
    /// Actualiza la barra de vida de forma progresiva a partir del valor normalizado de la misma
    /// </summary>
-   /// <param name="newHP">Valor normalizado (entre 0f y 1f) de la vida</param>
+   /// <param name="newHP">Cantidad de vida normalizada (entre 0f y 1f)</param>
    /// <returns></returns>
    public IEnumerator SetSmoothHP(float normalizedValue)
    {

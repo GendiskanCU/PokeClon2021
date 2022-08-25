@@ -35,7 +35,10 @@ public class BattleHUD : MonoBehaviour
         
         pokemonName.text = pokemon.Base.PokemonName;
         pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
-        //Nota: si con el Update se ve mal, podría ser necesario actualizar vida aquí al inicio de batalla
+        
+        //Inicializa la barra de vida poniéndola al 100% de su tamaño
+        healthBar.SetHP(1f);
+        
         UpdatePokemonData(_pokemon.Hp);
     }
 

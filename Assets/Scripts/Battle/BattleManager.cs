@@ -52,7 +52,10 @@ public class BattleManager : MonoBehaviour
    public event Action<bool> OnBattleFinish;
 
 
-   private void Start()
+   /// <summary>
+   /// Configura una nueva batalla pokemon
+   /// </summary>
+   public void HandleStartBattle()
    {
       StartCoroutine(SetupBattle());
    }

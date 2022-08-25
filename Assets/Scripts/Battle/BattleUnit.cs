@@ -70,6 +70,9 @@ public class BattleUnit : MonoBehaviour
 
         //Establece la imagen que se debe mostrar según si es el pokemon del player o del enemigo
         pokemonImage.sprite = isPlayer ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
+
+        //Reinicia el color del pokemon
+        pokemonImage.color = initialColor;
         
         //Animación de entrada
         PlayStartAnimation();

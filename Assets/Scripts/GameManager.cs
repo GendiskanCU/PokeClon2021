@@ -63,6 +63,9 @@ public class GameManager : MonoBehaviour
         
         //Desactiva la cámara que funciona cuando el player está moviéndose por el mundo
         worlMainCamera.gameObject.SetActive(false);
+        
+        //Inicia la batalla
+        battleManager.HandleStartBattle();
     }
 
     /// <summary>
