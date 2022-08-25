@@ -46,6 +46,10 @@ public class BattleManager : MonoBehaviour
    
    //Para controlar el ataque seleccionado por el player en el panel de selección de ataques o movimientos
    private int currentSelectedMovement;
+   
+   //Evento de la clase Action de Unity para que el GameManager conozca cuándo finaliza la batalla
+   //El evento devolverá un booleano para indicar además si el player ha vencido (true) o ha perdido (false)
+   public event Action<bool> OnBattleFinish;
 
 
    private void Start()
@@ -310,6 +314,12 @@ public class BattleManager : MonoBehaviour
          
          //Reproduce la animación de derrota del enemigo
          enemyUnit.PlayLoseAnimation();
+         
+         //Espera un instante para dejar que se reproduzca la animación
+         yield return new WaitForSeconds(1.5f);
+         
+         //Lanza el evento de finalización de la batalla con el resultado de victoria del player(true)
+         OnBattleFinish(true);
       }
       else
       {
@@ -361,6 +371,12 @@ public class BattleManager : MonoBehaviour
          
          //Reproduce la animación de derrota del player
          playerUnit.PlayLoseAnimation();
+         
+         //Espera un instante para dejar que se reproduzca la animación
+         yield return new WaitForSeconds(1.5f);
+         
+         //Lanza el evento de finalización de la batalla con el resultado de derrota del player(false)
+         OnBattleFinish(false);
       }
       else//En caso contrario, el player, vuelve a escoger acción a realizar
       {

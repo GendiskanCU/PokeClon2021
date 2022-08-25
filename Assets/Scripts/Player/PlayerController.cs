@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] [Tooltip("Capa/s a la/s que está/n asignado/s los Tilemap de zonas de aparición de pokemon")]
     private LayerMask pokemonLayer;
+
+    //Evento de la clase Action de Unity para indicar que se ha encontrado un pokemon y ha de iniciarse la batalla
+    public event Action OnPokemonEncountered;
     
     //Para guardar los valores de los ejes x/y antes de transmitirlos al player
     private Vector2 input;
@@ -161,7 +164,10 @@ public class PlayerController : MonoBehaviour
         {
             if (Random.Range(0, 100) < 10) //% de probabilidad de aparición de un pokemon
             {
-                Debug.Log("Aparece un Pokemon. Comienza la batalla pokemon");
+                OnPokemonEncountered();//Activa el evento indicando que la batalla debe dar comienzo
+                //TODO: Puede ser necesario detener la animación del player con IsMoving = false;
+
+                //Debug.Log("Aparece un Pokemon. Comienza la batalla pokemon");
             }
         }
     }
