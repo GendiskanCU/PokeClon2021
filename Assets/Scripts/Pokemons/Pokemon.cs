@@ -1,17 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 //POKEMON INSTANCIABLES.
 //SE CONTROLAN SUS ESTADÍSTICAS PARTIENDO DE LAS ESTADÍSTICAS BASE Y EL NIVEL ACTUAL DEL POKEMON
 
+//La clase debe ser serializable para que luego los pokemon que declaremos como [SerializaField]
+//puedan aparecer en el editor de Unity
+[Serializable]
 public class Pokemon
 {
     //Propiedades y estadísticas base del pokemon
+    [SerializeField][Tooltip("Base pokemon")]
     private PokemonBase _base;
     public PokemonBase Base => _base;
 
     //Nivel actual del pokemon (en función del nivel, las estadísticas base variarán)
+    [SerializeField][Tooltip("Nivel actual del pokemon")]
     private int _level;
     public int Level
     {
@@ -52,11 +59,9 @@ public class Pokemon
         set => _moves = value;
     }
     
-    //Constructor
-    public Pokemon(PokemonBase pokemonBase, int pokemonLevel)
+    //Inicializa los datos del pokemon
+    public void InitPokemon()
     {
-        _base = pokemonBase;
-        _level = pokemonLevel;
         //Inicializa la vida actual con la máxima calculada en función del nivel inicial
         _hp = MaxHP;
         

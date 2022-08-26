@@ -89,15 +89,17 @@ public class BattleManager : MonoBehaviour
       //Establece el estado inicial de la batalla
       state = BattleState.StartBattle;
       
-      //Configura el pokemon del player
-      playerUnit.SetupPokemon(playerUnit.Pokemon);
+      //Configura el pokemon del player (eliminado, ya no es necesario)
+      //playerUnit.SetupPokemon(playerUnit.Pokemon);
+      
       //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
       battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
       
-      //Configura el pokemon del enemigo
-      enemyUnit.SetupPokemon(enemyUnit.Pokemon);
+      //Configura el pokemon del enemigo (eliminado, ya no es necesario)
+      //enemyUnit.SetupPokemon(enemyUnit.Pokemon);
+      
       //Configura el HUD del enemigo
       enemyHUD.SetPokemonData(enemyUnit.Pokemon);
       
