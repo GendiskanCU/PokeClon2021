@@ -90,14 +90,14 @@ public class BattleManager : MonoBehaviour
       state = BattleState.StartBattle;
       
       //Configura el pokemon del player
-      playerUnit.SetupPokemon();
+      playerUnit.SetupPokemon(playerUnit.Pokemon);
       //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
       battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
       
       //Configura el pokemon del enemigo
-      enemyUnit.SetupPokemon();
+      enemyUnit.SetupPokemon(enemyUnit.Pokemon);
       //Configura el HUD del enemigo
       enemyHUD.SetPokemonData(enemyUnit.Pokemon);
       
@@ -285,6 +285,9 @@ public class BattleManager : MonoBehaviour
    {
       //Movimiento que se debe ejecutar
       Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
+      
+      //Reduce los puntos de poder disponibles para el movimiento que se va a ejecutar
+      move.Pp--;
 
       //Muestra el mensaje del ataque ejecutado y espera a que finalice de ser mostrado
       yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
@@ -343,6 +346,9 @@ public class BattleManager : MonoBehaviour
       
       //El enemigo decide el ataque a ejecutar aleatoriamente
       Move move = enemyUnit.Pokemon.RandoMove();
+      
+      //Reduce los puntos de poder disponibles para el movimiento que va a ejecutar
+      move.Pp--;
       
       //Muestra el movimiento en pantalla
       yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",

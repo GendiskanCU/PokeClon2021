@@ -36,8 +36,8 @@ public class BattleHUD : MonoBehaviour
         pokemonName.text = pokemon.Base.PokemonName;
         pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
         
-        //Inicializa la barra de vida poniéndola al 100% de su tamaño
-        healthBar.SetHP(1f);
+        //Inicializa la barra de vida con la vida actual del player
+        healthBar.SetHP((float) _pokemon.Hp / _pokemon.MaxHP);
         
         UpdatePokemonData(_pokemon.Hp);
     }
@@ -53,10 +53,6 @@ public class BattleHUD : MonoBehaviour
         StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
 
         StartCoroutine(DecreaseHealthPointsText(oldHPValue));
-        
-        
-        
-        
     }
 
     /// <summary>

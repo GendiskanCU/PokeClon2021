@@ -105,7 +105,7 @@ public class Pokemon
 
         modifiers *= critical;
 
-        //Creamos una estructura describiendo del daño con los valores obtenidos (la estructura está definida más abajo)
+        //Creamos una estructura describiendo el daño con los valores obtenidos (la estructura está definida más abajo)
         DamageDescription damageDesc = new DamageDescription()
         {
             Critical = critical,
@@ -113,9 +113,14 @@ public class Pokemon
             Fainted = false
         };
         
+        //Del atacante se tiene en cuenta si el ataque realizado es de tipo especial
+        float attack = (move.Base.IsSpecialMove) ? attacker.SpAttack : attacker.Attack;
+        //Del pokemon que recibe el daño se hace lo mismo con su defensa, en función del ataque recibido
+        float defense = (move.Base.IsSpecialMove) ? SpDefense : Defense; 
+        
         //Cálculo del daño base, basada en la fórmula que se puede ver
         //en la web https://bulbapedia.bulbagarden.net/wiki/Damage
-        float baseDamage = ((2f * attacker.Level / 5f + 2) * move.Base.Power * (attacker.Attack / (float) Defense)) / 50f + 2;
+        float baseDamage = ((2f * attacker.Level / 5f + 2) * move.Base.Power * (attack / (float) defense)) / 50f + 2;
         
         //Cálculo de daño efectivo, aplicándole los modificadores 
         int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
