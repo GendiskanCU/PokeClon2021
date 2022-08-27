@@ -162,7 +162,8 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    private void HandlePlayerActionSelection()
    {
-      //Se cambiará de acción pulsando arriba/abajo, estableciendo un lapso de tiempo mínimo para poder ir cambiando
+      //Se cambiará de acción pulsando arriba/abajo, izquierda/derecha
+      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
       timeSinceLastClick += Time.deltaTime;
       
       if (timeSinceLastClick < timeBetweenClicks)
@@ -173,9 +174,20 @@ public class BattleManager : MonoBehaviour
          //Reinicia el tiempo desde la última selección
          timeSinceLastClick = 0;
          
-         //Solo se puede escoger entre dos acciones (0 y 1), por lo que irá alternando entre ellas al pulsar arr/abj
-         currentSelectedAction = (currentSelectedAction + 1) % 2;
+         //La opción cambiará de dos en dos
+         currentSelectedAction = (currentSelectedAction + 2) % 4;
 
+         //Se resalta la acción seleccionada en el panel de la UI
+         battleDialogogBox.SelectAction(currentSelectedAction);
+      }
+      else if (Input.GetAxisRaw("Horizontal") != 0)//Al pulsar izquierda/derecha
+      {
+         timeSinceLastClick = 0;
+         
+         //Irá cambiando de columna, manteniéndose en la misma fila
+         currentSelectedAction = (currentSelectedAction + 1) % 2 +
+                                 2 * Mathf.FloorToInt(currentSelectedAction / 2);
+         
          //Se resalta la acción seleccionada en el panel de la UI
          battleDialogogBox.SelectAction(currentSelectedAction);
       }
@@ -192,7 +204,16 @@ public class BattleManager : MonoBehaviour
                PlayerMovement();
                break;
             case 1:
-               //El player huye
+               //El player escoge pokemon. Se abre la UI de selección de pokemon de la party del player
+               OpenPartySelectionScreen();
+               break;
+            case 2:
+               //El player revisa mochila. Se abre la UI del inventario del player
+               OpenInventoryScreen();
+               break;
+            case 3:
+               //El player huye. Se activa el evento de final de batalla con el resultado de derrota
+               OnBattleFinish(false);
                break;
             default:
                break;
@@ -289,6 +310,12 @@ public class BattleManager : MonoBehaviour
          battleDialogogBox.ToggleDialogText(true);
 
          StartCoroutine(PerformPlayerMovement());
+      }
+      
+      //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
+      if (Input.GetAxisRaw("Cancel") != 0)
+      {
+         PlayerAction();
       }
    }
 
@@ -445,6 +472,37 @@ public class BattleManager : MonoBehaviour
       else if (damageDesc.AttackType < 1)
       {
          yield return battleDialogogBox.SetDialog("No es muy efectivo");
+      }
+   }
+
+
+   /// <summary>
+   /// Abre la interfaz de selección de pokemon para la batalla
+   /// </summary>
+   private void OpenPartySelectionScreen()
+   {
+      Debug.Log("Selecciona pokemon");
+      
+      //Si se pulsa Cancelar se regresa a la pantalla de selección de acción del player
+      if (Input.GetAxisRaw("Cancel") != 0)
+      {
+         PlayerAction();
+      }
+   }
+
+
+   /// <summary>
+   /// Abre la interfaz de inventario del player
+   /// </summary>
+   private void OpenInventoryScreen()
+   {
+      //TODO: pendiente de implementar el inventario del player
+      Debug.Log("Inventario");
+      
+      //Si se pulsa Cancelar se regresa a la pantalla de selección de acción del player
+      if (Input.GetAxisRaw("Cancel") != 0)
+      {
+         PlayerAction();
       }
    }
 }
