@@ -64,8 +64,13 @@ public class GameManager : MonoBehaviour
         //Desactiva la cámara que funciona cuando el player está moviéndose por el mundo
         worlMainCamera.gameObject.SetActive(false);
         
-        //Inicia la batalla
-        battleManager.HandleStartBattle();
+        //Captura la party de pokemons del player
+        PokemonParty playerParty = playerController.GetComponent<PokemonParty>();
+        //Captura el pokemon salvaje del área de pokemons
+        Pokemon wildPokemon = FindObjectOfType<PokemonMapArea>().GetComponent<PokemonMapArea>().GetRandomWildPokemon();
+        
+        //Inicia la batalla            
+        battleManager.HandleStartBattle(playerParty, wildPokemon);
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -37,6 +38,12 @@ public class BattleManager : MonoBehaviour
    //Para controlar el estado actual de la batalla
    private BattleState state;
    
+   //Para guardar la party de pokemons del player disponible al entrar en la batalla
+   private PokemonParty playerParty;
+   
+   //Para guardar el pokemom salvaje enemigo que aparece en la batalla
+   private Pokemon wildPokemon;
+   
    //Para controlar la acción seleccionada por el player en el panel de selección de acciones
    private int currentSelectedAction;
    //Para controlar que no se pueda cambiar de acción seleccionada hasta pasado un lapso aunque se mantenga pulsado
@@ -55,8 +62,14 @@ public class BattleManager : MonoBehaviour
    /// <summary>
    /// Configura una nueva batalla pokemon
    /// </summary>
-   public void HandleStartBattle()
+   /// <param name="playerPokemonParty">Party de pokemons del player</param>
+   /// <param name="enemyPokemon">Pokemon salvaje que aparece en la batalla</param>
+   public void HandleStartBattle(PokemonParty playerPokemonParty, Pokemon enemyPokemon)
    {
+      //Guarda la party del player y el pokemon enemigo que intervendrán en la batalla
+      playerParty = playerPokemonParty;
+      wildPokemon = enemyPokemon;
+      
       StartCoroutine(SetupBattle());
    }
 
@@ -66,7 +79,6 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    public void HandleUpdate()
    {
-
       //No se realizará ninguna acción nueva mientras se esté escribiendo algo en el texto de diálogo de la batalla
       if (battleDialogogBox.IsWriting)
          return;
@@ -89,16 +101,16 @@ public class BattleManager : MonoBehaviour
       //Establece el estado inicial de la batalla
       state = BattleState.StartBattle;
       
-      //Configura el pokemon del player (eliminado, ya no es necesario)
-      //playerUnit.SetupPokemon(playerUnit.Pokemon);
+      //Configura el primer pokemon con vida de la party de pokemons del player
+      playerUnit.SetupPokemon(playerParty.GetFirstNonFaintedPokemon());
       
       //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
       battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
       
-      //Configura el pokemon del enemigo (eliminado, ya no es necesario)
-      //enemyUnit.SetupPokemon(enemyUnit.Pokemon);
+      //Configura el pokemon del enemigo
+      enemyUnit.SetupPokemon(wildPokemon);
       
       //Configura el HUD del enemigo
       enemyHUD.SetPokemonData(enemyUnit.Pokemon);
@@ -106,12 +118,13 @@ public class BattleManager : MonoBehaviour
       //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
       yield return battleDialogogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
-      
+
       //Inicia las acciones del player o del enemigo. Se comparan las velocidades de ambos contendientes
       //(enemyUnit, playerUnit) para decidir quién atacará primero
       if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
       {
-         EnemyAction();
+         yield return StartCoroutine(battleDialogogBox.SetDialog("El enemigo ataca primero"));
+         StartCoroutine(EnemyAction());
       }
       else
       {
@@ -386,8 +399,25 @@ public class BattleManager : MonoBehaviour
          //Espera un instante para dejar que se reproduzca la animación
          yield return new WaitForSeconds(1.5f);
          
-         //Lanza el evento de finalización de la batalla con el resultado de derrota del player(false)
-         OnBattleFinish(false);
+         //Comprueba si en la party de pokemons del player quedan más pokemon con vida
+         Pokemon nextPokemon = playerParty.GetFirstNonFaintedPokemon();
+         
+         //Si no quedan, lanza el evento de finalización de la batalla con el resultado de derrota del player(false)
+         if (nextPokemon == null)
+         {
+            OnBattleFinish(false);
+         }
+         else//Si queda algún pokemon con vida en la party, saldrá a la batalla
+         {
+            playerUnit.SetupPokemon(nextPokemon);
+            playerHUD.SetPokemonData(nextPokemon);
+            battleDialogogBox.SetPokemonMovements(nextPokemon.Moves);
+            yield return battleDialogogBox.SetDialog(String.Format("¡Adelante {0}!",
+               nextPokemon.Base.PokemonName));
+            
+            //Se reanuda la batalla con el nuevo pokemon
+            PlayerAction();
+         }
       }
       else//En caso contrario, el player, vuelve a escoger acción a realizar
       {

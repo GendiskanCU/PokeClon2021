@@ -78,8 +78,6 @@ public class Pokemon
             if (_moves.Count >= 4 )//Aunque limita el número de ataques que puede aprender a cuatro
                 break;
         }
-        
-        
     }
 
     /// <summary>

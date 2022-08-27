@@ -68,10 +68,8 @@ public class BattleUnit : MonoBehaviour
     /// <param name="pokemonInBattle">Pokemon del player o del enemigo</param>
     public void SetupPokemon(Pokemon pokemonInBattle)
     {
-        /*if(pokemonInBattle != null)
-            Pokemon = pokemonInBattle;
-        else
-            Pokemon = new Pokemon( _base, _level);*/
+        
+        Pokemon = pokemonInBattle;
 
         //Establece la imagen que se debe mostrar según si es el pokemon del player o del enemigo
         pokemonImage.sprite = isPlayer ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
