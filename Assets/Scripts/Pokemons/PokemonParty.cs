@@ -14,7 +14,6 @@ public class PokemonParty : MonoBehaviour
    public List<Pokemon> Pokemons
    {
       get => pokemons;
-      set => pokemons = value;
    }
 
    private void Start()

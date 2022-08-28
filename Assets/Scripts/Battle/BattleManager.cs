@@ -12,9 +12,10 @@ public enum BattleState
 {
    StartBattle,//Inicio de la batalla
    PlayerSelectAction,//El player tiene que hacer la selección de movimiento
-   PlayerMove,//Se ejecuta el movimiento del player
+   PlayerSelectMove,//Se ejecuta el movimiento del player
    EnemyMove,//Se ejecuta el movimiento del enemigo
    Busy,//No se puede hacer nada
+   PartySelectScreen//En la pantalla de selección de pokemon de la party
 }
 
 public class BattleManager : MonoBehaviour
@@ -34,6 +35,9 @@ public class BattleManager : MonoBehaviour
    [SerializeField] [Tooltip("Contenedor de la caja de texto del diálogo de batalla")]
    private BattleDialogBox battleDialogogBox;
 
+   [SerializeField] [Tooltip("Panel de selección de pokemon de la party del player")]
+   private PartyHUD partyHUD;
+
 
    //Para controlar el estado actual de la batalla
    private BattleState state;
@@ -48,11 +52,14 @@ public class BattleManager : MonoBehaviour
    private int currentSelectedAction;
    //Para controlar que no se pueda cambiar de acción seleccionada hasta pasado un lapso aunque se mantenga pulsado
    private float timeSinceLastClick;
-   [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción y ataque")]
+   [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción, ataque, etc.")]
    private float timeBetweenClicks = 1.0f;
    
    //Para controlar el ataque seleccionado por el player en el panel de selección de ataques o movimientos
    private int currentSelectedMovement;
+   
+   //Para controlar el pokemon seleccionado por el player en el panel de selección de pokemons de la party
+   private int currentSelectedPokemon;
    
    //Evento de la clase Action de Unity para que el GameManager conozca cuándo finaliza la batalla
    //El evento devolverá un booleano para indicar además si el player ha vencido (true) o ha perdido (false)
@@ -87,9 +94,13 @@ public class BattleManager : MonoBehaviour
       {
          HandlePlayerActionSelection();
       }
-      else if (state == BattleState.PlayerMove)//Estado: ejecución de un ataque por parte del player
+      else if (state == BattleState.PlayerSelectMove)//Estado: ejecución de un ataque por parte del player
       {
          HandlePlayerMovementSelection();
+      }
+      else if (state == BattleState.PartySelectScreen)//Estado: en la pantalla de selección de pokemon
+      {
+         HandlePlayerPartySelection();
       }
    }
 
@@ -108,6 +119,9 @@ public class BattleManager : MonoBehaviour
       playerHUD.SetPokemonData(playerUnit.Pokemon);
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
       battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
+      
+      //Inicializa el HUD de selección de pokemon de la party del player
+      partyHUD.InitPartyHUD();
       
       //Configura el pokemon del enemigo
       enemyUnit.SetupPokemon(wildPokemon);
@@ -227,7 +241,7 @@ public class BattleManager : MonoBehaviour
    private void PlayerMovement()
    {
       //Cambia al estado correspondiente
-      state = BattleState.PlayerMove;
+      state = BattleState.PlayerSelectMove;
       
       //Muestra/oculta los paneles correspondientes de la UI
       battleDialogogBox.ToggleDialogText(false);
@@ -477,19 +491,89 @@ public class BattleManager : MonoBehaviour
 
 
    /// <summary>
-   /// Abre la interfaz de selección de pokemon para la batalla
+   /// Rellena y abre la interfaz de selección de pokemon para la batalla
    /// </summary>
    private void OpenPartySelectionScreen()
    {
-      Debug.Log("Selecciona pokemon");
+      //Modifica el estado actual
+      state = BattleState.PartySelectScreen;
       
-      //Si se pulsa Cancelar se regresa a la pantalla de selección de acción del player
+      //Rellena el HUD de selección de pokemon con la lista de pokemon de la party del player y lo muestra
+      partyHUD.SetPartyData(playerParty.Pokemons);
+      partyHUD.gameObject.SetActive(true);
+   }
+
+   
+   /// <summary>
+   /// Gestiona la selección de un pokemon de la party del player desde el HUD
+   /// </summary>
+   private void HandlePlayerPartySelection()
+   {
+      //Se cambiará el pokemon seleccionado presionando arriba/abajo derecha/izquierda,
+      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
+      timeSinceLastClick += Time.deltaTime;
+      if (timeSinceLastClick < timeBetweenClicks)
+         return;
+      
+      /*Representación de las posiciones del panel en las que hay que desplazarse:
+        0    1
+        2    3
+        4    5 */
+      
+      if (Input.GetAxisRaw("Vertical") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+
+         int oldSelectedPokemon = currentSelectedPokemon;//Guarda el actual pokemon
+         
+         //El desplazamiento en vertical cambiará la selección moviendo dos posiciones
+         currentSelectedPokemon = (currentSelectedPokemon + 2) % 6;
+         
+         //Si el nuevo movimiento se "sale" de la lista de pokemons disponibles, se deja el que había
+         if (currentSelectedPokemon >= playerParty.Pokemons.Count)
+         {
+            currentSelectedPokemon = oldSelectedPokemon;
+         }
+         
+         //Muestra el pokemon seleccionado con un color diferente
+         partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
+      }
+      else if (Input.GetAxisRaw("Horizontal") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+         
+         int oldSelectedPokemon = currentSelectedPokemon;//Guarda el actual pokemon
+
+         currentSelectedPokemon = (currentSelectedPokemon + 1) % 2 +
+                                  2 * Mathf.FloorToInt(currentSelectedPokemon / 2);
+         
+         //Si el nuevo pokemon se "sale" de la lista de pokemons disponibles, se deja el que había
+         if (currentSelectedPokemon >= playerParty.Pokemons.Count)
+            currentSelectedPokemon = oldSelectedPokemon;
+         
+         //Muestra el pokemon seleccionado con un color diferente
+         partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
+      }
+      
+      //Si se pulsa el botón de acción, 
+      if (Input.GetAxisRaw("Submit") != 0)
+      {
+         //Reinicia el contador de tiempo para permitir una nueva pulsación
+         timeSinceLastClick = 0;
+         
+         //TODO: terminar de implementar la acción
+      }
+      
+      //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
       if (Input.GetAxisRaw("Cancel") != 0)
       {
+         //TODO: terminar de implementar la acción
          PlayerAction();
       }
    }
-
+   
 
    /// <summary>
    /// Abre la interfaz de inventario del player
@@ -505,4 +589,6 @@ public class BattleManager : MonoBehaviour
          PlayerAction();
       }
    }
+
+ 
 }

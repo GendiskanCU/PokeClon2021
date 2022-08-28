@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 7271756582695647765}
   - component: {fileID: 3357886785030134469}
   m_Layer: 0
-  m_Name: Image
+  m_Name: PokemonImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -486,6 +486,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f494c8497769e5c4d83a643a31658f6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 1775133009962476795}
+  levelText: {fileID: 1930141027912638245}
+  typeText: {fileID: 8111929448709191969}
+  hpText: {fileID: 6680400045746502642}
+  healthBar: {fileID: 7263708375021997986}
+  pokemonImage: {fileID: 3357886785030134469}
+  selectedColor: {r: 0.87058824, g: 0.25882354, b: 0.25882354, a: 1}
 --- !u!1 &8175519539277527199
 GameObject:
   m_ObjectHideFlags: 0
