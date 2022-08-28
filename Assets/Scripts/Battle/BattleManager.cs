@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ public class BattleManager : MonoBehaviour
    private BattleHUD enemyHUD;
 
    [SerializeField] [Tooltip("Contenedor de la caja de texto del diálogo de batalla")]
-   private BattleDialogBox battleDialogogBox;
+   private BattleDialogBox battleDialogBox;
 
    [SerializeField] [Tooltip("Panel de selección de pokemon de la party del player")]
    private PartyHUD partyHUD;
@@ -87,7 +88,7 @@ public class BattleManager : MonoBehaviour
    public void HandleUpdate()
    {
       //No se realizará ninguna acción nueva mientras se esté escribiendo algo en el texto de diálogo de la batalla
-      if (battleDialogogBox.IsWriting)
+      if (battleDialogBox.IsWriting)
          return;
       
       if (state == BattleState.PlayerSelectAction)//Estado: selección de una acción por parte del player
@@ -118,7 +119,7 @@ public class BattleManager : MonoBehaviour
       //Configura el HUD del player
       playerHUD.SetPokemonData(playerUnit.Pokemon);
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
-      battleDialogogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
+      battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
       
       //Inicializa el HUD de selección de pokemon de la party del player
       partyHUD.InitPartyHUD();
@@ -130,14 +131,14 @@ public class BattleManager : MonoBehaviour
       enemyHUD.SetPokemonData(enemyUnit.Pokemon);
       
       //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
-      yield return battleDialogogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
+      yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
 
       //Inicia las acciones del player o del enemigo. Se comparan las velocidades de ambos contendientes
       //(enemyUnit, playerUnit) para decidir quién atacará primero
       if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
       {
-         yield return StartCoroutine(battleDialogogBox.SetDialog("El enemigo ataca primero"));
+         yield return StartCoroutine(battleDialogBox.SetDialog("El enemigo ataca primero"));
          StartCoroutine(EnemyAction());
       }
       else
@@ -156,19 +157,19 @@ public class BattleManager : MonoBehaviour
       //Establece el estado actual de la batalla
       state = BattleState.PlayerSelectAction;
 
-      StartCoroutine(battleDialogogBox.SetDialog("Selecciona una acción..."));
+      StartCoroutine(battleDialogBox.SetDialog("Selecciona una acción..."));
       
       //Muestra/oculta los paneles correspondientes de la UI
       //Muestra el diálogo de batalla
-      battleDialogogBox.ToggleDialogText(true);
+      battleDialogBox.ToggleDialogText(true);
       //Muestra el panel de selección de acciones
-      battleDialogogBox.ToggleActions(true);
+      battleDialogBox.ToggleActions(true);
       //Oculta el panel de selección de ataque
-      battleDialogogBox.ToggleMovements(false);
+      battleDialogBox.ToggleMovements(false);
       
       //Se reinicia y resalta la acción por defecto
       currentSelectedAction = 0;
-      battleDialogogBox.SelectAction(currentSelectedAction);
+      battleDialogBox.SelectAction(currentSelectedAction);
    }
 
    /// <summary>
@@ -192,7 +193,7 @@ public class BattleManager : MonoBehaviour
          currentSelectedAction = (currentSelectedAction + 2) % 4;
 
          //Se resalta la acción seleccionada en el panel de la UI
-         battleDialogogBox.SelectAction(currentSelectedAction);
+         battleDialogBox.SelectAction(currentSelectedAction);
       }
       else if (Input.GetAxisRaw("Horizontal") != 0)//Al pulsar izquierda/derecha
       {
@@ -203,7 +204,7 @@ public class BattleManager : MonoBehaviour
                                  2 * Mathf.FloorToInt(currentSelectedAction / 2);
          
          //Se resalta la acción seleccionada en el panel de la UI
-         battleDialogogBox.SelectAction(currentSelectedAction);
+         battleDialogBox.SelectAction(currentSelectedAction);
       }
 
       if (Input.GetAxisRaw("Submit") != 0)//Al pulsar el botón de acción
@@ -244,14 +245,14 @@ public class BattleManager : MonoBehaviour
       state = BattleState.PlayerSelectMove;
       
       //Muestra/oculta los paneles correspondientes de la UI
-      battleDialogogBox.ToggleDialogText(false);
-      battleDialogogBox.ToggleActions(false);
-      battleDialogogBox.ToggleMovements(true);
+      battleDialogBox.ToggleDialogText(false);
+      battleDialogBox.ToggleActions(false);
+      battleDialogBox.ToggleMovements(true);
       
       //Establece el ataque seleccionado por defecto
       currentSelectedMovement = 0;
       //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
-      battleDialogogBox.SelectMovement(currentSelectedMovement,
+      battleDialogBox.SelectMovement(currentSelectedMovement,
          playerUnit.Pokemon.Moves[currentSelectedMovement]);
    }
 
@@ -285,7 +286,7 @@ public class BattleManager : MonoBehaviour
             currentSelectedMovement = oldSelectedMovement;
          
          //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
-         battleDialogogBox.SelectMovement(currentSelectedMovement,
+         battleDialogBox.SelectMovement(currentSelectedMovement,
             playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
       else if (Input.GetAxisRaw("Horizontal") != 0)
@@ -310,7 +311,7 @@ public class BattleManager : MonoBehaviour
             currentSelectedMovement = oldSelectedMovement;
          
          //Se resalta el ataque seleccionado en el panel de la UI y se actualiza su información en el HUD
-         battleDialogogBox.SelectMovement(currentSelectedMovement,
+         battleDialogBox.SelectMovement(currentSelectedMovement,
             playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
       //Si se pulsa el botón de acción, se ejecutará el ataque seleccionado por el player
@@ -319,9 +320,9 @@ public class BattleManager : MonoBehaviour
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
          //Oculta el panel de movimientos
-         battleDialogogBox.ToggleMovements(false);
+         battleDialogBox.ToggleMovements(false);
          //Muestra el diálogo
-         battleDialogogBox.ToggleDialogText(true);
+         battleDialogBox.ToggleDialogText(true);
 
          StartCoroutine(PerformPlayerMovement());
       }
@@ -346,7 +347,7 @@ public class BattleManager : MonoBehaviour
       move.Pp--;
 
       //Muestra el mensaje del ataque ejecutado y espera a que finalice de ser mostrado
-      yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
+      yield return battleDialogBox.SetDialog(String.Format("{0} ha usado {1}",
          playerUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
       
       //Guarda la vida del pokemon enemigo antes de ser atacado
@@ -371,7 +372,7 @@ public class BattleManager : MonoBehaviour
       if (damageDesc.Fainted)
       {
          //El player vence
-         yield return battleDialogogBox.SetDialog(String.Format("{0} se ha debilitado",
+         yield return battleDialogBox.SetDialog(String.Format("{0} se ha debilitado",
             enemyUnit.Pokemon.Base.PokemonName));
          
          //Reproduce la animación de derrota del enemigo
@@ -407,7 +408,7 @@ public class BattleManager : MonoBehaviour
       move.Pp--;
       
       //Muestra el movimiento en pantalla
-      yield return battleDialogogBox.SetDialog(String.Format("{0} ha usado {1}",
+      yield return battleDialogBox.SetDialog(String.Format("{0} ha usado {1}",
          enemyUnit.Pokemon.Base.PokemonName, move.Base.AttackName));
       
       //Guarda la vida del pokemon de player antes de ser atacado
@@ -431,7 +432,7 @@ public class BattleManager : MonoBehaviour
       
       if (damageDesc.Fainted)//Si el pokemon del player ha sido vencido
       {
-         yield return battleDialogogBox.SetDialog(String.Format("{0} ha sido debilitado",
+         yield return battleDialogBox.SetDialog(String.Format("{0} ha sido debilitado",
             playerUnit.Pokemon.Base.PokemonName));
          
          //Reproduce la animación de derrota del player
@@ -448,16 +449,9 @@ public class BattleManager : MonoBehaviour
          {
             OnBattleFinish(false);
          }
-         else//Si queda algún pokemon con vida en la party, saldrá a la batalla
+         else//Si queda algún pokemon con vida en la party, se abre la pantalla de selección de pokemons de la party
          {
-            playerUnit.SetupPokemon(nextPokemon);
-            playerHUD.SetPokemonData(nextPokemon);
-            battleDialogogBox.SetPokemonMovements(nextPokemon.Moves);
-            yield return battleDialogogBox.SetDialog(String.Format("¡Adelante {0}!",
-               nextPokemon.Base.PokemonName));
-            
-            //Se reanuda la batalla con el nuevo pokemon
-            PlayerAction();
+            OpenPartySelectionScreen();
          }
       }
       else//En caso contrario, el player, vuelve a escoger acción a realizar
@@ -476,16 +470,16 @@ public class BattleManager : MonoBehaviour
    {
       if (damageDesc.Critical > 1)
       {
-         yield return battleDialogogBox.SetDialog("¡Golpe crítico!");
+         yield return battleDialogBox.SetDialog("¡Golpe crítico!");
       }
 
       if (damageDesc.AttackType > 1)
       {
-         yield return battleDialogogBox.SetDialog("¡Ataque superefectivo!");
+         yield return battleDialogBox.SetDialog("¡Ataque superefectivo!");
       }
       else if (damageDesc.AttackType < 1)
       {
-         yield return battleDialogogBox.SetDialog("No es muy efectivo");
+         yield return battleDialogBox.SetDialog("No es muy efectivo");
       }
    }
 
@@ -501,6 +495,14 @@ public class BattleManager : MonoBehaviour
       //Rellena el HUD de selección de pokemon con la lista de pokemon de la party del player y lo muestra
       partyHUD.SetPartyData(playerParty.Pokemons);
       partyHUD.gameObject.SetActive(true);
+
+      //Deja seleccionado por defecto el pokemon actual en batalla
+      for (int i = 0; i < playerParty.Pokemons.Count; i++)
+      {
+         if (playerUnit.Pokemon == playerParty.Pokemons[i])
+            currentSelectedPokemon = i;
+      }
+      partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
    }
 
    
@@ -524,52 +526,60 @@ public class BattleManager : MonoBehaviour
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
+         
+         //Calcula la nueva posición teniendo en cuenta que deberá avanzar de dos en dos, sin dar la vuelta
+         //(de 0 a 2, de 2 a 4, de 4 a 2 o de 2 a 0)
+         currentSelectedPokemon -= (int)Input.GetAxisRaw("Vertical") * 2;
 
-         int oldSelectedPokemon = currentSelectedPokemon;//Guarda el actual pokemon
-         
-         //El desplazamiento en vertical cambiará la selección moviendo dos posiciones
-         currentSelectedPokemon = (currentSelectedPokemon + 2) % 6;
-         
-         //Si el nuevo movimiento se "sale" de la lista de pokemons disponibles, se deja el que había
-         if (currentSelectedPokemon >= playerParty.Pokemons.Count)
-         {
-            currentSelectedPokemon = oldSelectedPokemon;
-         }
-         
-         //Muestra el pokemon seleccionado con un color diferente
-         partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
       }
       else if (Input.GetAxisRaw("Horizontal") != 0)
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
-         
-         int oldSelectedPokemon = currentSelectedPokemon;//Guarda el actual pokemon
 
-         currentSelectedPokemon = (currentSelectedPokemon + 1) % 2 +
-                                  2 * Mathf.FloorToInt(currentSelectedPokemon / 2);
-         
-         //Si el nuevo pokemon se "sale" de la lista de pokemons disponibles, se deja el que había
-         if (currentSelectedPokemon >= playerParty.Pokemons.Count)
-            currentSelectedPokemon = oldSelectedPokemon;
-         
-         //Muestra el pokemon seleccionado con un color diferente
-         partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
+         //En horizontal solo avanzará una posición sin dar la vuelta
+         currentSelectedPokemon += (int) Input.GetAxisRaw("Horizontal") * 1;
       }
+
+      //Asegura que el valor resultante siempre queda dentro de los límites del array
+      currentSelectedPokemon = Mathf.Clamp(currentSelectedPokemon, 0, playerParty.Pokemons.Count - 1);
+           
+      //Muestra el pokemon seleccionado con un color diferente
+      partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
       
-      //Si se pulsa el botón de acción, 
+      //Si se pulsa el botón de acción, saldrá al combate el pokemon seleccionado, salvo que éste ya no tenga vida 
       if (Input.GetAxisRaw("Submit") != 0)
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
          timeSinceLastClick = 0;
+
+         //Guarda el pokemon seleccionado
+         Pokemon selectedPokemon = playerParty.Pokemons[currentSelectedPokemon];
+         //Comprueba si tiene vida, y en caso contrario muestra un mensaje informativo y sale sin hacer nada
+         if (selectedPokemon.Hp <= 0)
+         {
+            partyHUD.SetMessage("No puedes enviar un pokemon debilitado");
+            return;
+         }
+         else if (selectedPokemon == playerUnit.Pokemon) //Si el pokemon seleccionado es el que ya está en la batalla
+         {
+            partyHUD.SetMessage("El pokemon seleccionado ya está en batalla");
+            return; //También sale sin hacer nada
+         }
+
+         state = BattleState.Busy;//Mientras se hace el cambio de pokemon, cambia el estado para no permitir movimientos
          
-         //TODO: terminar de implementar la acción
+         //Desactiva el panel de elección de pokemon
+         partyHUD.gameObject.SetActive(false);
+         
+         //Intercambia el pokemon actual por el seleccionado
+         StartCoroutine(SwitchPokemon(selectedPokemon));
       }
       
       //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
       if (Input.GetAxisRaw("Cancel") != 0)
       {
-         //TODO: terminar de implementar la acción
+         partyHUD.gameObject.SetActive(false);
          PlayerAction();
       }
    }
@@ -590,5 +600,39 @@ public class BattleManager : MonoBehaviour
       }
    }
 
+   /// <summary>
+   /// Cambia el pokemon actual en batalla por el indicado como parámetro
+   /// </summary>
+   /// <param name="newPokemon">El pokemon que debe entrar en la batalla</param>
+   /// <returns></returns>
+   private IEnumerator SwitchPokemon(Pokemon newPokemon)
+   {
+      string switchMessage = String.Format("¡Vuelve, {0}!", playerUnit.Pokemon.Base.PokemonName);
+      //Este mensaje solo se mostrará si el pokemon actual todavía tiene vida:
+      if(playerUnit.Pokemon.Hp > 0)
+         yield return battleDialogBox.SetDialog(switchMessage);
+      
+      //Reproduce la animación de retirada del pokemon actual
+      playerUnit.PlayLoseAnimation();
+
+      //Espera un instante para que finalice la animación
+      yield return new WaitForSeconds(1.5f);
+      
+      //Configura el pokemon que se incorpora a la batalla
+      playerUnit.SetupPokemon(newPokemon);
+      
+      //Se actualiza el HUD
+      playerHUD.SetPokemonData(newPokemon);
+      
+      //Se actualizan los movimientos
+      battleDialogBox.SetPokemonMovements(newPokemon.Moves);
+
+      //Muestra el mensaje de entrada del nuevo pokemon
+      switchMessage = String.Format("¡Adelante, {0}!", newPokemon.Base.PokemonName);
+      yield return battleDialogBox.SetDialog(switchMessage);
+      
+      //Y le tocará atacar al enemigo
+      StartCoroutine(EnemyAction());
+   }
  
 }

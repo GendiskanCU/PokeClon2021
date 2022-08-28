@@ -67,4 +67,13 @@ public class PartyHUD : MonoBehaviour
       }
    }
 
+
+   /// <summary>
+   /// Muestra un mensaje en el área de información del HUD de selección de pokemon de la party de pokemons
+   /// </summary>
+   /// <param name="message"></param>
+   public void SetMessage(string message)
+   {
+      messageText.text = message;
+   }
 }

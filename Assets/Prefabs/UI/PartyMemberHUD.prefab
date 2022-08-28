@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -42, y: 13}
-  m_SizeDelta: {x: 63.8, y: 30}
+  m_AnchoredPosition: {x: -26.104599, y: 13}
+  m_SizeDelta: {x: 95.5908, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6999622753637917445
 CanvasRenderer:
@@ -79,7 +79,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Lv 11
+  m_Text: Lv 150
 --- !u!1 &2576629433947194855
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,8 +271,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 80.8, y: 3}
-  m_SizeDelta: {x: 75, y: 30}
+  m_AnchoredPosition: {x: 94.86133, y: 3}
+  m_SizeDelta: {x: 142.2498, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6515873602143669582
 CanvasRenderer:
@@ -309,13 +309,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 50/50
+  m_Text: 500/500
 --- !u!1 &7229886186470437591
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,7 +489,7 @@ MonoBehaviour:
   nameText: {fileID: 1775133009962476795}
   levelText: {fileID: 1930141027912638245}
   typeText: {fileID: 8111929448709191969}
-  hpText: {fileID: 6680400045746502642}
+  hpText: {fileID: 2029070007388777563}
   healthBar: {fileID: 7263708375021997986}
   pokemonImage: {fileID: 3357886785030134469}
   selectedColor: {r: 0.87058824, g: 0.25882354, b: 0.25882354, a: 1}
