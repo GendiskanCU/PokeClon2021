@@ -148,6 +148,4 @@ public class BattleDialogBox : MonoBehaviour
         //Si se han agotado los PP del ataque seleccionado, también se resaltará en otro color
         ppText.color = (move.Pp <= 0) ? selectedColor : Color.black;
     }
-
-    
 }

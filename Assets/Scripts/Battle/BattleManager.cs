@@ -127,10 +127,15 @@ public class BattleManager : MonoBehaviour
 
       //Inicia las acciones del player o del enemigo. Se comparan las velocidades de ambos contendientes
       //(enemyUnit, playerUnit) para decidir quién atacará primero
-      if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
+      if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)//Comienza el enemigo
       {
-         yield return StartCoroutine(battleDialogBox.SetDialog("El enemigo ataca primero"));
-         StartCoroutine(PerfomEnemyMovement());
+         //Activa/desactiva los paneles correspondientes
+         battleDialogBox.ToggleDialogText(true);
+         battleDialogBox.ToggleActions(false);
+         battleDialogBox.ToggleMovements(false);
+         //Muestra un mensaje y ejecuta la acción del enemigo
+         yield return battleDialogBox.SetDialog("El enemigo ataca primero");
+         yield return PerfomEnemyMovement();
       }
       else
       {
