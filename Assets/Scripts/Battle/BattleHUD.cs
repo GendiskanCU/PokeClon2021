@@ -39,20 +39,21 @@ public class BattleHUD : MonoBehaviour
         //Inicializa la barra de vida con la vida actual del player
         healthBar.SetHP((float) _pokemon.Hp / _pokemon.MaxHP);
         
-        UpdatePokemonData(_pokemon.Hp);
+        StartCoroutine(UpdatePokemonData(_pokemon.Hp));
     }
 
     /// <summary>
     /// Actualiza el texto con la vida y la barra de vida del pokemon en el HUD
     /// </summary>
-    public void UpdatePokemonData(int oldHPValue)
+    public IEnumerator UpdatePokemonData(int oldHPValue)
     {
         //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
         //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
         //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
         StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
+        StartCoroutine( DecreaseHealthPointsText(oldHPValue));
 
-        StartCoroutine(DecreaseHealthPointsText(oldHPValue));
+        yield return null;
     }
 
     /// <summary>

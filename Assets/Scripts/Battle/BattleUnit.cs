@@ -20,17 +20,22 @@ public class BattleUnit : MonoBehaviour
     [SerializeField][Tooltip("Nivel en el que se encuentra el pokemon")]
     private int _level;
     
+    [SerializeField] [Tooltip("HUD del pokemon que participa en la batalla")]
+    private BattleHUD hud;
+    public BattleHUD HUD => hud;
+
     //Para controlar si el pokemon es el de player o del enemigo
     [SerializeField][Tooltip("¿Es el pokemon del player? (¿o del enemigo?")]
     private bool isPlayer;
+    public bool IsPlayer => isPlayer;
 
     //Pokemon que participa en la batalla (público para ser accesible desde el BattleManager)
     public Pokemon Pokemon { get; set; }
     
     //Imagen que representa al pokemon
     private Image pokemonImage;
-    
-   
+
+
     //Para las animaciones del pokemon
     //Posición inicial del sprite pokemon
     private Vector3 initialPosition;
@@ -68,7 +73,7 @@ public class BattleUnit : MonoBehaviour
     /// <param name="pokemonInBattle">Pokemon del player o del enemigo</param>
     public void SetupPokemon(Pokemon pokemonInBattle)
     {
-        
+        //Asigna valor al pokemon que participa en la batalla
         Pokemon = pokemonInBattle;
 
         //Establece la imagen que se debe mostrar según si es el pokemon del player o del enemigo
@@ -76,6 +81,9 @@ public class BattleUnit : MonoBehaviour
 
         //Reinicia el color del pokemon
         pokemonImage.color = initialColor;
+        
+        //Actualiza el HUD con la información del pokemon
+        hud.SetPokemonData(Pokemon);
         
         //Animación de entrada
         PlayStartAnimation();

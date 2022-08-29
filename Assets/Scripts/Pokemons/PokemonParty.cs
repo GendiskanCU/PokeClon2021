@@ -35,4 +35,21 @@ public class PokemonParty : MonoBehaviour
       //Devuelve el primer pokemon que encuentre con Hp > 0 o nulo si no hay ninguno
       return pokemons.Where(x => x.Hp > 0).FirstOrDefault();
    }
+
+
+   /// <summary>
+   /// Devuelve la posición de un pokemon en la lista de pokemons de la party
+   /// </summary>
+   /// <param name="pokemon">Pokemon del que obtener su posición en la party</param>
+   /// <returns></returns>
+   public int GetPositionFromPokemon(Pokemon pokemon)
+   {
+      for (int i = 0; i < Pokemons.Count; i++)
+      {
+         if (pokemon == Pokemons[i])
+            return i;
+      }
+
+      return -1;//Aquí en realidad no se va a llegar
+   }
 }

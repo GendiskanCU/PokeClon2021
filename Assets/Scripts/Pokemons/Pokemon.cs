@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -147,13 +148,23 @@ public class Pokemon
     /// Se utilizará para implementar el ataque del pokemon enemigo
     /// </summary>
     /// <returns></returns>
-    public Move RandoMove()
+    public Move RandonMove()
     {
-        int randId = Random.Range(0, _moves.Count);
+        //Obtiene una nueva lista solo con los movimientos que no tengan agotados sus PP
+        var movesWithPP = Moves.Where(m => m.Pp > 0).ToList();
+        
+        //Escoge uno de esos movimientos de forma aleatoria
+        int randId = Random.Range(0, movesWithPP.Count);
 
-        return Moves[randId];
+        if (movesWithPP.Count > 0)//Si queda algún ataque con PP
+        {
+            return movesWithPP[randId];    
+        }
+        
+        //Si no quedaran ataques con PP se llegaría hasta aquí
+        return null;
+        //TODO: para este caso se puede implementar un ataque que hace daño tanto al enemigo como al atacante
     }
-    
 }
 
 
