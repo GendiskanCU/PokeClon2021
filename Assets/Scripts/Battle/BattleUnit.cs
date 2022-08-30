@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using DG.Tweening;
-using Unity.VisualScripting; //Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
+using DG.Tweening;//Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
+using Unity.VisualScripting; 
 
 //GESTIONA LOS POKEMON DE CADA BATALLA (DEL PLAYER O DEL ENEMIGO) Y RELLENA SU UI. SE COLOCARÁ COMO COMPONENTE
 //DEL OBJETO IMAGE QUE REPRESENTA AL POKEMON EN EL CANVAS

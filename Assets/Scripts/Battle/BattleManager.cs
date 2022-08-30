@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
+using DG.Tweening;//Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
 
 
 //GESTIONA LA BATALLA POKEMON PARA EL PLAYER O EL ENEMIGO
@@ -34,6 +35,9 @@ public class BattleManager : MonoBehaviour
 
    [SerializeField] [Tooltip("Panel de selección de pokemon de la party del player")]
    private PartyHUD partyHUD;
+
+   [SerializeField] [Tooltip("Prefab de la Pokeball que el player podrá lanzar")]
+   private GameObject pokeBall;
 
 
    //Para controlar el estado actual de la batalla
@@ -231,8 +235,11 @@ public class BattleManager : MonoBehaviour
                OpenPartySelectionScreen();
                break;
             case 2:
-               //El player revisa mochila. Se abre la UI del inventario del player
-               OpenInventoryScreen();
+               //TODO: El player revisa mochila. Se abre la UI del inventario del player
+               //OpenInventoryScreen();
+               
+               //El player lanza una pokeball
+               StartCoroutine(ThrowPokeball());
                break;
             case 3:
                //El player huye. Se activa el evento de final de batalla con el resultado de derrota
@@ -639,5 +646,28 @@ public class BattleManager : MonoBehaviour
       //Y le tocará atacar al enemigo
       StartCoroutine(PerfomEnemyMovement());
    }
- 
+
+   /// <summary>
+   /// Ejecuta la acción de lanzar una pokeball por parte del player
+   /// </summary>
+   /// <returns></returns>
+   private IEnumerator ThrowPokeball()
+   {
+      //Cambia el estado actual
+      state = BattleState.Busy;
+
+      yield return battleDialogBox.SetDialog($"¡Has lanzado una {pokeBall.gameObject.name}!");
+
+      //Instancia la pokeball un poco a la izquierda/abajo del pokemon del player
+      GameObject pokeballInst = Instantiate(pokeBall,
+         playerUnit.transform.position - new Vector3(2, 2, 0), Quaternion.identity);
+      
+      //Comienza la animación del movimiento parabólico de la pokeball hacia el pokemon enemigo:
+      //Captura el sprite de la pokeball
+      SpriteRenderer pokeballSpt = pokeballInst.GetComponent<SpriteRenderer>();
+      
+      //Utiliza la librería del paquete de la Asset Store "DOTween (HOTween v2)" para la animación de salto
+      yield return pokeballSpt.transform.DOLocalJump(enemyUnit.transform.position + new Vector3(0, 2, 0),
+         2f, 1, 1.5f).WaitForCompletion();
+   }
 }
