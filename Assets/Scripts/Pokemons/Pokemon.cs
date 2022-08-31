@@ -60,6 +60,20 @@ public class Pokemon
         set => _moves = value;
     }
     
+    
+    /// <summary>
+    /// Constructor de un nuevo pokemon que se puede utilizar para copiar un pokemon en otro
+    /// </summary>
+    /// <param name="pBase">Pokemon base del nuevo pokemon</param>
+    /// <param name="pLevel">Nivel del nuevo pokemon</param>
+    public Pokemon(PokemonBase pBase, int pLevel)
+    {
+        _base = pBase;
+        _level = pLevel;
+        
+        InitPokemon();
+    }
+    
     //Inicializa los datos del pokemon
     public void InitPokemon()
     {

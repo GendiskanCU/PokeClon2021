@@ -55,6 +55,9 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] [Tooltip("Duración de la animación de sufrir daño")]
     private float hitTimeAnimation = 0.15f;
 
+    [SerializeField] [Tooltip("Duración de la animación de ser capturado por una pokeball")]
+    private float capturedTimeAnimation = 0.5f;
+
     private void Awake()
     {
         pokemonImage = GetComponent<Image>();
@@ -81,6 +84,9 @@ public class BattleUnit : MonoBehaviour
 
         //Reinicia el color del pokemon
         pokemonImage.color = initialColor;
+        
+        //Restablece el tamaño del pokemon, que ha podido ser modificado al lanzar una pokeball
+        transform.localScale = new Vector3(1, 1, 1);
         
         //Actualiza el HUD con la información del pokemon
         hud.SetPokemonData(Pokemon);
@@ -133,7 +139,7 @@ public class BattleUnit : MonoBehaviour
     /// <summary>
     /// Reproduce la animación de derrota del pokemon
     /// </summary>
-    public void PlayLoseAnimation()
+    public void PlayFaintAnimation()
     {
         //Reproduce dos animaciones simultáneamente
         var sequence = DOTween.Sequence();
@@ -141,6 +147,43 @@ public class BattleUnit : MonoBehaviour
         sequence.Append(pokemonImage.transform.DOLocalMoveY(initialPosition.y - 200, loseTimeAnimation));
         //La otra hace un "Fade out". Como queremos que se reproduzca simultáneamente, se utiliza Joint, no Append
         sequence.Join(pokemonImage.DOFade(0f, loseTimeAnimation));
+    }
+
+
+    /// <summary>
+    /// Reproduce la animación del pokemon siendo atrapado por una pokeball
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator PlayCapturedAnimation()
+    {
+        //Animaciones que se reproducirán simultáneamente
+        var sequence = DOTween.Sequence();
+        //Animación de "Fade out"
+        sequence.Append(pokemonImage.DOFade(0, capturedTimeAnimation ));
+        //Animación de escalado decreciente 
+        sequence.Join(transform.DOScale(new Vector3(0.25f, 0.25f, 1f), capturedTimeAnimation));
+        //Animación de desplazamiento hacia arriba, en dirección a la pokeball
+        sequence.Join(transform.DOLocalMoveY(initialPosition.y + 50f, capturedTimeAnimation));
+        //Espera a que termine la secuencia de animaciones
+        yield return sequence.WaitForCompletion();
+    }
+    
+    /// <summary>
+    /// Reproduce la animación del pokemon escapando de una pokeball
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator PlayBreakOutAnimation()
+    {
+        //Animaciones que se reproducirán simultáneamente
+        var sequence = DOTween.Sequence();
+        //Animación de "Fade in"
+        sequence.Append(pokemonImage.DOFade(1, capturedTimeAnimation ));
+        //Animación de escalado creciente 
+        sequence.Join(transform.DOScale(new Vector3(1f, 1f, 1f), capturedTimeAnimation));
+        //Animación de desplazamiento hacia la posición inicial
+        sequence.Join(transform.DOLocalMoveY(initialPosition.y, capturedTimeAnimation));
+        //Espera a que termine la secuencia de animaciones
+        yield return sequence.WaitForCompletion();
     }
 }   
 

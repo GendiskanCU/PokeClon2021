@@ -73,7 +73,7 @@ public class TypeMatrix
         }
         
         //Cálculo de la fila del array bidimensional de la que extraer el multiplicador
-        int row = (int) attackType - 1;
+        int row = (int) attackType - 1;//Se resta 1 porque el tipo "ninguno" no está en la matriz
         //Cálculo de la columna del array bidimensional de la que extraer el multiplicador
         int col = (int) pokemonDefenderType - 1;
 
@@ -157,4 +157,8 @@ public class PokemonBase : ScriptableObject
     [SerializeField] [Tooltip("Lista de ataques que puede aprender el Pokemon")]
     private List<LearnableMove> _learnableMoves;
     public List<LearnableMove> LearnableMoves => _learnableMoves;
+
+    [SerializeField] [Tooltip("Ratio de captura del pokemon")][Range(0, 255)]
+    private int catchRate = 255;
+    public int CatchRate => catchRate;
 }

@@ -21,10 +21,8 @@ public class PartyHUD : MonoBehaviour
    /// </summary>
    public void InitPartyHUD()
    {
-      //Rellena la lista de las UI de los pokemon en la party
-      memberHuds = GetComponentsInChildren<PartyMemberHUD>();
-      
-      
+      //Rellena la lista de las UI de los pokemon en la party, incluyendo los que estén inactivos
+      memberHuds = GetComponentsInChildren<PartyMemberHUD>(true);
    }
 
    /// <summary>
@@ -62,7 +60,7 @@ public class PartyHUD : MonoBehaviour
    public void UpdateSelectedPokemon(int selectedPokemon)
    {
       for (int i = 0; i < pokemons.Count; i++)
-      { 
+      {
          memberHuds[i].SetSelectedPokemon( i == selectedPokemon  );
       }
    }

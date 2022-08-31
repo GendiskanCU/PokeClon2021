@@ -69,8 +69,16 @@ public class GameManager : MonoBehaviour
         //Captura el pokemon salvaje del área de pokemons
         Pokemon wildPokemon = FindObjectOfType<PokemonMapArea>().GetComponent<PokemonMapArea>().GetRandomWildPokemon();
         
-        //Inicia la batalla            
-        battleManager.HandleStartBattle(playerParty, wildPokemon);
+        //Se hace una copia del pokemon salvaje. Cuando el player vuelva a entrar más veces en un área pokemon,
+        //se volverá a obtener un pokemon al azar de dicho área. Ahí puede surgir un problema: que dos o más veces
+        //se obtenga exactamente el mismo pokemon de entre los posibles, de forma que siempre tendremos una referencia
+        //al mismo objeto en memoria: si uno de los pokemon sube de nivel, varía su vida, etc. el/los otro/s también
+        //lo harán. De ahí que sea necesario hacer una copia del pokemon obtenido cada vez en un nuevo pokemon,
+        //pues asegura que son objetos diferentes e independientes
+        Pokemon newWildPokemon = new Pokemon(wildPokemon.Base, wildPokemon.Level);
+        
+        //Inicia la batalla con el nuevo pokemon salvaje            
+        battleManager.HandleStartBattle(playerParty, newWildPokemon);
     }
 
     /// <summary>

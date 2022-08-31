@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
-using DG.Tweening;//Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
+//Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
+using DG.Tweening;
+using Random = UnityEngine.Random;
 
 
 //GESTIONA LA BATALLA POKEMON PARA EL PLAYER O EL ENEMIGO
@@ -19,7 +21,16 @@ public enum BattleState
    Busy,//No se puede hacer nada
    PartySelectScreen,//En la pantalla de selección de pokemon de la party
    ItemSelectScreen,//En la pantalla de selección de items (inventario o mochila)
+   LoseTurn,//El player pierde su turno
    FinishBattle//La batalla ha finalizado
+}
+
+//Tipos de batalla (contra un pokemon salvaje o contra el de un entrenador o el líder de un gimnasio)
+public enum BattleType
+{
+   WildPokemon,
+   Trainer,
+   Leader
 }
 
 public class BattleManager : MonoBehaviour
@@ -40,6 +51,9 @@ public class BattleManager : MonoBehaviour
    private GameObject pokeBall;
 
 
+   //Para establecer el tipo de batalla
+   private BattleType battleType;
+   
    //Para controlar el estado actual de la batalla
    private BattleState state;
    
@@ -68,7 +82,7 @@ public class BattleManager : MonoBehaviour
 
 
    /// <summary>
-   /// Configura una nueva batalla pokemon
+   /// Configura una nueva batalla contra un pokemon salvaje
    /// </summary>
    /// <param name="playerPokemonParty">Party de pokemons del player</param>
    /// <param name="enemyPokemon">Pokemon salvaje que aparece en la batalla</param>
@@ -78,9 +92,26 @@ public class BattleManager : MonoBehaviour
       playerParty = playerPokemonParty;
       wildPokemon = enemyPokemon;
       
+      //Establece el tipo de batalla
+      battleType = BattleType.WildPokemon;
+      
       StartCoroutine(SetupBattle());
    }
 
+   /// <summary>
+   /// Configura una nueva batalla contra el pokemon de un entrenador o un líder de gimnasio
+   /// </summary>
+   /// <param name="playerPokemonParty">La party de pokemons del player</param>
+   /// <param name="trainerPokemonParty">La party de pokemons del entrenador</param>
+   /// <param name="isLeader">True si el entrenador es líder de gimnasio, False si no lo es</param>
+   public void HandleStartTrainerBatlle(PokemonParty playerPokemonParty, PokemonParty trainerPokemonParty,
+      bool isLeader)
+   {
+      //Establece el tipo de batalla
+      battleType = (isLeader)? BattleType.Leader: BattleType.Trainer;
+      
+      //TODO: implementar el inicio de la batalla contra un NPC entrenador
+   }
    
    /// <summary>
    /// Método que iniciará una batalla en el update cuando sea invocado desde el GameManager
@@ -103,10 +134,14 @@ public class BattleManager : MonoBehaviour
       {
          HandlePlayerPartySelection();
       }
+      else if (state == BattleState.LoseTurn)//Estado: el player ha perdido su turno, es turno del enemigo
+      {
+         StartCoroutine(PerfomEnemyMovement());
+      }
    }
 
    /// <summary>
-   /// Corutina que realiza la configuración de inicio de una batalla
+   /// Corutina que realiza la configuración de inicio de una batalla contra un pokemon salvaje
    /// </summary>
    public IEnumerator SetupBattle()
    {
@@ -236,10 +271,7 @@ public class BattleManager : MonoBehaviour
                break;
             case 2:
                //TODO: El player revisa mochila. Se abre la UI del inventario del player
-               //OpenInventoryScreen();
-               
-               //El player lanza una pokeball
-               StartCoroutine(ThrowPokeball());
+               OpenInventoryScreen();
                break;
             case 3:
                //El player huye. Se activa el evento de final de batalla con el resultado de derrota
@@ -296,6 +328,12 @@ public class BattleManager : MonoBehaviour
    {
       //TODO: pendiente de implementar el inventario del player
       Debug.Log("Inventario");
+      
+      //Desactiva el panel de elección de acciones
+      battleDialogBox.ToggleActions(false);
+      
+      //El player lanza una pokeball
+      StartCoroutine(ThrowPokeball());
    }
    
 
@@ -477,7 +515,7 @@ public class BattleManager : MonoBehaviour
             target.Pokemon.Base.PokemonName));
          
          //Reproduce la animación de derrota del defensor
-         target.PlayLoseAnimation();
+         target.PlayFaintAnimation();
          
          //Espera un instante para dejar que se reproduzca la animación
          yield return new WaitForSeconds(1.5f);
@@ -628,7 +666,7 @@ public class BattleManager : MonoBehaviour
          yield return battleDialogBox.SetDialog(switchMessage);
       
       //Reproduce la animación de retirada del pokemon actual
-      playerUnit.PlayLoseAnimation();
+      playerUnit.PlayFaintAnimation();
 
       //Espera un instante para que finalice la animación
       yield return new WaitForSeconds(1.5f);
@@ -648,7 +686,7 @@ public class BattleManager : MonoBehaviour
    }
 
    /// <summary>
-   /// Ejecuta la acción de lanzar una pokeball por parte del player
+   /// Ejecuta la acción de lanzar una pokeball por parte del player para atrapar al pokemon enemigo
    /// </summary>
    /// <returns></returns>
    private IEnumerator ThrowPokeball()
@@ -656,6 +694,16 @@ public class BattleManager : MonoBehaviour
       //Cambia el estado actual
       state = BattleState.Busy;
 
+      //Si se ha lanzado la pokeball contra un pokemon de otro entrenador, no será posible y se perderá el turno
+      if (battleType != BattleType.WildPokemon)
+      {
+         battleDialogBox.SetDialog("¡No puedes robar los pokemon de otros entrenadores!");
+         state = BattleState.LoseTurn;
+         yield break;
+      }
+
+      //Si el pokemon era salvaje, se continuará con el intento de captura
+      
       yield return battleDialogBox.SetDialog($"¡Has lanzado una {pokeBall.gameObject.name}!");
 
       //Instancia la pokeball un poco a la izquierda/abajo del pokemon del player
@@ -665,9 +713,122 @@ public class BattleManager : MonoBehaviour
       //Comienza la animación del movimiento parabólico de la pokeball hacia el pokemon enemigo:
       //Captura el sprite de la pokeball
       SpriteRenderer pokeballSpt = pokeballInst.GetComponent<SpriteRenderer>();
+      //Utiliza la librería del paquete de la Asset Store "DOTween (HOTween v2)" para la animación de lanzamiento
+      yield return pokeballSpt.transform.DOLocalJump(enemyUnit.transform.position + new Vector3(0, 1.5f, 0),
+         2f, 1, 1f).WaitForCompletion();
       
-      //Utiliza la librería del paquete de la Asset Store "DOTween (HOTween v2)" para la animación de salto
-      yield return pokeballSpt.transform.DOLocalJump(enemyUnit.transform.position + new Vector3(0, 2, 0),
-         2f, 1, 1.5f).WaitForCompletion();
+      //Se reproduce la animación del pokemon siendo absorbido (capturado) por la pokeball
+      yield return enemyUnit.PlayCapturedAnimation();
+      
+      //La pokeball cae hacia el suelo
+      yield return pokeballSpt.transform.DOLocalMoveY(enemyUnit.transform.position.y - 1.5f,
+         0.3f).WaitForCompletion();
+      
+      //Se calcula el número de sacudidas que va a realizar la pokeball en el intento de capturar el pokemon
+      int numberOfShakes = TryToCatchPokemon(enemyUnit.Pokemon);
+
+      //Reproduce la animación de las sacudidas, limitándolas a máximo de 3 aunque se hayan obtenido 4 sacudidas
+      for (int i = 0; i < Mathf.Min(numberOfShakes, 3); i++)
+      {
+         yield return new WaitForSeconds(0.5f);
+         yield return pokeballSpt.transform.DOPunchRotation(new Vector3(0, 0, 15f),
+            0.6f).WaitForCompletion();
+      }
+      
+      //Cuando el número de sacudidas resultante sea 4, significará que el pokemon ha sido capturado
+      if (numberOfShakes == 4)
+      {
+         yield return battleDialogBox.SetDialog($"¡{enemyUnit.Pokemon.Base.name} capturado!");
+         
+         //La pokeball desaparece
+         yield return pokeballSpt.DOFade(0, 1.5f).WaitForCompletion();
+         Destroy(pokeballInst);
+         
+         //Intenta añadir el pokemon capturado a la party del player
+         if (playerParty.AddPokemonToParty(enemyUnit.Pokemon))
+         {
+            yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.name} se ha añadido a tu party");
+         }
+         else
+         {
+            yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.name} no cabe en tu party");
+         }
+
+         yield return new WaitForSeconds(0.5f);//Pequeña pausa
+
+         //Finaliza la batalla con resultado de victoria del player
+         BattleFinish(true);
+      }
+      else //Si el pokemon no ha sido capturado
+      {
+         //El pokemon escapa. Hace una pequeña pausa
+         yield return new WaitForSeconds(0.5f);
+         
+         //La pokeball desaparece y el pokemon enemigo vuelve a reaparecer
+         yield return pokeballSpt.DOFade(0, 0.2f).WaitForCompletion();
+         Destroy(pokeballInst);
+         yield return enemyUnit.PlayBreakOutAnimation();
+         
+         //Muestra un mensaje, diferente según lo "cerca" que ha estado de ser atrapado
+         if (numberOfShakes < 2)
+         {
+            yield return battleDialogBox.SetDialog($"¡{enemyUnit.Pokemon.Base.name} ha escapado!");
+         }
+         else
+         {
+            yield return battleDialogBox.SetDialog("¡Casi lo consigues!");
+         }
+         
+         //La batalla entra en el estado de pérdida de turno del player, la batalla pasa a ser control del enemigo
+         state = BattleState.LoseTurn;
+      }
+   }
+
+   /// <summary>
+   /// Implementa el "intento" de capturar un pokemon. Hará uso de la fórmula que se puede consultar en
+   /// https://bulbapedia.bulbagarden.net/wiki/Catch_rate 
+   /// </summary>
+   /// <param name="pokemon">El pokemon a intentar capturar</param>
+   /// /// <returns>El número de shakes o sacudidas que realizará la pokeball</returns>
+   private int TryToCatchPokemon(Pokemon pokemon)
+   {
+      return 4;
+      
+      //Estas dos variables se dejan en 1, pero listo para futuras implementaciones de un bonus según el tipo
+      //de pokeball y otro según el estado actual del pokemon que se intenta capturar
+      float bonusPokeball = 1;//TODO: clase pokeball con su multiplicador
+      float bonusStat = 1;//TODO: stats para chequear condición de bonificación
+      
+      //Se obtiene el primer valor de la fórmula
+      float a = (3 * pokemon.MaxHP - 2 * pokemon.Hp) * pokemon.Base.CatchRate * bonusPokeball * bonusStat /
+                (3 * pokemon.MaxHP);
+      
+      //Si este valor a alcanza o supera los 255, se devolverá el número máximo de shakes (4): captura inmediata
+      if (a >= 255)
+      {
+         return 4;
+      }
+      else//En caso contrario se hace un cálculo (aleatorio) de shakes:
+      {
+         //Se calcula el segundo número de la fórmula, una probabilidad del shake
+         float b = 1048560 / Mathf.Sqrt(Mathf.Sqrt(16711680 / a));
+
+         //Se hacen 4 comparaciones entre un número aleatorio de 0 a 65535 y b. Por cada comparación que resulte
+         //exitosa (cuando el número aleatorio sea menor que b) se aumentará en 1 el número de shakes
+         int shakeCount = 0;
+         while (shakeCount < 4)
+         {
+            if (Random.Range(0, 65535) >= b)
+            {
+               break;
+            }
+            else
+            {
+               shakeCount++;
+            }
+         }
+         //Se devuelve el número de shakes obtenido
+         return shakeCount;
+      }
    }
 }

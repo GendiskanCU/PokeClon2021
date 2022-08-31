@@ -160,7 +160,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void CheckForPokemon()
     {
-        if (Physics2D.OverlapCircle(transform.position, 0.2f, pokemonLayer) != null)
+        //Como el player no inicia la partida en una posición centrada como (0.5, 0.5) sino con un pequeño
+        //desplazamiento en el eje y de 0.2,o sea comienza en (0.5, 0.7), hay que tenerlo en cuenta para el
+        //cálculo del área de detección de una zona pokemon
+        float offsetY = 0.2f;
+        
+        if (Physics2D.OverlapCircle(transform.position - new Vector3(0, offsetY, 0)
+                , 0.2f, pokemonLayer) != null)
         {
             if (Random.Range(0, 100) < 10) //% de probabilidad de aparición de un pokemon
             {
