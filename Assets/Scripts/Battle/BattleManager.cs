@@ -73,6 +73,9 @@ public class BattleManager : MonoBehaviour
    //Para controlar el ataque seleccionado por el player en el panel de selección de ataques o movimientos
    private int currentSelectedMovement;
    
+   //Para controlar, y limitar, el número de intentos de huir de una batalla por parte del player
+   private int escapeAttemps;
+   
    //Para controlar el pokemon seleccionado por el player en el panel de selección de pokemons de la party
    private int currentSelectedPokemon;
    
@@ -94,6 +97,9 @@ public class BattleManager : MonoBehaviour
       
       //Establece el tipo de batalla
       battleType = BattleType.WildPokemon;
+      
+      //Reinicia el número de intentos de huir de la batalla
+      escapeAttemps = 0;
       
       StartCoroutine(SetupBattle());
    }
@@ -274,8 +280,8 @@ public class BattleManager : MonoBehaviour
                OpenInventoryScreen();
                break;
             case 3:
-               //El player huye. Se activa el evento de final de batalla con el resultado de derrota
-               OnBattleFinish(false);
+               //El player intenta huir de la batalla.
+               StartCoroutine(TryToEscapeFromBattle());
                break;
             default:
                break;
@@ -792,8 +798,6 @@ public class BattleManager : MonoBehaviour
    /// /// <returns>El número de shakes o sacudidas que realizará la pokeball</returns>
    private int TryToCatchPokemon(Pokemon pokemon)
    {
-      return 4;
-      
       //Estas dos variables se dejan en 1, pero listo para futuras implementaciones de un bonus según el tipo
       //de pokeball y otro según el estado actual del pokemon que se intenta capturar
       float bonusPokeball = 1;//TODO: clase pokeball con su multiplicador
@@ -830,5 +834,59 @@ public class BattleManager : MonoBehaviour
          //Se devuelve el número de shakes obtenido
          return shakeCount;
       }
+   }
+
+   
+   /// <summary>
+   /// Implementa el intento de huir de una batalla
+   /// </summary>
+   private IEnumerator TryToEscapeFromBattle()
+   {
+      //Cambia el estado de la batalla para evitar otras acciones mientras se ejecuta ésta
+      state = BattleState.Busy;
+      
+      //No será posible escapar de batallas contra pokemon de un entrenador o líder
+      if (battleType != BattleType.WildPokemon)
+      {
+         yield return battleDialogBox.SetDialog("¡No puedes huir de este combate!");
+         state = BattleState.LoseTurn;//Pierde el turno
+         yield break;//Sale sin hacer más
+      }
+      
+      //Si la batalla es contra un pokemon salvaje, se calcula la probabilidad de huir de la misma
+      //Utilizaremos la fórmula que se puede consultar en bulbapedia.bulbagarden.net
+      //Variables necesarias:
+      int playerSpeed = playerUnit.Pokemon.Speed;//Velocidad del player
+      int enemySpeed = enemyUnit.Pokemon.Speed;//Velocidad del enemigo
+      
+      //Se aumenta el número de intentos de huida que ha realizado el player
+      escapeAttemps++;
+
+      //Si la velocidad del player es >= que la del enemigo, siempre podrá escapar de la batalla
+      if (playerSpeed >= enemySpeed)
+      {
+         yield return battleDialogBox.SetDialog("Has escapado con éxito");
+         yield return new WaitForSeconds(1f);
+         BattleFinish(true);
+      }
+      else//En caso contrario, se calcula la probabilidad de huida
+      {
+         int oddsEscape = (Mathf.FloorToInt(playerSpeed * 128 / enemySpeed) + 30 * escapeAttemps) % 256;
+         //Y se calcula si se ha logrado huir
+         if (Random.Range(0, 256) < oddsEscape)
+         {
+            yield return battleDialogBox.SetDialog("Has escapado con éxito");
+            yield return new WaitForSeconds(1f);
+            BattleFinish(true);
+         }
+         else
+         {
+            yield return battleDialogBox.SetDialog("No has logrado huir de la batalla");
+            yield return new WaitForSeconds(0.5f);
+            //El player pierde el turno
+            state = BattleState.LoseTurn;
+         }
+      }
+
    }
 }

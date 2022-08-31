@@ -42,10 +42,17 @@ public class PartyMemberHUD : MonoBehaviour
 
         nameText.text = _pokemon.Base.PokemonName;
         levelText.text = String.Format("Lv {0}", _pokemon.Level);
-        typeText.text = $"{_pokemon.Base.Type1.ToString()}-{_pokemon.Base.Type2.ToString()}";
+        
+        typeText.text = (_pokemon.Base.Type2.ToString() != "NINGUNO") ?
+            $"{_pokemon.Base.Type1.ToString()}-{_pokemon.Base.Type2.ToString()}" :
+            $"{_pokemon.Base.Type1.ToString()}";
+        
         hpText.text = String.Format("{0}/{1}",_pokemon.Hp, _pokemon.MaxHP);
         healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
         pokemonImage.sprite = _pokemon.Base.FrontSprite;
+        
+        //Se cambia el color de fondo de la caja de información según el tipo1 del pokemon del que se trate
+        GetComponent<Image>().color = TypeColor.GetColorFromType(_pokemon.Base.Type1);
     }
     
     /// <summary>

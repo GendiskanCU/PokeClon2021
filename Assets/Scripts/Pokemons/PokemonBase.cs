@@ -35,7 +35,7 @@ public enum PokemonType
 //Nota: solo se han quedado ajustados los cinco primeros tipos, habría que finalizar los demás
 public class TypeMatrix
 {
-    private static float[][] matrix =
+    private static float[][] matrix =    //Estática para que no sea necesario crear una instancia
     {
         //                    NOR  FUE  AGU  ELE  HIE  HIE  LUC  VEN  TIE  AER  PSI  BIC  ROC  FAN  DRA  OSC  ACE  HAD
         /*NOR*/ new float[] { 1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f,  1f, 0.5f, 1f,  1f,  0f, 0.5f, 1f },
@@ -78,6 +78,43 @@ public class TypeMatrix
         int col = (int) pokemonDefenderType - 1;
 
         return matrix[row][col];
+    }
+}
+
+//Matriz de colores de cada tipo de pokemon
+public class TypeColor
+{
+    private static Color[] colors =
+    {
+        Color.white, //NINGUNO
+        Color.blue, //NORMAL
+        Color.red, //FUEGO
+        Color.cyan, //AGUA
+        Color.grey, //ELECTRICO
+        Color.green, //HIERBA
+        Color.magenta, //HIELO
+        Color.red, //LUCHA
+        Color.green, //VENENO
+        Color.gray, //TIERRA
+        Color.cyan, //AEREO
+        Color.magenta, //PSIQUICO
+        Color.green, //BICHO
+        Color.gray, //ROCA
+        Color.blue, //FANTASMA
+        Color.red, //DRAGON
+        Color.yellow, //OSCURO
+        Color.cyan, //ACERO
+        Color.yellow //HADA
+    };
+
+    /// <summary>
+    /// Devuelve el color característico de un tipo de pokemon
+    /// </summary>
+    /// <param name="type">Tipo de pokemon del que queremos obtener el color característico</param>
+    /// <returns>Color característico del tipo de pokemon</returns>
+    public static Color GetColorFromType(PokemonType type)   //Estática para que no haga falta crear instancia
+    {
+        return colors[(int)type];
     }
 }
 
