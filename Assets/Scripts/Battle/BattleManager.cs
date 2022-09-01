@@ -514,20 +514,10 @@ public class BattleManager : MonoBehaviour
 
       yield return ShowDamageDescription(damageDesc);//Muestra información adicional en el HUD
 
-      if (damageDesc.Fainted)
+      if (damageDesc.Fainted)//Si el pokemon atacado es debilitado
       {
-         //El atacante vence
-         yield return battleDialogBox.SetDialog(String.Format("{0} se ha debilitado",
-            target.Pokemon.Base.PokemonName));
-         
-         //Reproduce la animación de derrota del defensor
-         target.PlayFaintAnimation();
-         
-         //Espera un instante para dejar que se reproduzca la animación
-         yield return new WaitForSeconds(1.5f);
-         
-         //Comprueba el resultado de la batalla
-         CheckForBattleFinish(target);
+         //Implementa las acciones que suceden cuando un pokemon es vencido
+         yield return HandlePokemonFainted(target);
       }
    }
 
@@ -887,6 +877,49 @@ public class BattleManager : MonoBehaviour
             state = BattleState.LoseTurn;
          }
       }
+   }
+   
+   /// <summary>
+   /// Implementa las acciones que sucederán cuando un pokemon haya sido debilitado
+   /// </summary>
+   /// <param name="faintedUnit">El pokemon que ha sido vencido</param>
+   /// <returns></returns>
+   private IEnumerator HandlePokemonFainted(BattleUnit faintedUnit)
+   {
+      //El atacante vence
+      yield return battleDialogBox.SetDialog(String.Format("{0} se ha debilitado",
+         faintedUnit.Pokemon.Base.PokemonName));
+         
+      //Reproduce la animación de derrota del pokemon
+      faintedUnit.PlayFaintAnimation();
+         
+      //Espera un instante para dejar que se reproduzca la animación
+      yield return new WaitForSeconds(1.5f);
+      
+      //Cuando el pokemon debilitado es de un enemigo, el del player deberá ganar experiencia
+      if (!faintedUnit.IsPlayer)
+      {
+         //Experiencia base que da el pokemon vencido
+         int expBase = faintedUnit.Pokemon.Base.ExperienceBase;
+         //Nivel del pokemon vencido
+         int level = faintedUnit.Pokemon.Level;
+         //Si el pokemon vencido fuera el de un entrenador, dará 1.5 veces más experiencia
+         float multiplier = (battleType == BattleType.WildPokemon) ? 1 : 1.5f;
+         
+         //Experiencia total que se gana (fórmula de referencia de la Bulbapedia)
+         int wonExp = Mathf.FloorToInt((expBase * level * multiplier) / 7);
+         
+         //Suma la experiencia obtenida al pokemon del player mostrando el texto informativo
+         playerUnit.Pokemon.Experience += wonExp;
+         yield return battleDialogBox.SetDialog(
+            $"¡{playerUnit.Pokemon.Base.PokemonName} ha obtenido {wonExp} puntos de experiencia!");
+         yield return new WaitForSeconds(0.5f);
 
+
+         //Comprueba también si con la nueva cantidad de experiencia el pokemon subirá de nivel
+      }
+         
+      //Comprueba el resultado final de la batalla
+      CheckForBattleFinish(faintedUnit);
    }
 }

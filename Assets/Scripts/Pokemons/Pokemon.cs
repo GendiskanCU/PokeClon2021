@@ -34,6 +34,14 @@ public class Pokemon
         get => _hp;
         set => _hp = value;
     }
+    
+    //Experiencia actual del pokemon
+    private int _experience;
+    public int Experience
+    {
+        get => _experience;
+        set => _experience = value;
+    }
 
 
     //Ataque del pokemon, en función del ataque base y el nivel actual. La fórmula que se utiliza es multiplicarlo
@@ -93,6 +101,9 @@ public class Pokemon
             if (_moves.Count >= 4 )//Aunque limita el número de ataques que puede aprender a cuatro
                 break;
         }
+        
+        //Inicializa la experiencia que tiene el pokemon a partir de su nivel inicial
+        _experience = Base.GetNeccessaryExperienceForLevel(_level);
     }
 
     /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SubsystemsImplementation;
 
 //PARA DEFINIR LAS ESTADÍSTICAS BASE DE CADA POKEMON QUE SE CREE EN LA POKEDEX
 
@@ -29,6 +30,13 @@ public enum PokemonType
     ACERO,
     HADA
 }
+
+//Tipos de ratio de crecimiento o subida de nivel (algunos pokemon subirán de nivel más rápido que otros según esto)
+public enum GrowthRate
+{
+    Erratic, Fast, MediumFast, MediumSlow, Slow, Fluctuating
+}
+
 
 //Matriz de tipos. Para establecer el daño que cada tipo de ataque hace a cada tipo de defensa
 //0 no hace daño, 1 hace daño normal, 0.5 hace la mitad de daño, 2 hace el doble de daño
@@ -198,4 +206,77 @@ public class PokemonBase : ScriptableObject
     [SerializeField] [Tooltip("Ratio de captura del pokemon")][Range(0, 255)]
     private int catchRate = 255;
     public int CatchRate => catchRate;
+
+    [SerializeField] [Tooltip("Experiencia base del pokemon (cantidad que otorga cuando sea vencido")]
+    private int experienceBase;
+    public int ExperienceBase => experienceBase;
+
+    [SerializeField] [Tooltip("Ratio de crecimiento de nivel del pokemon")]
+    private GrowthRate pokemonGrowthRate;
+    public GrowthRate PokemonGrowthRate => pokemonGrowthRate;
+
+
+    /// <summary>
+    /// Calcula y devuelve la cantidad de experiencia necesaria para que un pokemon suba a un determinado nivel
+    /// teniendo en cuenta la GrowthRate de ese pokemon y según las fórmulas de referencia de la Bulbapedia
+    /// </summary>
+    /// <param name="level">Nivel al que se quiere subir</param>
+    /// <returns></returns>
+    public int GetNeccessaryExperienceForLevel(int level)
+    {
+        switch (pokemonGrowthRate) //Según el ratio de crecimiento del pokemon, la experiencia necesaria será:
+        {
+            case GrowthRate.Fast:
+                return Mathf.FloorToInt(4 * Mathf.Pow(level, 3) / 5);
+                break;
+            case GrowthRate.MediumFast:
+                return Mathf.FloorToInt(Mathf.Pow(level, 3));
+                break;
+            case GrowthRate.MediumSlow:
+                return Mathf.FloorToInt(6 * Mathf.Pow(level, 3) / 5 - 15 * Mathf.Pow(level, 2) +
+                    100 * level - 140);
+                break;
+            case GrowthRate.Slow:
+                return Mathf.FloorToInt(5 * Mathf.Pow(level, 3) / 4);
+                break;
+            case GrowthRate.Erratic:
+                if (level < 50)
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) * (100 - level) / 50);
+                }
+                else if (level < 68)
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) * (150 - level) / 100);
+                }
+                else if (level < 98)
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) *
+                        Mathf.FloorToInt((1911 - 10 * level) / 3) / 500);
+                }
+                else
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) * (160 - level) / 50);
+                }
+
+                break;
+            case GrowthRate.Fluctuating:
+                if (level < 15)
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) *
+                        (Mathf.FloorToInt((level + 1) / 3) + 24) / 50);
+                }
+                else if (level < 36)
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) * (level + 14) / 50);
+                }
+                else
+                {
+                    return Mathf.FloorToInt(Mathf.Pow(level, 3) * Mathf.FloorToInt((level / 2) + 32) / 50);
+                }
+
+                break;
+        }
+
+        return -1;
+    }
 }
