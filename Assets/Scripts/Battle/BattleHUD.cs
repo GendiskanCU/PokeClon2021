@@ -21,6 +21,9 @@ public class BattleHUD : MonoBehaviour
     [SerializeField] [Tooltip("Script que gestiona la barra de vida del Pokemon")]
     private HealthBarUI healthBar;
 
+    [SerializeField] [Tooltip("Barra indicadora de la experiencia actual del Pokemon")]
+    private GameObject expBar;
+
     //Referencia al pokemon que contenga este script
     private Pokemon _pokemon;
 
@@ -71,5 +74,17 @@ public class BattleHUD : MonoBehaviour
         }
         
         pokemonHealth.text = String.Format("{0}/{1}", _pokemon.Hp, _pokemon.MaxHP);
+    }
+
+
+    /// <summary>
+    /// Actualiza la barra de experiencia del pokemon
+    /// </summary>
+    public void SetExp()
+    {
+        if (expBar != null)//Solo tiene barra de experiencia el pokemon del player
+        {
+            
+        }
     }
 }
