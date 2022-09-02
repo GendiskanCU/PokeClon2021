@@ -190,6 +190,22 @@ public class Pokemon
         return null;
         //TODO: para este caso se puede implementar un ataque que hace daño tanto al enemigo como al atacante
     }
+
+    /// <summary>
+    /// Comprueba si el pokemon tiene suficiente experiencia para subir de nivel. En caso contrario, su nivel subirá
+    /// </summary>
+    /// <returns>True si el pokemon sube de nivel / false si todavía no tiene la suficiente experiencia</returns>
+    public bool NeedsToLevelUp()
+    {
+        //Si el pokemon tiene suficiente experiencia para subir al siguiente nivel
+        if (_experience > Base.GetNeccessaryExperienceForLevel(_level + 1))
+        {
+            _level++;//Sube de nivel
+            return true;
+        }
+
+        return false;
+    }
 }
 
 

@@ -66,7 +66,7 @@ public class BattleHUD : MonoBehaviour
         _pokemon = pokemon;
         
         pokemonName.text = pokemon.Base.PokemonName;
-        pokemonLevel.text = String.Format("Lv {0}", pokemon.Level);
+        SetLevelText();
         
         //Inicializa la barra de vida con la vida actual del pokemon del player
         healthBar.SetHP((float) _pokemon.Hp / _pokemon.MaxHP);
@@ -92,10 +92,10 @@ public class BattleHUD : MonoBehaviour
     }
 
     /// <summary>
-    /// Actualiza progresivamente el texto de cantidad de vida en la barra
+    /// Actualiza progresivamente el texto de cantidad de vida del pokemon en la barra de la UI
     /// </summary>
     /// <param name="oldHP"></param>
-    /// <returns>vida de partida antes de recibir daño</returns>
+    /// <returns>Cantidad de vida que tenía el pokemon antes de recibir daño</returns>
     private IEnumerator DecreaseHealthPointsText(int oldHP)
     {
         while (oldHP > _pokemon.Hp)
@@ -123,16 +123,31 @@ public class BattleHUD : MonoBehaviour
     /// <summary>
     /// Actualiza progresivamente el tamaño de la barra de experiencia del pokemon conforme a la experiencia actual
     /// </summary>
+    /// <param name="needsToResetBar">True si la barra debe ponerse otra vez a "0" porque se ha subido de nivel</param>
     /// <returns></returns>
-    public IEnumerator SetExpSmooth()
+    public IEnumerator SetExpSmooth(bool needsToResetBar = false)
     {
+        if (needsToResetBar)
+        {
+            expBar.transform.localScale = new Vector3(0, 1, 1);
+        }
+        
         if (expBar != null)//Solo tiene barra de experiencia el pokemon del player, por lo que puede ser nulo
         {
             //Utiliza un método de la librería DG.Tweening para escalar la barra en el eje X con una animación
-            expBar.transform.DOScaleX(NormalizedExp, 1.5f).WaitForCompletion();
+            yield return expBar.transform.DOScaleX(NormalizedExp, 1.5f).WaitForCompletion();
         }
 
         yield break;
+    }
+
+
+    /// <summary>
+    /// Escribe el nivel actual del pokemon en la caja de texto correspondiente de la UI
+    /// </summary>
+    public void SetLevelText()
+    {
+        pokemonLevel.text = $"Lv {_pokemon.Level}";
     }
     
     

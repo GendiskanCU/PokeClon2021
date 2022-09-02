@@ -918,12 +918,24 @@ public class BattleManager : MonoBehaviour
          //Actualiza la experiencia en la barra de experiencia del HUD
          yield return playerUnit.HUD.SetExpSmooth();
          yield return new WaitForSeconds(1f);
-
-
-         //Comprueba también si con la nueva cantidad de experiencia el pokemon subirá de nivel
+         
+         //Comprueba también si con la nueva cantidad de experiencia el pokemon sube de nivel
+         //Como podría necesitar subir más de un nivel de golpe si ha conseguido suficiente experiencia,
+         //por haber vencido a un enemigo muy superior, se usa el while en vez de una simple instrucción if
+         while(playerUnit.Pokemon.NeedsToLevelUp())//Si el pokemon sube de nivel
+         {
+            //Actualiza la información en el HUD
+            playerUnit.HUD.SetLevelText();
+            yield return playerUnit.HUD.UpdatePokemonData(playerUnit.Pokemon.Hp);
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName} sube de nivel");
+            
+            //Actualiza la barra de experiencia, reseteándola a 0 pues al subir de nivel ya está al máximo
+            yield return playerUnit.HUD.SetExpSmooth(true);
+         }
       }
          
       //Comprueba el resultado final de la batalla
       CheckForBattleFinish(faintedUnit);
    }
+   
 }
