@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,26 +12,28 @@ public class HealthBarUI : MonoBehaviour
    [SerializeField] [Tooltip("Imagen de la barra de vida")]
    private GameObject healthBar;
 
-   //Para establecer el color de la barra de vida en función de su tamaño
-   public Color BarColor
+   
+   /// <summary>
+   /// Devuelve el color de la barra de vida según la cantidad de vida indicada
+   /// </summary>
+   /// <param name="finalScale">Cantidad de vida, normalizada en término de escala de la barra (de 0 a 1)</param>
+   /// <returns></returns>
+   public Color BarColor (float finalScale)
    {
-      get
+      if (finalScale < 0.15f)
       {
-         float localScale = healthBar.transform.localScale.x;
-
-         if (localScale < 0.15f)
-            return new Color(195f/255, 53f/255, 23/255f);
-         else if (localScale < 0.5f)
-            return new Color(229f/255, 154f/255, 44f/255);
-         else
+         return new Color(195f / 255, 53f / 255, 23 / 255f);
+      }
+      else if (finalScale < 0.5f)
+      {
+         return new Color(229f / 255, 154f / 255, 44f / 255);
+      }
+      else
          {
             return new Color(114f/255, 207f/255, 131f/255);
          }
-      }
+      
    }
-
-   
-   
 
    /// <summary>
    /// Actualiza la barra de vida a partir del valor normalizado (entre 0 y 1) de la misma
@@ -42,7 +45,7 @@ public class HealthBarUI : MonoBehaviour
       healthBar.transform.localScale = new Vector3(normalizedValue, 1, 1);
       
       //Cambia el color de la barra en función de su tamaño actual
-      healthBar.GetComponent<Image>().color = BarColor;
+      healthBar.GetComponent<Image>().color = BarColor(normalizedValue);
    }
 
 
@@ -53,6 +56,7 @@ public class HealthBarUI : MonoBehaviour
    /// <returns></returns>
    public IEnumerator SetSmoothHP(float normalizedValue)
    {
+      /*//Alternativa sin utilizar la librería DG.Tweening:
       float currentScale = healthBar.transform.localScale.x;//Guarda el valor inicial
 
       float updateQuantity = currentScale - normalizedValue;//Cantidad de vida que hay que restar
@@ -63,9 +67,21 @@ public class HealthBarUI : MonoBehaviour
          //Cambia el tamaño de la barra y el color en función de este tamaño
          healthBar.transform.localScale = new Vector3(currentScale, 1, 1);
          healthBar.GetComponent<Image>().color = BarColor;
-         yield return null;//Espera a que finalice el frame actual
+         yield return null;//Espera a que finalice el frame actual        
+         
       }
       //Al final del bucle asegura que el tamaño de la barra queda en la escala final
       healthBar.transform.localScale = new Vector3(normalizedValue, 1, 1);
+       */
+
+      //Utiliza la librería DG.Tweening para escalar la barra en el eje X e ir variando el color de forma animada
+
+      var sequence = DOTween.Sequence();
+      
+      sequence.Append( healthBar.transform.DOScaleX(normalizedValue, 1f));
+      sequence.Join (healthBar.GetComponent<Image>().DOColor(BarColor(normalizedValue), 1f));
+      yield return sequence.WaitForCompletion();
    }
+   
+   
 }

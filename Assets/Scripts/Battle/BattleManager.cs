@@ -914,6 +914,10 @@ public class BattleManager : MonoBehaviour
          yield return battleDialogBox.SetDialog(
             $"¡{playerUnit.Pokemon.Base.PokemonName} ha obtenido {wonExp} puntos de experiencia!");
          yield return new WaitForSeconds(0.5f);
+         
+         //Actualiza la experiencia en la barra de experiencia del HUD
+         yield return playerUnit.HUD.SetExpSmooth();
+         yield return new WaitForSeconds(1f);
 
 
          //Comprueba también si con la nueva cantidad de experiencia el pokemon subirá de nivel
