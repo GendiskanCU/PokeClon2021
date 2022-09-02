@@ -32,7 +32,11 @@ public class Pokemon
     public int Hp
     {
         get => _hp;
-        set => _hp = value;
+        set
+        {
+            //La vida no podrá ser inferior a cero ni superior a la MaxHP
+            _hp = Mathf.FloorToInt(Mathf.Clamp(value, 0, MaxHP));
+        }
     }
     
     //Experiencia actual del pokemon
@@ -200,11 +204,37 @@ public class Pokemon
         //Si el pokemon tiene suficiente experiencia para subir al siguiente nivel
         if (_experience > Base.GetNeccessaryExperienceForLevel(_level + 1))
         {
+            int currentMaxHp = MaxHP;//Guarda la vida máxima antes de la subida de nivel
             _level++;//Sube de nivel
+            
+            //La vida actual se incrementa en la misma cantidad que haya aumentado la vida máxima al subir de nivel
+            Hp += (MaxHP - currentMaxHp);
+            
             return true;
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Devuelve el movimiento que el pokemon puede ser capaz de aprender a su nivel actual
+    /// </summary>
+    /// <returns>El movimiento aprendible al nivel actual del pokemon</returns>
+    public LearnableMove GetLearnableMoveAtCurrentLevel()
+    {
+        return Base.LearnableMoves.Where(move => move.Level == _level).FirstOrDefault();
+        
+        /*  Nota: con la sintaxis tradicional, equivale a:
+        
+        foreach (LearnableMove move in _base.LearnableMoves)
+        {
+            if (move.Level == _level)
+            {
+                return move;
+            }
+        }
+
+        return null;  */
     }
 }
 

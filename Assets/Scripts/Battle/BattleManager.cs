@@ -929,6 +929,20 @@ public class BattleManager : MonoBehaviour
             yield return playerUnit.HUD.UpdatePokemonData(playerUnit.Pokemon.Hp);
             yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName} sube de nivel");
             
+            //Se comprueba si el pokemon puede aprender un nuevo movimiento al nuevo nivel
+            LearnableMove newMove = playerUnit.Pokemon.GetLearnableMoveAtCurrentLevel();
+            if (newMove != null)
+            {
+               if (playerUnit.Pokemon.Moves.Count < 4)//Si no se ha superado el número máximo de movimientos aprendidos
+               {
+                  //Aprende el nuevo movimiento
+               }
+               else //Si ya se ha superado el número máximo de movimientos aprendidos
+               {
+                  //Debe olvidar uno de los movimientos aprendidos para hacer espacio al nuevo
+               }
+            }
+            
             //Actualiza la barra de experiencia, reseteándola a 0 pues al subir de nivel ya está al máximo
             yield return playerUnit.HUD.SetExpSmooth(true);
          }
