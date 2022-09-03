@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 //Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
@@ -21,6 +22,7 @@ public enum BattleState
    Busy,//No se puede hacer nada
    PartySelectScreen,//En la pantalla de selección de pokemon de la party
    ItemSelectScreen,//En la pantalla de selección de items (inventario o mochila)
+   ForgetMovement,//En la pantalla de selección de movimiento a olvidar al superar el límite de movs. aprendidos
    LoseTurn,//El player pierde su turno
    FinishBattle//La batalla ha finalizado
 }
@@ -46,6 +48,9 @@ public class BattleManager : MonoBehaviour
 
    [SerializeField] [Tooltip("Panel de selección de pokemon de la party del player")]
    private PartyHUD partyHUD;
+
+   [SerializeField] [Tooltip("Panel de selección de movimiento a olvidar cuando se supere el límite ")]
+   private LearnedMovesSelectionUI selectMoveUI;
 
    [SerializeField] [Tooltip("Prefab de la Pokeball que el player podrá lanzar")]
    private GameObject pokeBall;
@@ -933,13 +938,26 @@ public class BattleManager : MonoBehaviour
             LearnableMove newMove = playerUnit.Pokemon.GetLearnableMoveAtCurrentLevel();
             if (newMove != null)
             {
-               if (playerUnit.Pokemon.Moves.Count < 4)//Si no se ha superado el número máximo de movimientos aprendidos
+               //Si no se ha superado el número máximo de movimientos aprendidos
+               if (playerUnit.Pokemon.Moves.Count < 
+                   PokemonBase.NUMBER_OF_LEARNABLE_MOVES)
                {
-                  //Aprende el nuevo movimiento
+                  //Aprende el nuevo movimiento mostrando un mensaje informativo
+                  playerUnit.Pokemon.LearnMove(newMove);
+                  yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName}" +
+                                                         $" ha aprendido {newMove.Move.AttackName}");
+                  //Actualiza la lista de movimientos en la UI de la batalla
+                  battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
                }
                else //Si ya se ha superado el número máximo de movimientos aprendidos
                {
                   //Debe olvidar uno de los movimientos aprendidos para hacer espacio al nuevo
+                  yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName}" +
+                                                         $" intenta aprender " +
+                                                         $"{newMove.Move.AttackName}");
+                  yield return battleDialogBox.SetDialog($"Pero no puede aprender más de " +
+                                                         $"{PokemonBase.NUMBER_OF_LEARNABLE_MOVES} movimientos");
+                  yield return ChooseMovementToForget(playerUnit.Pokemon, newMove.Move);
                }
             }
             
@@ -950,6 +968,37 @@ public class BattleManager : MonoBehaviour
          
       //Comprueba el resultado final de la batalla
       CheckForBattleFinish(faintedUnit);
+   }
+
+   /// <summary>
+   /// Lógica de elección del movimiento a olvidar cuando se ha superado el límite de movimientos máximos
+   /// </summary>
+   /// <param name="learner">El pokemon que debe olvidar uno de los movimientos</param>
+   /// <param name="newMove">El nuevo movimiento que puede aprender tras haber subido de nivel</param>
+   /// <returns></returns>
+   private IEnumerator ChooseMovementToForget(Pokemon learner, MoveBase newMove)
+   {
+      //Cambia el estado de la batalla para que no se puedan realizar otras acciones durante este proceso
+      state = BattleState.Busy;
+
+      //Muestra la UI de selección con los movimientos ya aprendidos y el nuevo movimiento aprendible
+      yield return battleDialogBox.SetDialog("Selecciona el movimiento que quieres olvidar");
+      selectMoveUI.gameObject.SetActive(true);
+
+      /*Alternativa a la siguiente instrucción sin funciones Lambda:
+      List<MoveBase> moveBases = new List<MoveBase>();
+      foreach (Move mv in learner.Moves)
+      {
+         moveBases.Add(mv.Base);
+      }
+      selectMoveUI.SetMovements(moveBases, newMove);
+         */
+      //Rellena la lista de movimientos
+      selectMoveUI.SetMovements(learner.Moves.Select(mv => mv.Base).ToList(), newMove);
+      
+      //Ahora ya cambia al estado de selección del movimiento a olvidar
+      state = BattleState.ForgetMovement;
+
    }
    
 }

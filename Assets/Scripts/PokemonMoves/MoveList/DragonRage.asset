@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: DragonRage
   m_EditorClassIdentifier: 
-  attackName: "Furia Drag\xF3n"
+  attackName: "FuriaDrag\xF3n"
   description: Poderoso ataque draconiano
   type: 15
   power: 40

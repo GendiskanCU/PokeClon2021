@@ -202,6 +202,9 @@ public class PokemonBase : ScriptableObject
     [SerializeField] [Tooltip("Lista de ataques que puede aprender el Pokemon")]
     private List<LearnableMove> _learnableMoves;
     public List<LearnableMove> LearnableMoves => _learnableMoves;
+    
+    //Número máximo de ataques que el pokemon puede aprender
+    public static int NUMBER_OF_LEARNABLE_MOVES { get; } = 4;//De solo lectura
 
     [SerializeField] [Tooltip("Ratio de captura del pokemon")][Range(0, 255)]
     private int catchRate = 255;

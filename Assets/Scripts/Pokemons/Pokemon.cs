@@ -102,7 +102,8 @@ public class Pokemon
                 _moves.Add(new Move(mov.Move));
             }
 
-            if (_moves.Count >= 4 )//Aunque limita el número de ataques que puede aprender a cuatro
+            if (_moves.Count >= PokemonBase.NUMBER_OF_LEARNABLE_MOVES )
+                //Se limita el número de ataques que puede aprender a cuatro
                 break;
         }
         
@@ -235,6 +236,25 @@ public class Pokemon
         }
 
         return null;  */
+    }
+
+
+    /// <summary>
+    /// Implementa la lógica de aprender un nuevo movimiento o ataque
+    /// </summary>
+    /// <param name="learnableMove">El movimiento a aprender</param>
+    public void LearnMove(LearnableMove learnableMove)
+    {
+        //Comprueba que puede aprenderse el nuevo movimiento (no se ha superado el límite de movimientos aprendidos)
+        if (Moves.Count > PokemonBase.NUMBER_OF_LEARNABLE_MOVES)
+        {
+            return;
+        }
+        
+        //Se crea el nuevo movimiento, en el que se copia el que ha de aprender
+        Move moveToLearn = new Move(learnableMove.Move);
+        //Se añade el nuevo movimiento a la lista de movimientos aprendidos por el pokemon
+        Moves.Add(moveToLearn);
     }
 }
 
