@@ -48,15 +48,17 @@ public class LearnedMovesSelectionUI : MonoBehaviour
       int direction = Mathf.FloorToInt(Input.GetAxisRaw("Vertical"));
       //Actualiza el movimiento seleccionado
       currentSelectedMovement -= direction;
-      //Lo mantiene dentro de los límites de la lista de movimientos
-      currentSelectedMovement = Mathf.Clamp(currentSelectedMovement, 0,
-        PokemonBase.NUMBER_OF_LEARNABLE_MOVES);
-      //Resalta el movimiento seleccionado
-      UpdateColorForgetMoveSelection();
+      
       //Invoca el evento devolviendo un -1 para indicar simplemente que el jugador ha pulsado una tecla
       //de forma que en el battlemanager pueda resetearse el timer entre pulsaciones
       onSelected?.Invoke(-1);
     }
+    
+    //Lo mantiene dentro de los límites de la lista de movimientos
+    currentSelectedMovement = Mathf.Clamp(currentSelectedMovement, 0,
+      PokemonBase.NUMBER_OF_LEARNABLE_MOVES);
+    //Resalta el movimiento seleccionado
+    UpdateColorForgetMoveSelection(currentSelectedMovement);
     
     //A pulsar el botón de Submit
     if (Input.GetAxisRaw("Submit") != 0)
@@ -70,11 +72,11 @@ public class LearnedMovesSelectionUI : MonoBehaviour
   /// <summary>
   /// Resalta el movimiento seleccionado con otro color y el resto del color por defecto
   /// </summary>
-  private void UpdateColorForgetMoveSelection()
+  private void UpdateColorForgetMoveSelection(int selectedMove)
   {
     for (int i = 0; i <= PokemonBase.NUMBER_OF_LEARNABLE_MOVES; i++)
     {
-      movementText[i].color = (i == currentSelectedMovement) ? selectedColor : Color.black;
+      movementText[i].color = (i == selectedMove) ? selectedColor : Color.black;
     }
   }
 }

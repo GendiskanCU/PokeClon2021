@@ -39,6 +39,10 @@ public class BattleDialogBox : MonoBehaviour
     
     [SerializeField] [Tooltip("Color para resaltar la acción seleccionada por el player en el panel")]
     private Color selectedColor = Color.blue;
+    
+    //Sonidos
+    [SerializeField] [Tooltip("Lista de sonidos aleatorios que se escucharán al escribirse los caracteres")]
+    private AudioClip[] characterSounds;
 
     private bool isWriting = false;
     public bool IsWriting => isWriting;
@@ -59,6 +63,11 @@ public class BattleDialogBox : MonoBehaviour
         foreach (var character in message)
         {
             dialogText.text += character;
+            //Reproduce un sonido aleatorio al escribir cada carácter, excepto en los espacios en blanco
+            if (character != ' ')
+            {
+                SoundManager.SharedInstance.RandomSoundEffect(characterSounds);
+            }
             yield return new WaitForSeconds(1 / charactersPerSecond);
         }
         

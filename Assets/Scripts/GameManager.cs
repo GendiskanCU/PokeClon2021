@@ -22,11 +22,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Tooltip("Cámara del mundo (no de la batalla)")]
     private Camera worlMainCamera;
 
+    [SerializeField] [Tooltip("Música del mundo (no de la batalla)")]
+    private AudioClip worldAudioClip;
+    
+    [SerializeField] [Tooltip("Música de la batalla (no del mundo)")]
+    private AudioClip battleAudioClip;
+    
+    
     private GameState _gameState;
+    
+    
 
     private void Awake()
     {
         _gameState = GameState.TRAVEL;
+        SoundManager.SharedInstance.PlayMusic(worldAudioClip);
     }
 
     private void Start()
@@ -55,6 +65,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void StartPokemonBattle()
     {
+        //Comienza a reproducir la música de batalla
+        SoundManager.SharedInstance.PlayMusic(battleAudioClip);
+        
         //Cambia el estado del juego
         _gameState = GameState.BATTLE;
         
@@ -76,7 +89,7 @@ public class GameManager : MonoBehaviour
         //lo harán. De ahí que sea necesario hacer una copia del pokemon obtenido cada vez en un nuevo pokemon,
         //pues asegura que son objetos diferentes e independientes
         Pokemon newWildPokemon = new Pokemon(wildPokemon.Base, wildPokemon.Level);
-        
+
         //Inicia la batalla con el nuevo pokemon salvaje            
         battleManager.HandleStartBattle(playerParty, newWildPokemon);
     }
@@ -87,6 +100,9 @@ public class GameManager : MonoBehaviour
     /// <param name="playerWin">Resultado que devuelve el evento OnBattleFinish del BattleManager</param>
     private void FinishPokemonBattle(bool playerWin)
     {
+        //Comienza a reproducir la música del mundo
+        SoundManager.SharedInstance.PlayMusic(worldAudioClip);
+        
         //Cambia el estado del juego
         _gameState = GameState.TRAVEL;
         

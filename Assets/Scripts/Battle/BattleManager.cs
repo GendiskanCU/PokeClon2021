@@ -91,6 +91,22 @@ public class BattleManager : MonoBehaviour
    //El evento devolverá un booleano para indicar además si el player ha vencido (true) o ha perdido (false)
    public event Action<bool> OnBattleFinish;
 
+   
+   //Sonidos:
+   [SerializeField] [Tooltip("Sonido que se reproducirá al atacar")]
+   private AudioClip attackClip;
+
+   [SerializeField] [Tooltip("Sonido que se reproducirá al recibir daño")]
+   private AudioClip damageClip;
+
+   [SerializeField] [Tooltip("Sonido que se reproducirá al subir de nivel")]
+   private AudioClip levelUp;
+
+   [SerializeField] [Tooltip("Sonido que se reproducirá al finalizar la batalla")]
+   private AudioClip battleFinish;
+
+   [SerializeField] [Tooltip("Sonido que se reproducirá al lanzar una pokeball")]
+   private AudioClip pokeballClip;
 
    /// <summary>
    /// Configura una nueva batalla contra un pokemon salvaje
@@ -225,6 +241,9 @@ public class BattleManager : MonoBehaviour
    /// <param name="playerHasWon">true si el resultado de la batalla es de victoria para el player</param>
    private void BattleFinish(bool playerHasWon)
    {
+      //Reproduce el sonido de fin de batalla
+      SoundManager.SharedInstance.PlaySound(battleFinish);
+      
       //Cambia el estado de la batalla
       state = BattleState.FinishBattle;
 
@@ -514,14 +533,20 @@ public class BattleManager : MonoBehaviour
       //Guarda la vida del pokemon defensor antes de ser atacado
       int oldHPValue = target.Pokemon.Hp;
       
+      
       //Reproduce la animación de ataque
       attacker.PlayAttackAnimation();
+      //Reproduce el sonido de ataque
+      SoundManager.SharedInstance.PlaySound(attackClip);
 
       //Hace una pausa para dejar que la animación termine
       yield return new WaitForSeconds(1f);
       
       //Reproduce la animación de recibir daño por parte del enemigo
       target.PlayReceiveAttackAnimation();
+      //Reproduce el sonido de recibir daño
+      SoundManager.SharedInstance.PlaySound(damageClip);
+      yield return new WaitForSeconds(1f);
       
       //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
       DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
@@ -713,6 +738,8 @@ public class BattleManager : MonoBehaviour
       
       yield return battleDialogBox.SetDialog($"¡Has lanzado una {pokeBall.gameObject.name}!");
 
+      //Reproduce el sonido de lanzar una pokeball
+      SoundManager.SharedInstance.PlaySound(pokeballClip);
       //Instancia la pokeball un poco a la izquierda/abajo del pokemon del player
       GameObject pokeballInst = Instantiate(pokeBall,
          playerUnit.transform.position - new Vector3(2, 2, 0), Quaternion.identity);
@@ -935,6 +962,9 @@ public class BattleManager : MonoBehaviour
          //por haber vencido a un enemigo muy superior, se usa el while en vez de una simple instrucción if
          while(playerUnit.Pokemon.NeedsToLevelUp())//Si el pokemon sube de nivel
          {
+            //Reproduce el sonido de subir nivel
+            SoundManager.SharedInstance.PlaySound(levelUp);
+            yield return new WaitForSeconds(2.5f);
             //Actualiza la información en el HUD
             playerUnit.HUD.SetLevelText();
             yield return playerUnit.HUD.UpdatePokemonData(playerUnit.Pokemon.Hp);
