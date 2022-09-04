@@ -41,6 +41,7 @@ public class SoundManager : MonoBehaviour
     {
         effectsSource.Stop();
         effectsSource.clip = clipToPlay;
+        effectsSource.pitch = 1;
         effectsSource.Play();
     }
     

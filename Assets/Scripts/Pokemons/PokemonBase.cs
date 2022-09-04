@@ -278,6 +278,8 @@ public class PokemonBase : ScriptableObject
                 }
 
                 break;
+            default:
+                break;
         }
 
         return -1;

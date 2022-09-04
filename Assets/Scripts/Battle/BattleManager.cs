@@ -100,13 +100,16 @@ public class BattleManager : MonoBehaviour
    private AudioClip damageClip;
 
    [SerializeField] [Tooltip("Sonido que se reproducirá al subir de nivel")]
-   private AudioClip levelUp;
+   private AudioClip levelUpClip;
 
    [SerializeField] [Tooltip("Sonido que se reproducirá al finalizar la batalla")]
-   private AudioClip battleFinish;
+   private AudioClip battleFinishClip;
 
    [SerializeField] [Tooltip("Sonido que se reproducirá al lanzar una pokeball")]
    private AudioClip pokeballClip;
+
+   [SerializeField] [Tooltip("Sonido que se reproducirá cuando un pokemon es vencido")]
+   private AudioClip faintedClip;
 
    /// <summary>
    /// Configura una nueva batalla contra un pokemon salvaje
@@ -242,7 +245,7 @@ public class BattleManager : MonoBehaviour
    private void BattleFinish(bool playerHasWon)
    {
       //Reproduce el sonido de fin de batalla
-      SoundManager.SharedInstance.PlaySound(battleFinish);
+      SoundManager.SharedInstance.PlaySound(battleFinishClip);
       
       //Cambia el estado de la batalla
       state = BattleState.FinishBattle;
@@ -928,10 +931,12 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogBox.SetDialog(String.Format("{0} se ha debilitado",
          faintedUnit.Pokemon.Base.PokemonName));
          
+      //Reproduce el sonido de derrota
+      SoundManager.SharedInstance.PlaySound(faintedClip);
       //Reproduce la animación de derrota del pokemon
       faintedUnit.PlayFaintAnimation();
          
-      //Espera un instante para dejar que se reproduzca la animación
+      //Espera un instante para dejar que se reproduzca la animación y el sonido
       yield return new WaitForSeconds(1.5f);
       
       //Cuando el pokemon debilitado es de un enemigo, el del player deberá ganar experiencia
@@ -963,7 +968,8 @@ public class BattleManager : MonoBehaviour
          while(playerUnit.Pokemon.NeedsToLevelUp())//Si el pokemon sube de nivel
          {
             //Reproduce el sonido de subir nivel
-            SoundManager.SharedInstance.PlaySound(levelUp);
+            SoundManager.SharedInstance.PlaySound(levelUpClip);
+            //Espera para que se puede reproducir el sonido totalmente
             yield return new WaitForSeconds(2.5f);
             //Actualiza la información en el HUD
             playerUnit.HUD.SetLevelText();

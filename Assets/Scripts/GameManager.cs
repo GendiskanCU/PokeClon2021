@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //Estados posibles del juego
@@ -36,9 +37,9 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         _gameState = GameState.TRAVEL;
-        SoundManager.SharedInstance.PlayMusic(worldAudioClip);
     }
-
+    
+  
     private void Start()
     {
         //Suscripción al evento del playerController para dar inicio una batalla
@@ -46,6 +47,8 @@ public class GameManager : MonoBehaviour
         
         //Suscripción al evento del battleManager para conocer cuándo finaliza una batalla, y con qué resultado
         battleManager.OnBattleFinish += FinishPokemonBattle;
+        
+        SoundManager.SharedInstance.PlayMusic(worldAudioClip);
     }
 
     private void Update()
