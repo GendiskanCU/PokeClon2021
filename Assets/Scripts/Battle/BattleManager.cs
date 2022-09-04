@@ -83,6 +83,9 @@ public class BattleManager : MonoBehaviour
    
    //Para controlar el pokemon seleccionado por el player en el panel de selección de pokemons de la party
    private int currentSelectedPokemon;
+
+   //Para guardar un nuevo movimiento que el pokemon vaya a aprender
+   private MoveBase moveToLearn;
    
    //Evento de la clase Action de Unity para que el GameManager conozca cuándo finaliza la batalla
    //El evento devolverá un booleano para indicar además si el player ha vencido (true) o ha perdido (false)
@@ -133,6 +136,13 @@ public class BattleManager : MonoBehaviour
       if (battleDialogBox.IsWriting)
          return;
       
+      //Se cambiará de acción pulsando arriba/abajo, izquierda/derecha
+      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
+      timeSinceLastClick += Time.deltaTime;
+      if (timeSinceLastClick < timeBetweenClicks)
+         return;
+      
+      
       if (state == BattleState.ActionSelection)//Estado: selección de una acción por parte del player
       {
          HandlePlayerActionSelection();
@@ -148,6 +158,21 @@ public class BattleManager : MonoBehaviour
       else if (state == BattleState.LoseTurn)//Estado: el player ha perdido su turno, es turno del enemigo
       {
          StartCoroutine(PerfomEnemyMovement());
+      }
+      else if (state == BattleState.ForgetMovement)//Estado: hay que elegir un movimiento a olvidar
+      {
+         //Abre la pantalla de selección, actuando en función del valor devuelto por el evento correspondiente
+         selectMoveUI.HandleForgetMoveSelection((moveIndex) =>
+         {
+            if (moveIndex == -1)//Cuando en la pantalla de selección se haya cambiado el elemento seleccionado
+            {
+               timeSinceLastClick = 0;//Resetea el timer entre selecciones
+            }
+            else//Cuando en la pantalla de selección se haya pulsado Submit moveIndex tendrá el movimiento seleccionado
+            {
+               StartCoroutine(ForgetOldMove(moveIndex));
+            }
+         });
       }
    }
 
@@ -235,13 +260,6 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    private void HandlePlayerActionSelection()
    {
-      //Se cambiará de acción pulsando arriba/abajo, izquierda/derecha
-      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
-      timeSinceLastClick += Time.deltaTime;
-      
-      if (timeSinceLastClick < timeBetweenClicks)
-         return;
-      
       if (Input.GetAxisRaw("Vertical") != 0)//Al pulsar hacia arriba/abajo
       {
          //Reinicia el tiempo desde la última selección
@@ -353,12 +371,6 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    private void HandlePlayerMovementSelection()
    {
-      //Se cambiará el ataque seleccionado presionando arriba/abajo derecha/izquierda,
-      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
-      timeSinceLastClick += Time.deltaTime;
-      if (timeSinceLastClick < timeBetweenClicks)
-         return;
-      
       /*Representación de las posiciones del panel en las que hay que desplazarse:
         0    1
         2    3 */
@@ -580,12 +592,6 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    private void HandlePlayerPartySelection()
    {
-      //Se cambiará el pokemon seleccionado presionando arriba/abajo derecha/izquierda,
-      //estableciendo un lapso de tiempo mínimo para poder ir cambiando
-      timeSinceLastClick += Time.deltaTime;
-      if (timeSinceLastClick < timeBetweenClicks)
-         return;
-      
       /*Representación de las posiciones del panel en las que hay que desplazarse:
         0    1
         2    3
@@ -958,6 +964,10 @@ public class BattleManager : MonoBehaviour
                   yield return battleDialogBox.SetDialog($"Pero no puede aprender más de " +
                                                          $"{PokemonBase.NUMBER_OF_LEARNABLE_MOVES} movimientos");
                   yield return ChooseMovementToForget(playerUnit.Pokemon, newMove.Move);
+                  
+                  //(ChooseMovementToForget establece el estado a ForgetMovement)
+                  //Indica que se debe esperar hasta que el estado del juego salga de ForgetMovement
+                  yield return new WaitUntil(() => state != BattleState.ForgetMovement);
                }
             }
             
@@ -966,7 +976,7 @@ public class BattleManager : MonoBehaviour
          }
       }
          
-      //Comprueba el resultado final de la batalla
+      //Finalizado, se comprueba el resultado final de la batalla
       CheckForBattleFinish(faintedUnit);
    }
 
@@ -996,9 +1006,49 @@ public class BattleManager : MonoBehaviour
       //Rellena la lista de movimientos
       selectMoveUI.SetMovements(learner.Moves.Select(mv => mv.Base).ToList(), newMove);
       
-      //Ahora ya cambia al estado de selección del movimiento a olvidar
+      //Guarda el nuevo movimiento que puede aprenderse en la variable global que se maneja en HandleUpdate
+      moveToLearn = newMove;
+      
+      //Ahora ya cambia al estado de selección del movimiento a olvidar para que HandleUpdate actúe en consonancia
       state = BattleState.ForgetMovement;
 
    }
+
+
+   /// <summary>
+   /// Implementa en una corutina la lógica de olvidar un movimiento (y sustituirlo por el nuevo aprendido si procede)
+   /// </summary>
+   /// <param name="moveIndex">Índice del movimiento a olvidar</param>
+   /// <returns></returns>
+   private IEnumerator ForgetOldMove(int moveIndex)
+   {
+      selectMoveUI.gameObject.SetActive(false);//Desactiva la UI de selección
+      if (moveIndex == PokemonBase.NUMBER_OF_LEARNABLE_MOVES)
+      {
+         //Se olvida el nuevo movimiento adquirido, quedando los que ya se conocían
+         yield return StartCoroutine(battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName}" +
+                                                  $" no ha aprendido {moveToLearn.AttackName}"));
+      }
+      else
+      {
+         //Se olvida el movimiento seleccionado y se aprende el nuevo movimiento:
+         //Guarda temporalmente el movimiento que se va a olvidar
+         var selectedMove = playerUnit.Pokemon.Moves[moveIndex].Base;
+         yield return StartCoroutine(battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName}" +
+                                                               $" olvida {selectedMove.AttackName}" +
+                                                               $" y aprende {moveToLearn.AttackName}"));
+         //Se sustituye el movimiento que se olvida por el nuevo
+         playerUnit.Pokemon.Moves[moveIndex] = new Move(moveToLearn);
+      }
+      
+      //Al final se resetea el nuevo movimiento a aprender para liberar referencias en memoria
+      moveToLearn = null;
+      //Cambia el estado de la batalla
+      state = BattleState.FinishBattle;
+      //TODO: revisar cuando haya entrenadores
+   }
+   
+   
+   
    
 }
