@@ -13,27 +13,7 @@ public class HealthBarUI : MonoBehaviour
    private GameObject healthBar;
 
    
-   /// <summary>
-   /// Devuelve el color de la barra de vida según la cantidad de vida indicada
-   /// </summary>
-   /// <param name="finalScale">Cantidad de vida, normalizada en término de escala de la barra (de 0 a 1)</param>
-   /// <returns></returns>
-   public Color BarColor (float finalScale)
-   {
-      if (finalScale < 0.15f)
-      {
-         return new Color(195f / 255, 53f / 255, 23 / 255f);
-      }
-      else if (finalScale < 0.5f)
-      {
-         return new Color(229f / 255, 154f / 255, 44f / 255);
-      }
-      else
-         {
-            return new Color(114f/255, 207f/255, 131f/255);
-         }
-      
-   }
+  
 
    /// <summary>
    /// Actualiza la barra de vida a partir del valor normalizado (entre 0 y 1) de la misma
@@ -45,7 +25,7 @@ public class HealthBarUI : MonoBehaviour
       healthBar.transform.localScale = new Vector3(normalizedValue, 1, 1);
       
       //Cambia el color de la barra en función de su tamaño actual
-      healthBar.GetComponent<Image>().color = BarColor(normalizedValue);
+      healthBar.GetComponent<Image>().color = ColorManager.SharedInstance.BarColor(normalizedValue);
    }
 
 
@@ -79,7 +59,8 @@ public class HealthBarUI : MonoBehaviour
       var sequence = DOTween.Sequence();
       
       sequence.Append( healthBar.transform.DOScaleX(normalizedValue, 1f));
-      sequence.Join (healthBar.GetComponent<Image>().DOColor(BarColor(normalizedValue), 1f));
+      sequence.Join (healthBar.GetComponent<Image>().DOColor(
+         ColorManager.SharedInstance.BarColor(normalizedValue), 1f));
       yield return sequence.WaitForCompletion();
    }
    

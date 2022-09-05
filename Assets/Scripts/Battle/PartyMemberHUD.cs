@@ -49,7 +49,7 @@ public class PartyMemberHUD : MonoBehaviour
         pokemonImage.sprite = _pokemon.Base.FrontSprite;
         
         //Se cambia el color de fondo de la caja de información según el tipo1 del pokemon del que se trate
-        GetComponent<Image>().color = TypeColor.GetColorFromType(_pokemon.Base.Type1);
+        GetComponent<Image>().color = ColorManager.TypeColor.GetColorFromType(_pokemon.Base.Type1);
     }
     
     /// <summary>

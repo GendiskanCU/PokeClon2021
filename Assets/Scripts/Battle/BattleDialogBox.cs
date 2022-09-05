@@ -149,9 +149,13 @@ public class BattleDialogBox : MonoBehaviour
         
         //Actualiza la información con los PP y tipo
         ppText.text = String.Format("PP {0}/{1}", move.Pp, move.Base.PP);
+        
         typeText.text = move.Base.Type.ToString();
-
-        //Si se han agotado los PP del ataque seleccionado, también se resaltará en otro color
-        ppText.color = (move.Pp <= 0) ? ColorManager.SharedInstance.SelectedColor : Color.black;
+        
+        //Se modifica el color de fondo del texto del ataque en función de su tipo
+        moveDescription.GetComponent<Image>().color = ColorManager.TypeColor.GetColorFromType(move.Base.Type);
+        
+        //Se modifica el color del texto los PP en la UI en función del % de PP restantes
+        ppText.color = ColorManager.SharedInstance.PPColor((float)move.Pp / move.Base.PP);
     }
 }

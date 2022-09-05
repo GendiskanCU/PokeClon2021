@@ -89,45 +89,6 @@ public class TypeMatrix
     }
 }
 
-//Matriz de colores de cada tipo de pokemon
-public class TypeColor
-{
-    private static Color[] colors =
-    {
-        Color.white, //NINGUNO
-        Color.blue, //NORMAL
-        Color.red, //FUEGO
-        Color.cyan, //AGUA
-        Color.grey, //ELECTRICO
-        Color.green, //HIERBA
-        Color.magenta, //HIELO
-        Color.red, //LUCHA
-        Color.green, //VENENO
-        Color.gray, //TIERRA
-        Color.cyan, //AEREO
-        Color.magenta, //PSIQUICO
-        Color.green, //BICHO
-        Color.gray, //ROCA
-        Color.blue, //FANTASMA
-        Color.red, //DRAGON
-        Color.yellow, //OSCURO
-        Color.cyan, //ACERO
-        Color.yellow //HADA
-    };
-
-    /// <summary>
-    /// Devuelve el color característico de un tipo de pokemon
-    /// </summary>
-    /// <param name="type">Tipo de pokemon del que queremos obtener el color característico</param>
-    /// <returns>Color característico del tipo de pokemon</returns>
-    public static Color GetColorFromType(PokemonType type)   //Estática para que no haga falta crear instancia
-    {
-        return colors[(int)type];
-    }
-}
-
-
-
 //Tipos de ataque (o movimiento) que los pokemon pueden aprender en cada nivel
 //Es una clase [Serializable] para que luego pueda mostrarse en el editor de Unity
 [Serializable]public class LearnableMove
