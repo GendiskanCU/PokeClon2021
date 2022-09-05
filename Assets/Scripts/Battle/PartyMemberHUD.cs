@@ -25,9 +25,6 @@ public class PartyMemberHUD : MonoBehaviour
 
     [SerializeField] [Tooltip("Imagen del pokemon")]
     private Image pokemonImage;
-    
-    [SerializeField] [Tooltip("Color para resaltar si es el pokemon seleccionado")]
-    private Color selectedColor = Color.blue;
 
     //El pokemon
     private Pokemon _pokemon;
@@ -63,7 +60,7 @@ public class PartyMemberHUD : MonoBehaviour
     {
         if (selected)
         {
-            nameText.color = selectedColor;
+            nameText.color = ColorManager.SharedInstance.SelectedColor;
         }
         else
         {

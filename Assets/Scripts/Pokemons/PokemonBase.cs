@@ -231,17 +231,17 @@ public class PokemonBase : ScriptableObject
         {
             case GrowthRate.Fast:
                 return Mathf.FloorToInt(4 * Mathf.Pow(level, 3) / 5);
-                break;
+                //break;
             case GrowthRate.MediumFast:
                 return Mathf.FloorToInt(Mathf.Pow(level, 3));
-                break;
+                //break;
             case GrowthRate.MediumSlow:
                 return Mathf.FloorToInt(6 * Mathf.Pow(level, 3) / 5 - 15 * Mathf.Pow(level, 2) +
                     100 * level - 140);
-                break;
+                //break;
             case GrowthRate.Slow:
                 return Mathf.FloorToInt(5 * Mathf.Pow(level, 3) / 4);
-                break;
+                //break;
             case GrowthRate.Erratic:
                 if (level < 50)
                 {
@@ -261,7 +261,7 @@ public class PokemonBase : ScriptableObject
                     return Mathf.FloorToInt(Mathf.Pow(level, 3) * (160 - level) / 50);
                 }
 
-                break;
+                //break;
             case GrowthRate.Fluctuating:
                 if (level < 15)
                 {
@@ -277,9 +277,7 @@ public class PokemonBase : ScriptableObject
                     return Mathf.FloorToInt(Mathf.Pow(level, 3) * Mathf.FloorToInt((level / 2) + 32) / 50);
                 }
 
-                break;
-            default:
-                break;
+                //break;
         }
 
         return -1;

@@ -11,9 +11,6 @@ public class LearnedMovesSelectionUI : MonoBehaviour
   [SerializeField] [Tooltip("Cuadro de texto con el nombre del movimiento")]
   private List<Text> movementText;
 
-  [SerializeField] [Tooltip("Color para resaltar el movimiento seleccionado")]
-  private Color selectedColor = Color.red;
-
   //Para guardar el movimiento seleccionado en el panel
   private int currentSelectedMovement = 0;
 
@@ -76,7 +73,7 @@ public class LearnedMovesSelectionUI : MonoBehaviour
   {
     for (int i = 0; i <= PokemonBase.NUMBER_OF_LEARNABLE_MOVES; i++)
     {
-      movementText[i].color = (i == selectedMove) ? selectedColor : Color.black;
+      movementText[i].color = (i == selectedMove) ? ColorManager.SharedInstance.SelectedColor : Color.black;
     }
   }
 }

@@ -36,10 +36,7 @@ public class BattleDialogBox : MonoBehaviour
     
     [SerializeField] [Tooltip("Velocidad a la que se irán mostrando los mensajes, en caracteres/segundo")]
     private float charactersPerSecond;
-    
-    [SerializeField] [Tooltip("Color para resaltar la acción seleccionada por el player en el panel")]
-    private Color selectedColor = Color.blue;
-    
+
     //Sonidos
     [SerializeField] [Tooltip("Lista de sonidos aleatorios que se escucharán al escribirse los caracteres")]
     private AudioClip[] characterSounds;
@@ -114,7 +111,7 @@ public class BattleDialogBox : MonoBehaviour
     {
         for (int i = 0; i < actionTexts.Count; i++)
         {
-            actionTexts[i].color = i == selectedAction ? selectedColor : Color.black;
+            actionTexts[i].color = i == selectedAction ? ColorManager.SharedInstance.SelectedColor : Color.black;
         }
     }
 
@@ -147,7 +144,7 @@ public class BattleDialogBox : MonoBehaviour
     {
         for (int i = 0; i < movementTexts.Count; i++)
         {
-            movementTexts[i].color = i == selectedMovement ? selectedColor : Color.black;
+            movementTexts[i].color = i == selectedMovement ? ColorManager.SharedInstance.SelectedColor : Color.black;
         }
         
         //Actualiza la información con los PP y tipo
@@ -155,6 +152,6 @@ public class BattleDialogBox : MonoBehaviour
         typeText.text = move.Base.Type.ToString();
 
         //Si se han agotado los PP del ataque seleccionado, también se resaltará en otro color
-        ppText.color = (move.Pp <= 0) ? selectedColor : Color.black;
+        ppText.color = (move.Pp <= 0) ? ColorManager.SharedInstance.SelectedColor : Color.black;
     }
 }
