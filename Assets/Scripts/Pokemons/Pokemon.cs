@@ -27,6 +27,16 @@ public class Pokemon
         set => _level = value;
     }
 
+    //Diccionario con las estadísticas del pokemon. La clave será el nombre de la estadística, definido en
+    //el enumerado Stat de la clase PokemonBase y cada estadística tendrá un número entero en el valor
+    public Dictionary<Stat, int> Stats { get; private set; }   //Pública para lectura, pero privada para escritura
+    
+    //Un diccionario también con las estadísticas del pokemon, pero que se utilizará para calcular y obtener sus
+    //valores una vez que hayan sido afectados por modificadores de estadísticas durante una batalla. Guardará en
+    //cada clave el nivel de mejora o empeoramiento de la estadística original y será un valor entre -6 y +6
+    //siendo -6 el nivel máximo de empeoramiento, 0 que no hay modificador y +6 el nivel máximo de mejora
+    public Dictionary<Stat, int> StatsBoosted { get; private set; }
+
     //Vida actual del pokemon
     private int _hp;
     public int Hp
@@ -47,21 +57,15 @@ public class Pokemon
         set => _experience = value;
     }
 
-
-    //Ataque del pokemon, en función del ataque base y el nivel actual. La fórmula que se utiliza es multiplicarlo
-    //el ataque base por el nivel y el resultado dividirlo por 100. Como el ataque es un entero y el resultado de  la
-    //división podrá tener decimales, se trunca el resultado con Floor. Al final, se suma una pequeña cantidad entre
-    //1 y 5 para evitar que en niveles bajos el resultado final dé el valor cero o un valor demasiado pequeño
-    public int Attack => Mathf.FloorToInt((_base.Attack * _level) / 100) + 1;
+    //Estadísticas públicas del pokemon, que pueden se objeto de modificadores por la acción de ataques enemigos
+    public int Attack => GetStat(Stat.Attack);
+    public int Defense => GetStat(Stat.Defense);
+    public int SpAttack =>GetStat(Stat.SpAttack);
+    public int SpDefense => GetStat(Stat.spDefense);
+    public int Speed => GetStat(Stat.Speed);
     
-    //Con el resto de estadísticas se utiliza la misma fórmula
-    public int Defense => Mathf.FloorToInt((_base.Defense * _level) / 100) + 2;
-    public int SpAttack => Mathf.FloorToInt((_base.SpAttack * _level) / 100) + 2;
-    public int SpDefense => Mathf.FloorToInt((_base.SpDefense * _level) / 100) + 2;
-    public int Speed => Mathf.FloorToInt((_base.Speed * _level) / 100) + 3;
-    
-    //Vida máxima del pokemon. Similar, pero asegurando al menos 10 puntos y dividiendo por una cantidad menor
-    public int MaxHP => Mathf.FloorToInt((_base.MaxHp * _level) / 20) + 10;
+    //Vida máxima del pokemon
+    public int MaxHP { get; private set; }
 
 
     //Ataques o movimientos que tiene el Pokemon
@@ -86,12 +90,12 @@ public class Pokemon
         InitPokemon();
     }
     
-    //Inicializa los datos del pokemon
+    
+    /// <summary>
+    /// Inicializa los datos del pokemon
+    /// </summary>
     public void InitPokemon()
     {
-        //Inicializa la vida actual con la máxima calculada en función del nivel inicial
-        _hp = MaxHP;
-        
         //Inicializa la lista de ataques
         _moves = new List<Move>();
         //Rellena inicialmente la lista con los ataques ya se tienen con el nivel inicial del pokemon
@@ -109,8 +113,82 @@ public class Pokemon
         
         //Inicializa la experiencia que tiene el pokemon a partir de su nivel inicial
         _experience = Base.GetNeccessaryExperienceForLevel(_level);
+        
+        //Calcula las estadísticas iniciales del pokemon
+        CalculateStats();
+        
+        //Inicializa las estadísticas alteradas por los modificadores (al comienzo el modificador será 0)
+        StatsBoosted = new Dictionary<Stat, int>()
+        {
+            {Stat.Attack, 0},
+            {Stat.Defense, 0},
+            {Stat.SpAttack, 0},
+            {Stat.spDefense, 0},
+            {Stat.Speed, 0}
+        };
+        
+        //Inicializa la vida actual con la máxima calculada en función del nivel inicial
+        _hp = MaxHP;
     }
 
+    
+    /// <summary>
+    /// Calcula las estadísticas del pokemon: vida máxima por un lado, y el resto de estadísticas que serán guardadas
+    /// en el diccionario de estadísticas, Stats
+    /// </summary>
+    private void CalculateStats()
+    {
+        Stats = new Dictionary<Stat, int>();
+        //Ataque del pokemon, en función del ataque base y el nivel actual. La fórmula que se utiliza es multiplicar
+        //el ataque base por el nivel y el resultado dividirlo por 100. Como el ataque es un entero y el resultado de  la
+        //división podrá tener decimales, se trunca el resultado con Floor. Al final, se suma una pequeña cantidad entre
+        //1 y 5 para evitar que en niveles bajos el resultado final dé el valor cero o un valor demasiado pequeño
+        Stats.Add(Stat.Attack, Mathf.FloorToInt((_base.Attack * _level) / 100) + 1);
+        //Con el resto de estadísticas se utiliza una fórmula similar
+        Stats.Add(Stat.Defense, Mathf.FloorToInt((_base.SpDefense * _level) / 100) + 2);
+        Stats.Add(Stat.SpAttack, Mathf.FloorToInt((_base.SpAttack * _level) / 100) + 2);
+        Stats.Add(Stat.spDefense, Mathf.FloorToInt((_base.SpDefense * _level) / 100) + 2);
+        Stats.Add(Stat.Speed, Mathf.FloorToInt((_base.Speed * _level) / 100) + 3);
+
+        //Se inicializa también la vida, si bien es una estadística que se debe tratar aparte, por lo que no
+        //se encontrará en el diccionario de estadísticas del pokemon
+        //Se calcula con una fórmula similar, asegurando al menos 10 puntos de vida
+        MaxHP = Mathf.FloorToInt((_base.MaxHp * _level) / 20) + 10;
+    }
+
+
+    /// <summary>
+    /// Devuelve el valor de una estadística del diccionario de estadísticas del pokemon, teniendo en cuenta
+    /// los posibles modificadores que puedan aplicarse a la misma
+    /// </summary>
+    /// <param name="stat">Estadística de la que deseamos obtener el valor</param>
+    /// <returns>Valor en la estadística del pokemon</returns>
+    private int GetStat(Stat stat)
+    {
+        //Guarda temporalmente el valor actual de la estadística
+        int statValue = Stats[stat];
+        
+        //Aplica los modificadores de estado según el nivel que se guarda en el diccionario boosted
+        int boost = StatsBoosted[stat];//Valor entre -6 y +6
+        //Si el boost es negativo, significa que la estadística empeora y si es positivo que mejora
+        //Hay 6 niveles de mejora o empeoramiento, cuyos valores a aplicar son 1, 1.5, 2, 2.5, 3, 3.5, 4
+        //Nivel de boost:  -6    -5     -4     -3     -2     -1     0     1     2     3     4     5     6
+        //Modificador  :   -4    -3.5   -3     -2.5   -2     -1.5   1     1.5   2     2.5   3     3.5   4
+        float modifier = Mathf.Min( 1 + Mathf.Abs(boost) / 2.0f, 4.0f);;
+        if (boost >= 0)
+        {
+            statValue = Mathf.FloorToInt(statValue * modifier);
+        }
+        else
+        {
+            statValue = Mathf.FloorToInt(statValue / modifier);
+        }
+        
+        //Devuelve el valor de la estadística después de haber aplicado los posibles modificadores
+        return statValue;
+    }
+
+    
     /// <summary>
     /// Implementa el daño que sufre un pokemon al recibir el ataque de otro pokemon
     /// </summary>

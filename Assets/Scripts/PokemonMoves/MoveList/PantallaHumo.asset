@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PantallaHumo
   m_EditorClassIdentifier: 
   attackName: PantallaHumo
-  description: Crea una pantalla de humo
+  description: "Crea una pantalla de humo reduciendo la precisi\xF3n del ataque del
+    enemigo"
   type: 1
+  typeOfMove: 2
   power: 0
   accuracy: 100
   pp: 20

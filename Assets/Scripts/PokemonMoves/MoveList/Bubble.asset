@@ -15,6 +15,7 @@ MonoBehaviour:
   attackName: Burbuja
   description: "Burbujas en espray que son lanzadas al enemigo infligi\xE9ndole da\xF1o"
   type: 3
+  typeOfMove: 1
   power: 40
   accuracy: 100
   pp: 30

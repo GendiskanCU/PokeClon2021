@@ -38,6 +38,16 @@ public enum GrowthRate
 }
 
 
+//Estadísticas del pokemon
+public enum Stat
+{
+    Attack,
+    Defense,
+    SpAttack,
+    spDefense,
+    Speed
+}
+
 //Matriz de tipos. Para establecer el daño que cada tipo de ataque hace a cada tipo de defensa
 //0 no hace daño, 1 hace daño normal, 0.5 hace la mitad de daño, 2 hace el doble de daño
 //Nota: solo se han quedado ajustados los cinco primeros tipos, habría que finalizar los demás

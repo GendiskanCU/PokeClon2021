@@ -4,7 +4,19 @@ using UnityEngine;
 
 //PARA DEFINIR LOS ATAQUES BASE ("MOVIMIENTOS") DE LOS POKEMON
 
+
+//Tipos de movimiento a ataque que pueden existir
+public enum MoveType
+{
+    Physical, //El ataque es de tipo físico
+    Special, //El ataque es de tipo especial
+    Stats  //El ataque modifica las estadísticas de un pokemon
+}
+
+
+//Crea una entrada en el menú contextual del editor de Unity
 [CreateAssetMenu(fileName = "PokemonMove", menuName = "Pokemon/New movement")]
+
 
 public class MoveBase : ScriptableObject
 {
@@ -18,9 +30,13 @@ public class MoveBase : ScriptableObject
     private string description;
     public string Description => description;
 
-    [SerializeField] [Tooltip("Tipo de ataque")]
+    [SerializeField] [Tooltip("Tipo de pokemon del que deriva el ataque o movimiento")]
     private PokemonType type;
     public PokemonType Type => type;
+
+    [SerializeField] [Tooltip("Tipo ataque según la clase de efecto que produce")]
+    private MoveType typeOfMove;
+    public MoveType TypeOfMove => typeOfMove;
 
     [SerializeField] [Tooltip("Poder del ataque")]
     private int power;
@@ -40,6 +56,9 @@ public class MoveBase : ScriptableObject
     {
         get
         {
+            return typeOfMove == MoveType.Special;
+            
+            /* Código sustituido:
             //El movimiento es especial si es de uno de los siguientes tipos
             //(información extraída de https://bulbapedia.bulbagarden.net/wiki/Special_move)
             if (type == PokemonType.AGUA || type == PokemonType.FUEGO ||
@@ -52,8 +71,10 @@ public class MoveBase : ScriptableObject
             else
             {
                 return false;
-            }
+            }  */
         }
-        set => isSpecialMove = value;
     }
 }
+
+
+

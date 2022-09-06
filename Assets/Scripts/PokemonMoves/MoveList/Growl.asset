@@ -15,6 +15,7 @@ MonoBehaviour:
   attackName: "Gru\xF1ido"
   description: "No inflinge da\xF1o pero reduce el que puede ocasionar el enemigo"
   type: 1
+  typeOfMove: 2
   power: 0
   accuracy: 100
   pp: 20

@@ -15,6 +15,7 @@ MonoBehaviour:
   attackName: "L\xE1tigoCepa"
   description: "Inflinge da\xF1o al enemigo"
   type: 5
+  typeOfMove: 1
   power: 45
   accuracy: 100
   pp: 25

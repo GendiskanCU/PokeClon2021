@@ -15,6 +15,7 @@ MonoBehaviour:
   attackName: "FuriaDrag\xF3n"
   description: Poderoso ataque draconiano
   type: 15
+  typeOfMove: 1
   power: 40
   accuracy: 100
   pp: 10
