@@ -15,6 +15,10 @@ MonoBehaviour:
   attackName: Placaje
   description: "Ataque f\xEDsico cargando contra el enemigo"
   type: 1
+  typeOfMove: 0
+  effects:
+    boostings: []
+  target: 1
   power: 40
   accuracy: 100
   pp: 35

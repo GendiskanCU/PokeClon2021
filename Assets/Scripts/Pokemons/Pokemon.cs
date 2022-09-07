@@ -174,20 +174,41 @@ public class Pokemon
         //Hay 6 niveles de mejora o empeoramiento, cuyos valores a aplicar son 1, 1.5, 2, 2.5, 3, 3.5, 4
         //Nivel de boost:  -6    -5     -4     -3     -2     -1     0     1     2     3     4     5     6
         //Modificador  :   -4    -3.5   -3     -2.5   -2     -1.5   1     1.5   2     2.5   3     3.5   4
-        float modifier = Mathf.Min( 1 + Mathf.Abs(boost) / 2.0f, 4.0f);;
+        float statsModifier =  1 + Mathf.Abs(boost) / 2.0f;
         if (boost >= 0)
         {
-            statValue = Mathf.FloorToInt(statValue * modifier);
+            statValue = Mathf.FloorToInt(statValue * statsModifier);
         }
         else
         {
-            statValue = Mathf.FloorToInt(statValue / modifier);
+            statValue = Mathf.FloorToInt(statValue / statsModifier);
         }
         
         //Devuelve el valor de la estadística después de haber aplicado los posibles modificadores
         return statValue;
     }
 
+
+    /// <summary>
+    /// Aplica un boost a una de las stats de un Pokemon
+    /// </summary>
+    /// <param name="statBoostings">La stat con el valor de boost que se debe aplicar</param>
+    public void ApplyBoost(StatBoosting statBoosting)
+    {
+       
+        //La stat 
+        var stat = statBoosting.stat;
+        //Valor de boost a aplicar sobre la stat
+        var value = statBoosting.boost;
+            
+        //Actualiza el valor correspondiente del diccionario de estados del pokemon
+        //Limitamos los valores mínimos y máximos para que siempre estén entre -6 y +6
+        StatsBoosted[stat] = Mathf.Clamp(StatsBoosted[stat] + value, -6, 6);
+
+        Debug.Log($"El estado {stat} se ha modificado a {StatsBoosted[stat]}");
+       
+    }
+    
     
     /// <summary>
     /// Implementa el daño que sufre un pokemon al recibir el ataque de otro pokemon

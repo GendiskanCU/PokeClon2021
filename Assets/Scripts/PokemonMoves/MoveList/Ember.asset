@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "Peque\xF1as llamas que prenden al enemigo"
   type: 2
   typeOfMove: 1
+  effects:
+    boostings: []
+  target: 1
   power: 40
   accuracy: 100
   pp: 25

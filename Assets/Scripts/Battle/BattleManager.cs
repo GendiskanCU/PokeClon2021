@@ -532,11 +532,7 @@ public class BattleManager : MonoBehaviour
       //Muestra el mensaje del ataque ejecutado y espera a que finalice de ser mostrado
       yield return battleDialogBox.SetDialog(String.Format("{0} ha usado {1}",
          attacker.Pokemon.Base.PokemonName, move.Base.AttackName));
-      
-      //Guarda la vida del pokemon defensor antes de ser atacado
-      int oldHPValue = target.Pokemon.Hp;
-      
-      
+
       //Reproduce la animación de ataque
       attacker.PlayAttackAnimation();
       //Reproduce el sonido de ataque
@@ -551,15 +547,40 @@ public class BattleManager : MonoBehaviour
       SoundManager.SharedInstance.PlaySound(damageClip);
       yield return new WaitForSeconds(1f);
       
-      //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
-      DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
+      //Si el ataque ejecutado es del tipo de los que modifican los estados (stats) con un boost
+      if (move.Base.TypeOfMove == MoveType.Stats)
+      {
+         if (move.Base.Effects.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
+         {
+            //Se recorre la lista de boost que puede provocar el ataque
+            foreach (var effect in move.Base.Effects.Boostings)
+            {
+               if (effect.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
+               {
+                  attacker.Pokemon.ApplyBoost(effect);
+               }
+               else //Si el boost afecta al pokemon que recibe el ataque
+               {
+                  target.Pokemon.ApplyBoost(effect);
+               }
+            }
+         }
+      }
+      else //Si el ataque es de otro tipo (físico o especial)
+      {
+         //Guarda la vida del pokemon defensor antes de ser atacado
+         int oldHPValue = target.Pokemon.Hp;
+         //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
+         DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
+
+         //Actualiza la información del pokemon atacado en el HUD
+         yield return target.HUD.UpdatePokemonData(oldHPValue);
+
+         yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
+      }
+
       
-      //Actualiza la información del pokemon atacado en el HUD
-      yield return target.HUD.UpdatePokemonData(oldHPValue);
-
-      yield return ShowDamageDescription(damageDesc);//Muestra información adicional en el HUD
-
-      if (damageDesc.Fainted)//Si el pokemon atacado es debilitado
+      if (target.Pokemon.Hp <= 0)//Si tras el ataque el pokemon atacado es debilitado
       {
          //Implementa las acciones que suceden cuando un pokemon es vencido
          yield return HandlePokemonFainted(target);

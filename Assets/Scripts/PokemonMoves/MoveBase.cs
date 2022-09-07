@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +39,16 @@ public class MoveBase : ScriptableObject
     private MoveType typeOfMove;
     public MoveType TypeOfMove => typeOfMove;
 
+    [SerializeField] [Tooltip("Lista de efectos que el movimiento o ataque puede provocar (contiene la stat a la" +
+                              " que afectará y si el efecto es de mejora o de empeoramiento de la misma")]
+    private MoveStatEffect effects;
+    public MoveStatEffect Effects => effects;
+
+    [SerializeField] [Tooltip("El efecto del ataque, ¿afectará al propio " +
+                              "pokemon que ejecuta el ataque, o al que lo recibe?")]
+    private MoveTarget target;
+    public MoveTarget Target => target;
+
     [SerializeField] [Tooltip("Poder del ataque")]
     private int power;
     public int Power => power;
@@ -52,28 +63,50 @@ public class MoveBase : ScriptableObject
 
     //Para definir si el movimiento es especial
     private bool isSpecialMove;
-    public bool IsSpecialMove
-    {
-        get
-        {
-            return typeOfMove == MoveType.Special;
-            
-            /* Código sustituido:
-            //El movimiento es especial si es de uno de los siguientes tipos
-            //(información extraída de https://bulbapedia.bulbagarden.net/wiki/Special_move)
+    public bool IsSpecialMove => typeOfMove == MoveType.Special;
+    
+    
+            /*El movimiento es especial si es de uno de los siguientes tipos
+            (información extraída de https://bulbapedia.bulbagarden.net/wiki/Special_move)
             if (type == PokemonType.AGUA || type == PokemonType.FUEGO ||
                 type == PokemonType.HIELO || type == PokemonType.DRAGON ||
                 type == PokemonType.HIERBA || type == PokemonType.ELECTRICO ||
-                type == PokemonType.OSCURO || type == PokemonType.PSIQUICO)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }  */
-        }
-    }
+                type == PokemonType.OSCURO || type == PokemonType.PSIQUICO)*/
+           
+}
+
+
+
+//Clase para definir las estadísticas que podrían sufrir un boost de mejora o empeoramiento al ejecutarse un ataque
+[Serializable]
+public class MoveStatEffect
+{
+    [SerializeField] [Tooltip("Lista de stats con tipo de boost, de mejora o empeoramiento, a las que afecta")]
+    private List<StatBoosting> boostings;
+    public List<StatBoosting> Boostings => boostings;
+}
+
+
+
+//Clase para vincular cada estadísticas que puede mejorar o empeorar con el tipo de boost
+[Serializable]public class StatBoosting
+{
+    public Stat stat;
+    //Tipo de boost (p.ej. -1 empeora, +1 mejora)
+    public int boost;
+    //Pokemon al que afecta el boost (puede ser el propio pokemon que ejecuta el ataque, o el pokemon atacado
+    public MoveTarget target;
+}
+
+
+/// <summary>
+/// Enumerado para poder definir a qué pokemon afectará el boost de mejora o empeoramiento de una stat cuando
+/// se ejecute un ataque o movimiento (Self si es al propio atacante, Other si es al defensor)
+/// </summary>
+public enum MoveTarget
+{
+    Self, //El boost afectará al propio pokemon que ejecute el movimiento o ataque
+    Other //El boost afectará al pokemon que recibe el ataque
 }
 
 

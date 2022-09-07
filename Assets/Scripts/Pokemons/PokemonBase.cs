@@ -99,11 +99,11 @@ public class TypeMatrix
     }
 }
 
-//Tipos de ataque (o movimiento) que los pokemon pueden aprender en cada nivel
+//Ataques (o movimientos) que los pokemon pueden aprender en cada nivel
 //Es una clase [Serializable] para que luego pueda mostrarse en el editor de Unity
 [Serializable]public class LearnableMove
 {
-    [SerializeField][Tooltip("Tipo de ataque o movimiento")]
+    [SerializeField][Tooltip("Ataque o movimiento base que el pokemon puede aprender")]
     private MoveBase _move;
     public MoveBase Move => _move;
 

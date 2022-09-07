@@ -17,6 +17,15 @@ MonoBehaviour:
     enemigo"
   type: 1
   typeOfMove: 2
+  effects:
+    boostings:
+    - stat: 4
+      boost: -1
+      target: 0
+    - stat: 4
+      boost: -1
+      target: 1
+  target: 1
   power: 0
   accuracy: 100
   pp: 20

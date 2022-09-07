@@ -16,6 +16,12 @@ MonoBehaviour:
   description: "No inflinge da\xF1o pero reduce el que puede ocasionar el enemigo"
   type: 1
   typeOfMove: 2
+  effects:
+    boostings:
+    - stat: 0
+      boost: -1
+      target: 1
+  target: 1
   power: 0
   accuracy: 100
   pp: 20
