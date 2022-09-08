@@ -36,6 +36,12 @@ public class Pokemon
     //cada clave el nivel de mejora o empeoramiento de la estadística original y será un valor entre -6 y +6
     //siendo -6 el nivel máximo de empeoramiento, 0 que no hay modificador y +6 el nivel máximo de mejora
     public Dictionary<Stat, int> StatsBoosted { get; private set; }
+    
+    
+    //Una cola para guardar y poder mostrar en pantalla los diversos cambios en las estadísticas (boosts)
+    //de un pokemon que puedan ir sucediendo durante una batalla como consecuencia de la ejecución de ataques
+    public Queue<string> StatusChangeMessages { get; private set; }
+    
 
     //Vida actual del pokemon
     private int _hp;
@@ -117,7 +123,20 @@ public class Pokemon
         //Calcula las estadísticas iniciales del pokemon
         CalculateStats();
         
-        //Inicializa las estadísticas alteradas por los modificadores (al comienzo el modificador será 0)
+        //Inicializa los boost que afectan a las stats
+        ResetBoostings();
+        
+        //Inicializa la vida actual con la máxima calculada en función del nivel inicial
+        _hp = MaxHP;
+    }
+
+
+    /// <summary>
+    /// Pone a cero los boost o modificadores de las stats del pokemon e inicializa la lista de mensajes sobre
+    /// los boosts producidos durante las batallas
+    /// </summary>
+    private void ResetBoostings()
+    {
         StatsBoosted = new Dictionary<Stat, int>()
         {
             {Stat.Attack, 0},
@@ -126,11 +145,11 @@ public class Pokemon
             {Stat.spDefense, 0},
             {Stat.Speed, 0}
         };
-        
-        //Inicializa la vida actual con la máxima calculada en función del nivel inicial
-        _hp = MaxHP;
-    }
 
+        StatusChangeMessages = new Queue<string>();
+    }
+    
+    
     
     /// <summary>
     /// Calcula las estadísticas del pokemon: vida máxima por un lado, y el resto de estadísticas que serán guardadas
@@ -190,7 +209,8 @@ public class Pokemon
 
 
     /// <summary>
-    /// Aplica un boost a una de las stats de un Pokemon
+    /// Aplica un boost a una de las stats de un Pokemon y guarda el mensaje informativo en la cola
+    /// de mensajes que se mostrarán en la UI de batalla
     /// </summary>
     /// <param name="statBoostings">La stat con el valor de boost que se debe aplicar</param>
     public void ApplyBoost(StatBoosting statBoosting)
@@ -205,8 +225,22 @@ public class Pokemon
         //Limitamos los valores mínimos y máximos para que siempre estén entre -6 y +6
         StatsBoosted[stat] = Mathf.Clamp(StatsBoosted[stat] + value, -6, 6);
 
-        Debug.Log($"El estado {stat} se ha modificado a {StatsBoosted[stat]}");
-       
+        if (value > 0) //Si el boost ha sido positivo (mejora la stat del pokemon)
+        {
+            //Añadiremos un nuevo mensaje a la cola de strings informando del incremento
+            StatusChangeMessages.Enqueue($"{Base.PokemonName} ha incrementado su " +
+                                         $"{stat}");
+        }
+        else if (value < 0) //Si el boost ha sido negativo
+        {
+            //Añade el mensaje informando de la reducción
+            StatusChangeMessages.Enqueue($"{Base.PokemonName} ha reducido su " +
+                                         $"{stat}");
+        }
+        else //Si el boost ha sido cero, no se produce ningún efecto
+        {
+            StatusChangeMessages.Enqueue($"{Base.PokemonName} no nota ningún efecto en sus stats");
+        }
     }
     
     
@@ -355,6 +389,18 @@ public class Pokemon
         //Se añade el nuevo movimiento a la lista de movimientos aprendidos por el pokemon
         Moves.Add(moveToLearn);
     }
+
+
+    /// <summary>
+    /// Realiza las acciones necesarias sobre un pokemon cuando una batalla haya finalizado, para que el
+    /// pokemon quede bien inicializado de cara a la siguiente batalla
+    /// </summary>
+    public void OnBattleFinish()
+    {
+        //Vuelve a dejar los boost de las stats a cero
+        ResetBoostings();
+    }
+    
 }
 
 

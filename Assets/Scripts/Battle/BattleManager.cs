@@ -219,25 +219,41 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
 
-      //Inicia las acciones del player o del enemigo. Se comparan las velocidades de ambos contendientes
+      //Inicia el ataque del player o del enemigo, dependiendo de a cuál le toque el primer turno 
+      yield return ChooseFirstTurn(true);
+   }
+
+
+   /// <summary>
+   /// Decide cuál de los Pokemon de la batalla comenzará atacando primero, comparando la velocidad de ambos
+   /// </summary>
+   /// <param name="showFirstMessage">Indica si se debe mostrar el mensaje inicial de la batalla</param>
+   /// <returns></returns>
+   private IEnumerator ChooseFirstTurn(bool showFirstMessage = false)
+   {
+      //Se comparan las velocidades de ambos contendientes
       //(enemyUnit, playerUnit) para decidir quién atacará primero
-      if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)//Comienza el enemigo
+      if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
       {
          //Activa/desactiva los paneles correspondientes
          battleDialogBox.ToggleDialogText(true);
          battleDialogBox.ToggleActions(false);
          battleDialogBox.ToggleMovements(false);
          //Muestra un mensaje y ejecuta la acción del enemigo
-         yield return battleDialogBox.SetDialog("El enemigo ataca primero");
+         if (showFirstMessage)
+         {
+            yield return battleDialogBox.SetDialog("El enemigo ataca primero");
+         }
+
          yield return PerfomEnemyMovement();
       }
       else
       {
          PlayerActionSelection();
       }
-      
    }
 
+   
    /// <summary>
    /// Finaliza una batalla
    /// </summary>
@@ -252,6 +268,14 @@ public class BattleManager : MonoBehaviour
 
       //Transmite el evento de finalización de la batalla
       OnBattleFinish(playerHasWon);
+      
+      //Restablece los valores que correspondan en los pokemon del player que hayan intervenido en la batalla
+      playerParty.Pokemons.ForEach(pok => pok.OnBattleFinish());
+      /*Nota: La línea anterior equivale a la nomenclatura tradicional:
+      foreach (var pok in playerParty.Pokemons)
+      {
+         pok.OnBattleFinish();
+      } */
    }
    
    /// <summary>
@@ -533,38 +557,14 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogBox.SetDialog(String.Format("{0} ha usado {1}",
          attacker.Pokemon.Base.PokemonName, move.Base.AttackName));
 
-      //Reproduce la animación de ataque
-      attacker.PlayAttackAnimation();
-      //Reproduce el sonido de ataque
-      SoundManager.SharedInstance.PlaySound(attackClip);
+      //Reproduce las animaciones correspondientes
+      yield return RunMoveAnims(attacker, target);
 
-      //Hace una pausa para dejar que la animación termine
-      yield return new WaitForSeconds(1f);
-      
-      //Reproduce la animación de recibir daño por parte del enemigo
-      target.PlayReceiveAttackAnimation();
-      //Reproduce el sonido de recibir daño
-      SoundManager.SharedInstance.PlaySound(damageClip);
-      yield return new WaitForSeconds(1f);
-      
       //Si el ataque ejecutado es del tipo de los que modifican los estados (stats) con un boost
       if (move.Base.TypeOfMove == MoveType.Stats)
       {
-         if (move.Base.Effects.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
-         {
-            //Se recorre la lista de boost que puede provocar el ataque
-            foreach (var effect in move.Base.Effects.Boostings)
-            {
-               if (effect.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
-               {
-                  attacker.Pokemon.ApplyBoost(effect);
-               }
-               else //Si el boost afecta al pokemon que recibe el ataque
-               {
-                  target.Pokemon.ApplyBoost(effect);
-               }
-            }
-         }
+         //Aplica los cambios correspondientes sobre las stats
+         yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
       }
       else //Si el ataque es de otro tipo (físico o especial)
       {
@@ -587,6 +587,82 @@ public class BattleManager : MonoBehaviour
       }
    }
 
+
+   /// <summary>
+   /// Aplica los boosts correspondientes sobre las stats del pokemon atacanta o defensor, cuando el movimiento
+   /// ejecutado es de los que modifican estadísticas
+   /// </summary>
+   /// <param name="attacker">El pokemon que ejecuta el ataque o movimiento que afecta a estadisticas</param>
+   /// <param name="target">El pokemon que recibe el ataque o movimiento que afecta a estadísticas</param>
+   /// <param name="move">El ataque o movimiento que afecta a estadísticas</param>
+   /// <returns></returns>
+   private IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, Move move)
+   {
+      if (move.Base.Effects.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
+      {
+         //Se recorre la lista de boost que puede provocar el ataque
+         foreach (var effect in move.Base.Effects.Boostings)
+         {
+            if (effect.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
+            {
+               attacker.ApplyBoost(effect);
+            }
+            else //Si el boost afecta al pokemon que recibe el ataque
+            {
+               target.ApplyBoost(effect);
+            }
+         }
+            
+         //Muestra los mensajes informando de los aumentos o reducciones en las stats que se hayan producido
+         yield return ShowStatsMessages(attacker);
+         yield return ShowStatsMessages(target);
+      }
+   }
+
+
+   /// <summary>
+   /// Reproduce las animaciones de ejecutar/recibir un ataque durante la batalla
+   /// </summary>
+   /// <param name="attacker">Pokemon que ejecuta un ataque</param>
+   /// <param name="target">Pokemon que recibe un ataque</param>
+   /// <returns></returns>
+   private IEnumerator RunMoveAnims(BattleUnit attacker, BattleUnit target)
+   {
+      //Reproduce la animación de ataque
+      attacker.PlayAttackAnimation();
+      //Reproduce el sonido de ataque
+      SoundManager.SharedInstance.PlaySound(attackClip);
+
+      //Hace una pausa para dejar que la animación termine
+      yield return new WaitForSeconds(1f);
+      
+      //Reproduce la animación de recibir daño por parte del enemigo
+      target.PlayReceiveAttackAnimation();
+      //Reproduce el sonido de recibir daño
+      SoundManager.SharedInstance.PlaySound(damageClip);
+      yield return new WaitForSeconds(1f);
+   }
+
+
+   /// <summary>
+   /// Muestra en la UI de la batalla un mensaje mostrando los cambios que se hayan producido en las stats
+   /// de un pokemon a lo largo de la misma, como consecuencia de la ejecición de los diversos ataques
+   /// </summary>
+   /// <param name="pokemon">El pokemon del que mostrar las stats</param>
+   /// <returns></returns>
+   IEnumerator ShowStatsMessages(Pokemon pokemon)
+   {
+      //Se lee la cola de los mensajes a mostrar que tiene el pokemon, y mientras haya mensajes en la misma....
+      while (pokemon.StatusChangeMessages.Count > 0)
+      {
+         //Guarda el primer mensaje de la cola, sacándolo de la misma
+         string message = pokemon.StatusChangeMessages.Dequeue();
+         //Se muestra el mensaje
+         yield return battleDialogBox.SetDialog(message);
+      }
+   }
+   
+   
    /// <summary>
    /// Comprueba el resultado final de una batalla, dando la victoria al pokemon del player o al del enemigo
    /// </summary>
@@ -716,11 +792,23 @@ public class BattleManager : MonoBehaviour
    /// <returns></returns>
    private IEnumerator SwitchPokemon(Pokemon newPokemon)
    {
-      string switchMessage = String.Format("¡Vuelve, {0}!", playerUnit.Pokemon.Base.PokemonName);
-      //Este mensaje solo se mostrará si el pokemon actual todavía tiene vida:
-      if(playerUnit.Pokemon.Hp > 0)
-         yield return battleDialogBox.SetDialog(switchMessage);
+      //¿El pokemon que sale de la batalla ha sido vencido? (por defecto, sí)
+      bool currentPokemonFainted = true;
       
+      //Se comprueba si el pokemon de la batalla todavía no había sido vencido (aún tiene vida)
+      if (playerUnit.Pokemon.Hp > 0)
+      {
+         currentPokemonFainted = false;
+      }
+
+      string switchMessage;
+      //Nota: este mensaje solo se mostrará si el pokemon actual que va a salir de la batalla todavía tenía vida:
+      if (!currentPokemonFainted)
+      {
+         switchMessage = String.Format("¡Vuelve, {0}!", playerUnit.Pokemon.Base.PokemonName);
+         yield return battleDialogBox.SetDialog(switchMessage);
+      }
+
       //Reproduce la animación de retirada del pokemon actual
       playerUnit.PlayFaintAnimation();
 
@@ -737,8 +825,16 @@ public class BattleManager : MonoBehaviour
       switchMessage = String.Format("¡Adelante, {0}!", newPokemon.Base.PokemonName);
       yield return battleDialogBox.SetDialog(switchMessage);
       
-      //Y le tocará atacar al enemigo
-      StartCoroutine(PerfomEnemyMovement());
+      //Si el pokemon que sale de la batalla había sido vencido, se decide si al salir el nuevo
+      //le corresponde a él atacar primero, o si le corresponde al pokemon enemigo
+      if (currentPokemonFainted)
+      {
+         yield return ChooseFirstTurn();
+      }
+      else //Si el pokemon retirado aún tenía vida, siempre le tocará atacar al pokemon enemigo
+      {
+         yield return PerfomEnemyMovement();
+      }
    }
 
    /// <summary>
