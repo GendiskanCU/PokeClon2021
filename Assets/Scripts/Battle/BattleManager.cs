@@ -578,12 +578,25 @@ public class BattleManager : MonoBehaviour
 
          yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
       }
-
       
       if (target.Pokemon.Hp <= 0)//Si tras el ataque el pokemon atacado es debilitado
       {
          //Implementa las acciones que suceden cuando un pokemon es vencido
          yield return HandlePokemonFainted(target);
+      }
+
+      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él,
+      //tales como aplicar los efectos de estado alterado que pudiera haber sufrido
+      attacker.Pokemon.OnFinishTurn();
+      //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
+      yield return ShowStatsMessages(attacker.Pokemon);
+      //Y se actualiza la información de su vida en el HUD, si se ha visto modificada
+      yield return attacker.HUD.UpdatePokemonData(attacker.Pokemon.Hp);
+      //Si tras el turno el pokemon que ataca es debilitado como consecuencia de los estados alterados anteriores
+      if (attacker.Pokemon.Hp <= 0)
+      {
+         //Implementa las acciones que suceden cuando el pokemon atacante es vencido
+         yield return HandlePokemonFainted(attacker);
       }
    }
 
@@ -591,6 +604,7 @@ public class BattleManager : MonoBehaviour
    /// <summary>
    /// Aplica los boosts correspondientes sobre las stats del pokemon atacanta o defensor, cuando el movimiento
    /// ejecutado es de los que modifican estadísticas
+   /// También aplica un estado alterado sobre el pokemon si el movimiento ejecutado lo puede producir
    /// </summary>
    /// <param name="attacker">El pokemon que ejecuta el ataque o movimiento que afecta a estadisticas</param>
    /// <param name="target">El pokemon que recibe el ataque o movimiento que afecta a estadísticas</param>
@@ -598,25 +612,39 @@ public class BattleManager : MonoBehaviour
    /// <returns></returns>
    private IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, Move move)
    {
+      //Primero aplica los boosts en las stats
       if (move.Base.Effects.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
       {
          //Se recorre la lista de boost que puede provocar el ataque
-         foreach (var effect in move.Base.Effects.Boostings)
+         foreach (var boost in move.Base.Effects.Boostings)
          {
-            if (effect.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
+            if (boost.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
             {
-               attacker.ApplyBoost(effect);
+               attacker.ApplyBoost(boost);
             }
             else //Si el boost afecta al pokemon que recibe el ataque
             {
-               target.ApplyBoost(effect);
+               target.ApplyBoost(boost);
             }
          }
-            
-         //Muestra los mensajes informando de los aumentos o reducciones en las stats que se hayan producido
-         yield return ShowStatsMessages(attacker);
-         yield return ShowStatsMessages(target);
       }
+      
+      //Después aplica el estado alterado, si lo hubiera, sobre el pokemon que recibe el ataque
+      if (move.Base.Effects.Status != StatusConditionID.none)
+      {
+         if (move.Base.Target == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
+         {
+            target.SetConditionStatus(move.Base.Effects.Status);
+         }
+         else //Si el objetivo del ataque es el propio pokemon que ejecuta el ataque
+         {
+            attacker.SetConditionStatus(move.Base.Effects.Status);
+         }
+      }
+      
+      //Muestra los mensajes informando de los cambios en las stats y los estados alterados que se hayan producido
+      yield return ShowStatsMessages(attacker);
+      yield return ShowStatsMessages(target);
    }
 
 

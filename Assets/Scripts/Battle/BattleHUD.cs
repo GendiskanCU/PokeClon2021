@@ -78,17 +78,24 @@ public class BattleHUD : MonoBehaviour
     }
 
     /// <summary>
-    /// Actualiza el texto con la vida y la barra de vida del pokemon en el HUD
+    /// Actualiza el texto con la vida y la barra de vida del pokemon en el HUD, si la misma ha sido modificada
     /// </summary>
     public IEnumerator UpdatePokemonData(int oldHPValue)
     {
-        //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
-        //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
-        //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
-        StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
-        StartCoroutine( DecreaseHealthPointsText(oldHPValue));
-
-        yield return null;
+        if (_pokemon.HasHPChanged)
+        {
+            //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
+            //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
+            //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
+            StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
+            StartCoroutine(DecreaseHealthPointsText(oldHPValue));
+            
+            //Vuelve a resetear la booleana para que no se vuelva a ejecutar este código si la vida no se modifica
+            //otra vez
+            _pokemon.HasHPChanged = false;
+            
+            yield return null;
+        }
     }
 
     /// <summary>

@@ -42,6 +42,9 @@ public class Pokemon
     //de un pokemon que puedan ir sucediendo durante una batalla como consecuencia de la ejecución de ataques
     public Queue<string> StatusChangeMessages { get; private set; }
     
+    
+    //Para guardar el estado del pokemon (ninguno o alterado -envenenado, congelado, etc.)
+    public StatusCondition StatusCondition { get; set; }
 
     //Vida actual del pokemon
     private int _hp;
@@ -73,7 +76,9 @@ public class Pokemon
     //Vida máxima del pokemon
     public int MaxHP { get; private set; }
 
-
+    //Para poder saber si durante un turno de la batalla la vida del pokemon se ha visto reducida o aumentada
+    public bool HasHPChanged { get; set; } = false;
+    
     //Ataques o movimientos que tiene el Pokemon
     private List<Move> _moves;
     public List<Move> Moves
@@ -227,7 +232,7 @@ public class Pokemon
 
         if (value > 0) //Si el boost ha sido positivo (mejora la stat del pokemon)
         {
-            //Añadiremos un nuevo mensaje a la cola de strings informando del incremento
+            //Añade un nuevo mensaje a la cola de strings informando del incremento
             StatusChangeMessages.Enqueue($"{Base.PokemonName} ha incrementado su " +
                                          $"{stat}");
         }
@@ -293,18 +298,49 @@ public class Pokemon
         int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
 
         //Aplica el daño al pokemon
-        Hp -= totalDamage;
+        UpdateHP(totalDamage);
         
         //Comprueba el resultado y se marca si el pokemon ha sido vencido
         if (Hp <= 0)
         {
-            Hp = 0;
             damageDesc.Fainted = true;
         }
     
         //Devuelve el resultado describiendo el daño recibido
         return damageDesc;
     }
+
+
+    /// <summary>
+    /// Actualiza la vida de un pokemon tras sufrir daño durante la batalla
+    /// </summary>
+    /// <param name="damage">Cantidad de daño que sufre el pokemon</param>
+    public void UpdateHP(int damage)
+    {
+        //Indica que la vida ha sido modificada
+        HasHPChanged = true;
+        
+        //Aplica el daño al pokemon asegurando que la vida no baja de 0
+        Hp -= damage;
+
+        if (Hp <= 0)
+        {
+            Hp = 0;
+        }
+    }
+    
+    
+    /// <summary>
+    /// Aplica un estado alterado al pokemon
+    /// </summary>
+    /// <param name="id">La id del estado alterado a aplicar</param>
+    public void SetConditionStatus(StatusConditionID id)
+    {
+        StatusCondition = StatusConditionFactory.StatusConditions[id];
+        //Añade un nuevo mensaje a la cola de strings informando del cambio de estado del pokemon
+        StatusChangeMessages.Enqueue($"{Base.PokemonName} {StatusCondition.StartMessage}");
+    }
+    
 
     /// <summary>
     /// Devuelve un movimiento (ataque) aleatorio de entre los que el pokemon tiene disponibles en su lista
@@ -400,8 +436,22 @@ public class Pokemon
         //Vuelve a dejar los boost de las stats a cero
         ResetBoostings();
     }
+
+
+    /// <summary>
+    /// Realiza las acciones adicionales necesarias sobre un pokemon tras la finalización de cada turno, como
+    /// la activación de los efectos de estados alterados
+    /// </summary>
+    public void OnFinishTurn()
+    {
+        //Activa el evento OnFinishTurn de StatusCondition para que puedan aplicarse los efectos de estado alterado
+        //que el pokemon pueda haber sufrido en el turno tras el última ataque recibido
+        StatusCondition?.OnFinishTurn?.Invoke(this);
+    }
+    
     
 }
+
 
 
 //Estructura para describir las causas que provocan el daño (el tipo de ataque, si es crítico, y si provoca la derrota)
