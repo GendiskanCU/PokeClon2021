@@ -568,13 +568,12 @@ public class BattleManager : MonoBehaviour
       }
       else //Si el ataque es de otro tipo (físico o especial)
       {
-         //Guarda la vida del pokemon defensor antes de ser atacado
-         int oldHPValue = target.Pokemon.Hp;
+         
          //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
          DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
 
          //Actualiza la información del pokemon atacado en el HUD
-         yield return target.HUD.UpdatePokemonData(oldHPValue);
+         yield return target.HUD.UpdatePokemonData();
 
          yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
       }
@@ -591,7 +590,7 @@ public class BattleManager : MonoBehaviour
       //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
       yield return ShowStatsMessages(attacker.Pokemon);
       //Y se actualiza la información de su vida en el HUD, si se ha visto modificada
-      yield return attacker.HUD.UpdatePokemonData(attacker.Pokemon.Hp);
+      yield return attacker.HUD.UpdatePokemonData();
       //Si tras el turno el pokemon que ataca es debilitado como consecuencia de los estados alterados anteriores
       if (attacker.Pokemon.Hp <= 0)
       {
@@ -1118,7 +1117,8 @@ public class BattleManager : MonoBehaviour
             yield return new WaitForSeconds(2.5f);
             //Actualiza la información en el HUD
             playerUnit.HUD.SetLevelText();
-            yield return playerUnit.HUD.UpdatePokemonData(playerUnit.Pokemon.Hp);
+            playerUnit.Pokemon.HasHPChanged = true;//Marca que la vida del pokemon ha sido cambiada al subir de nivel
+            yield return playerUnit.HUD.UpdatePokemonData();
             yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.PokemonName} sube de nivel");
             
             //Se comprueba si el pokemon puede aprender un nuevo movimiento al nuevo nivel

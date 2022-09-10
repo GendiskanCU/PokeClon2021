@@ -12,29 +12,41 @@ public class HealthBarUI : MonoBehaviour
    [SerializeField] [Tooltip("Imagen de la barra de vida")]
    private GameObject healthBar;
 
+   [SerializeField] [Tooltip("Texto que contendrá la cantidad de vida actual del Pokemon")]
+   private Text currentHPText;
+
+   [SerializeField] [Tooltip("Texto que contendrá la cantidad de vida máxima del Pokemon")]
+   private Text maxHPText;
    
   
 
    /// <summary>
-   /// Actualiza la barra de vida a partir del valor normalizado (entre 0 y 1) de la misma
+   /// Actualiza el tamaño la barra de vida a partir de un valor normalizado (entre 0 y 1) de la misma
+   /// y también actualiza el texto con el valor de vida máxima del pokemon que hay en la barra de vida
    /// </summary>
    /// <param name="normalizedValue"Valor normalizado (entre 0f y 1f) de la vida></param>
-   public void SetHP(float normalizedValue)
+   public void SetHP(Pokemon pokemon)
    {
+      //Calcula el valor normalizado de la vida actual para aplicarlo a la escala de la barra de vida
+      float normalizedValue = (float) pokemon.Hp / pokemon.MaxHP;
+      
       //Modifica el tamaño de la barra de vida escalándola
       healthBar.transform.localScale = new Vector3(normalizedValue, 1, 1);
       
       //Cambia el color de la barra en función de su tamaño actual
       healthBar.GetComponent<Image>().color = ColorManager.SharedInstance.BarColor(normalizedValue);
+      
+      //Actualiza el texto que muestra la cantidad de vida máxima del pokemon
+      maxHPText.text = $"/{pokemon.MaxHP}";
    }
 
 
    /// <summary>
    /// Actualiza la barra de vida de forma progresiva a partir del valor normalizado de la misma
    /// </summary>
-   /// <param name="newHP">Cantidad de vida normalizada (entre 0f y 1f)</param>
+   /// <param name="pokemon">El pokemon del que hay que actualizar la barra de vida</param>
    /// <returns></returns>
-   public IEnumerator SetSmoothHP(float normalizedValue)
+   public IEnumerator SetSmoothHP(Pokemon pokemon)
    {
       /*//Alternativa sin utilizar la librería DG.Tweening:
       float currentScale = healthBar.transform.localScale.x;//Guarda el valor inicial
@@ -58,11 +70,22 @@ public class HealthBarUI : MonoBehaviour
 
       var sequence = DOTween.Sequence();
       
+      //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
+      //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
+      //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
+      float normalizedValue = (float) pokemon.Hp / pokemon.MaxHP;
+      
       sequence.Append( healthBar.transform.DOScaleX(normalizedValue, 1f));
       sequence.Join (healthBar.GetComponent<Image>().DOColor(
          ColorManager.SharedInstance.BarColor(normalizedValue), 1f));
+      //También habrá una animación que actualiza el texto con la cantidad de vida en la barra de vida
+      sequence.Join(currentHPText.DOCounter(pokemon.PreviousHPValue, pokemon.Hp, 1f));
+      maxHPText.text = $"/{pokemon.MaxHP}";
       yield return sequence.WaitForCompletion();
+
    }
+
+   
    
    
 }

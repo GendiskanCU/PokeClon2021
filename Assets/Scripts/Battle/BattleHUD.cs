@@ -16,8 +16,7 @@ public class BattleHUD : MonoBehaviour
     [SerializeField] [Tooltip("Texto que contendrá el nivel del Pokemon")]
     private Text pokemonLevel;
     
-    [SerializeField] [Tooltip("Texto que contendrá la cantidad de vida del Pokemon")]
-    private Text pokemonHealth;
+    
     
     [SerializeField] [Tooltip("Script que gestiona la barra de vida del Pokemon")]
     private HealthBarUI healthBar;
@@ -69,51 +68,33 @@ public class BattleHUD : MonoBehaviour
         SetLevelText();
         
         //Inicializa la barra de vida con la vida actual del pokemon del player
-        healthBar.SetHP((float) _pokemon.Hp / _pokemon.MaxHP);
+        healthBar.SetHP(_pokemon);
+        
         
         //Inicializa la barra de experiencia con la experiencia actual del pokemon del player
         SetExp();
         
-        StartCoroutine(UpdatePokemonData(_pokemon.Hp));
+        StartCoroutine(UpdatePokemonData());
     }
 
     /// <summary>
     /// Actualiza el texto con la vida y la barra de vida del pokemon en el HUD, si la misma ha sido modificada
     /// </summary>
-    public IEnumerator UpdatePokemonData(int oldHPValue)
+    /// <returns></returns>
+    public IEnumerator UpdatePokemonData()
     {
         if (_pokemon.HasHPChanged)
         {
-            //La vida hay que pasarla con un valor entre 0 y 1, por lo que se divide la actual entre la máxima
-            //Hay que forzar que el resultado dé un float para evitar que al dividir números enteros pueda ser siempre 0
-            //healthBar.SetHP((float)_pokemon.Hp / _pokemon.MaxHP);
-            StartCoroutine(healthBar.SetSmoothHP((float) _pokemon.Hp / _pokemon.MaxHP));
-            StartCoroutine(DecreaseHealthPointsText(oldHPValue));
+            
+            yield return healthBar.SetSmoothHP(_pokemon);
             
             //Vuelve a resetear la booleana para que no se vuelva a ejecutar este código si la vida no se modifica
             //otra vez
             _pokemon.HasHPChanged = false;
-            
-            yield return null;
         }
     }
 
-    /// <summary>
-    /// Actualiza progresivamente el texto de cantidad de vida del pokemon en la barra de la UI
-    /// </summary>
-    /// <param name="oldHP"></param>
-    /// <returns>Cantidad de vida que tenía el pokemon antes de recibir daño</returns>
-    private IEnumerator DecreaseHealthPointsText(int oldHP)
-    {
-        while (oldHP > _pokemon.Hp)
-        {
-            oldHP--;
-            pokemonHealth.text = String.Format("{0}/{1}",oldHP, _pokemon.MaxHP);
-            yield return new WaitForSeconds(0.1f);
-        }
-        
-        pokemonHealth.text = String.Format("{0}/{1}", _pokemon.Hp, _pokemon.MaxHP);
-    }
+    
 
 
     /// <summary>

@@ -79,6 +79,9 @@ public class Pokemon
     //Para poder saber si durante un turno de la batalla la vida del pokemon se ha visto reducida o aumentada
     public bool HasHPChanged { get; set; } = false;
     
+    //Para poder guardar la vida que tenía el pokemon antes de que la misma haya sido modificada
+    public int PreviousHPValue { get; set; }
+
     //Ataques o movimientos que tiene el Pokemon
     private List<Move> _moves;
     public List<Move> Moves
@@ -133,6 +136,11 @@ public class Pokemon
         
         //Inicializa la vida actual con la máxima calculada en función del nivel inicial
         _hp = MaxHP;
+        //Inicializa de las misma forma la vida que tenía el pokemon antes de alguna modificación
+        PreviousHPValue = MaxHP;
+        //Para forzar que al inicio de una batalla la barra de vida de la UI muestre bien los valores iniciales
+        HasHPChanged = true;
+        
     }
 
 
@@ -319,6 +327,9 @@ public class Pokemon
     {
         //Indica que la vida ha sido modificada
         HasHPChanged = true;
+        
+        //Guarda la vida que el pokemon tenía antes de ser modificada
+        PreviousHPValue = Hp;
         
         //Aplica el daño al pokemon asegurando que la vida no baja de 0
         Hp -= damage;

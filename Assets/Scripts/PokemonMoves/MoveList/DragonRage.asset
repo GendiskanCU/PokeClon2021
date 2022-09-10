@@ -18,6 +18,7 @@ MonoBehaviour:
   typeOfMove: 1
   effects:
     boostings: []
+    status: 0
   target: 1
   power: 40
   accuracy: 100
