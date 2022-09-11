@@ -550,6 +550,20 @@ public class BattleManager : MonoBehaviour
    /// <returns></returns>
    private IEnumerator RunMovement(BattleUnit attacker, BattleUnit target, Move move)
    {
+      //Al inicio del turno se comprueba si hay algún estado alterado que impida atacar al pokemon, como
+      //el de parálisis, dormido, etc.
+      bool canRunMovement = attacker.Pokemon.OnStartTurn();
+      if (!canRunMovement) //Si el pokemon atacante no puede atacar, sale sin hacer nada más que mostrar un mensaje
+      {
+         yield return ShowStatsMessages(attacker.Pokemon);
+         yield break;
+      }
+      
+      
+      //Asegura de que si queda algún mensaje en cola que se deba de mostrar, lo haga ahora
+      yield return ShowStatsMessages(attacker.Pokemon);
+      
+      
       //Reduce los puntos de poder disponibles del atacante para el movimiento que se va a ejecutar
       move.Pp--;
 

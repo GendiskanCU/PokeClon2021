@@ -45,6 +45,9 @@ public class Pokemon
     
     //Para guardar el estado del pokemon (ninguno o alterado -envenenado, congelado, etc.)
     public StatusCondition StatusCondition { get; set; }
+    
+    //Para guardar el número de turnos que alguno de los estados alterados, como el de dormido, van a durar
+    public int StatusNumTurns { get; set; }
 
     //Vida actual del pokemon
     private int _hp;
@@ -350,6 +353,11 @@ public class Pokemon
         StatusCondition = StatusConditionFactory.StatusConditions[id];
         //Añade un nuevo mensaje a la cola de strings informando del cambio de estado del pokemon
         StatusChangeMessages.Enqueue($"{Base.PokemonName} {StatusCondition.StartMessage}");
+        
+        //Invoca el evento que efectúa alguna acción adicional al aplicarse un estado alterado, siempre que en el
+        //estado alterado actual esté definido este evento (ver que se ponen los "?"). Esto ocurre, por ejemplo,
+        //en el estado "dormido", en el que al ser aplicado se debe establecer el número de turnos que va a durar
+        StatusCondition?.OnApplyStatusCondition?.Invoke(this);
     }
     
 
@@ -450,12 +458,40 @@ public class Pokemon
 
 
     /// <summary>
+    /// Implementa la "curación" del pokemon del efecto de algún estado alterado durante la batalla
+    /// </summary>
+    public void CureStatusCondition()
+    {
+        StatusCondition = null;
+    }
+
+
+    /// <summary>
+    /// Realiza las acciones adicionales necesarias sobre un pokemon al inicio de cada turno, como
+    /// la activación de los efectos de estados alterados de parálisis, dormido, etc.
+    /// </summary>
+    /// <returns>True si el pokemon puede atacar en este turno, false en caso contrario</returns>
+    public bool OnStartTurn()
+    {
+        //Activa el evento OnStartTurn para comprobar si el pokemon no puede atacar por estar afectado por un
+        //estado alterado de parálisis, dormido, etc.
+        if (StatusCondition?.OnStartTurn != null) //Si hay asignado un estado alterado que deba aplicarse al StartTurn
+        {
+            return StatusCondition.OnStartTurn(this);//Devolverá el booleano correspondiente
+        }
+
+        //Si no había ningún estado alterado que deba aplicarse al inicio del turno
+        return true;
+    }
+    
+    
+    /// <summary>
     /// Realiza las acciones adicionales necesarias sobre un pokemon tras la finalización de cada turno, como
-    /// la activación de los efectos de estados alterados
+    /// la activación de los efectos de estados alterados de envenenamiento, quemado, etc.
     /// </summary>
     public void OnFinishTurn()
     {
-        //Activa el evento OnFinishTurn de StatusCondition para que puedan aplicarse los efectos de estado alterado
+        //Invoca el evento OnFinishTurn de StatusCondition para que puedan aplicarse los efectos de estado alterado
         //que el pokemon pueda haber sufrido en el turno tras el última ataque recibido
         StatusCondition?.OnFinishTurn?.Invoke(this);
     }
