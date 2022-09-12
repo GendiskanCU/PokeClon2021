@@ -48,6 +48,9 @@ public class Pokemon
     
     //Para guardar el número de turnos que alguno de los estados alterados, como el de dormido, van a durar
     public int StatusNumTurns { get; set; }
+    
+    //Evento para que el pokemon indique que su condición de estado ha cambiado
+    public event Action OnStatusConditionChanged;
 
     //Vida actual del pokemon
     private int _hp;
@@ -139,7 +142,7 @@ public class Pokemon
         
         //Inicializa la vida actual con la máxima calculada en función del nivel inicial
         _hp = MaxHP;
-        //Inicializa de las misma forma la vida que tenía el pokemon antes de alguna modificación
+        //Inicializa de la misma forma la vida que tenía el pokemon antes de alguna modificación
         PreviousHPValue = MaxHP;
         //Para forzar que al inicio de una batalla la barra de vida de la UI muestre bien los valores iniciales
         HasHPChanged = true;
@@ -187,8 +190,8 @@ public class Pokemon
 
         //Se inicializa también la vida, si bien es una estadística que se debe tratar aparte, por lo que no
         //se encontrará en el diccionario de estadísticas del pokemon
-        //Se calcula con una fórmula similar, asegurando al menos 10 puntos de vida
-        MaxHP = Mathf.FloorToInt((_base.MaxHp * _level) / 20) + 10;
+        //Se calcula con una fórmula similar, sumándole al final el nivel actual del pokemon
+        MaxHP = Mathf.FloorToInt((_base.MaxHp * _level) / 20) + _level;
     }
 
 
@@ -350,6 +353,12 @@ public class Pokemon
     /// <param name="id">La id del estado alterado a aplicar</param>
     public void SetConditionStatus(StatusConditionID id)
     {
+        //A un pokemon solo puede afectarle un estado alterado. Si ya tiene uno aplicado, no puede aplicársele otro
+        if (StatusCondition != null)
+        {
+            return;
+        }
+        
         StatusCondition = StatusConditionFactory.StatusConditions[id];
         //Añade un nuevo mensaje a la cola de strings informando del cambio de estado del pokemon
         StatusChangeMessages.Enqueue($"{Base.PokemonName} {StatusCondition.StartMessage}");
@@ -358,6 +367,9 @@ public class Pokemon
         //estado alterado actual esté definido este evento (ver que se ponen los "?"). Esto ocurre, por ejemplo,
         //en el estado "dormido", en el que al ser aplicado se debe establecer el número de turnos que va a durar
         StatusCondition?.OnApplyStatusCondition?.Invoke(this);
+        
+        //Invoca el evento indicando que el estado ha sido modificado (este evento será recogido en BattleHUD)
+        OnStatusConditionChanged?.Invoke();
     }
     
 

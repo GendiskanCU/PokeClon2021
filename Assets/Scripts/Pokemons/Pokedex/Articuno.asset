@@ -30,6 +30,8 @@ MonoBehaviour:
     level: 4
   - _move: {fileID: 11400000, guid: d48111fad48328a4ebd68e53bac72f10, type: 2}
     level: 7
+  - _move: {fileID: 11400000, guid: d48111fad48328a4ebd68e53bac72f10, type: 2}
+    level: 7
   catchRate: 255
   experienceBase: 120
   pokemonGrowthRate: 2

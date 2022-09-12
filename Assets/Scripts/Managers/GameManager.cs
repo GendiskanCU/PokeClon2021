@@ -50,6 +50,9 @@ public class GameManager : MonoBehaviour
         battleManager.OnBattleFinish += FinishPokemonBattle;
         
         SoundManager.SharedInstance.PlayMusic(worldAudioClip);
+        
+        //Inicializa la factoría de estados alterados de los pokemon
+        StatusConditionFactory.InitFactory();
     }
 
     private void Update()

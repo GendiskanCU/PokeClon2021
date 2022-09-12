@@ -21,6 +21,9 @@ public class BattleHUD : MonoBehaviour
     [SerializeField] [Tooltip("Script que gestiona la barra de vida del Pokemon")]
     private HealthBarUI healthBar;
 
+    [SerializeField] [Tooltip("Recuadro de color que indica el estado alterado del pokemon, si lo hay")]
+    private GameObject statusBox;
+
     [SerializeField] [Tooltip("Barra indicadora de la experiencia actual del Pokemon")]
     private GameObject expBar;
 
@@ -73,6 +76,12 @@ public class BattleHUD : MonoBehaviour
         
         //Inicializa la barra de experiencia con la experiencia actual del pokemon del player
         SetExp();
+        
+        //Inicializa el recuadro indicador del estado alterado del pokemon
+        SetStatusConditionData();
+        
+        //Suscripción al evento que invocará el pokemon cuando su estado haya cambiado, para actualizar el recuadro
+        _pokemon.OnStatusConditionChanged += SetStatusConditionData;
         
         StartCoroutine(UpdatePokemonData());
     }
@@ -137,6 +146,22 @@ public class BattleHUD : MonoBehaviour
     {
         pokemonLevel.text = $"Lv {_pokemon.Level}";
     }
-    
+
+
+    private void SetStatusConditionData()
+    {
+        if (_pokemon.StatusCondition == null) //Si el pokemon no tiene activo ningún estado alterado
+        {
+            statusBox.SetActive(false);
+        }
+        else
+        {
+            //Cambia el color del recuadro indicador
+            statusBox.GetComponent<Image>().color = Color.magenta;
+            //Cambia el texto dentro del recuadro indicador
+            statusBox.GetComponentInChildren<Text>().text = _pokemon.StatusCondition.Id.ToString().ToUpper();
+            statusBox.SetActive(true);
+        }
+    }
     
 }

@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class StatusCondition
 {
+    //Id del estado alterado
+    public StatusConditionID Id { get; set; }
     //Nombre del estado alterado
     public string Name { get; set; }
     

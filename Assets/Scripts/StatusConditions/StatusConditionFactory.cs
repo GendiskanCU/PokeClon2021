@@ -18,6 +18,20 @@ public enum StatusConditionID
 
 public class StatusConditionFactory
 {
+    /// <summary>
+    /// Inicializa la factoría de StatusConditions
+    /// </summary>
+    public static void InitFactory()
+    {
+        //Recorre el diccionario y asigna al campo Id el valor de la clave correspondiente
+        foreach (var condition in StatusConditions)
+        {
+            var id = condition.Key;
+            var statusCondition = condition.Value;
+            statusCondition.Id = id;
+        }
+    }
+    
     //Diccionario que asocia cada identificador de los estados con la definición del estado de que se trata
     //Será accesible directamente desde otros scripts
     public static Dictionary<StatusConditionID, StatusCondition> StatusConditions { get; set; } =

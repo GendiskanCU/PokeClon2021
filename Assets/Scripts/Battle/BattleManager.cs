@@ -203,7 +203,7 @@ public class BattleManager : MonoBehaviour
       //Establece el estado inicial de la batalla
       state = BattleState.StartBattle;
       
-      //Configura el primer pokemon con vida de la party de pokemons del player
+      //Captura y configura el primer pokemon con vida de la party de pokemons del player
       playerUnit.SetupPokemon(playerParty.GetFirstNonFaintedPokemon());
       
       //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
