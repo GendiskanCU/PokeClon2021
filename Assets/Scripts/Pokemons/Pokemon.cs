@@ -475,6 +475,7 @@ public class Pokemon
     public void CureStatusCondition()
     {
         StatusCondition = null;
+        OnStatusConditionChanged?.Invoke();
     }
 
 

@@ -156,8 +156,9 @@ public class BattleHUD : MonoBehaviour
         }
         else
         {
-            //Cambia el color del recuadro indicador
-            statusBox.GetComponent<Image>().color = Color.magenta;
+            //Cambia el color del recuadro indicador conforme al estado alterado activo
+            statusBox.GetComponent<Image>().color =
+                ColorManager.StatusConditionColor.GetColorFromStatusCondition(_pokemon.StatusCondition.Id);
             //Cambia el texto dentro del recuadro indicador
             statusBox.GetComponentInChildren<Text>().text = _pokemon.StatusCondition.Id.ToString().ToUpper();
             statusBox.SetActive(true);

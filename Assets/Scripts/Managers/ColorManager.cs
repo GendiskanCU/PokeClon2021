@@ -28,7 +28,7 @@ public class ColorManager : MonoBehaviour
     /// <returns></returns>
     public Color BarColor (float finalScale)
     {
-        if (finalScale < 0.15f)
+        if (finalScale < 0.2f)
         {
             return new Color(195f / 255, 53f / 255, 23 / 255f);
         }
@@ -104,7 +104,33 @@ public class ColorManager : MonoBehaviour
             return colors[(int)type];
         }
     }
-    
+
+    /// <summary>
+    /// Clase interna con un diccionario que contendrá, para cada estado alterado que pueda afectar a un pokemon,
+    /// el color correspondiente que se mostrará en la UI de batalla para mostrar este hecho
+    /// </summary>
+    public class StatusConditionColor
+    {
+        private static Dictionary<StatusConditionID, Color> colors = new Dictionary<StatusConditionID, Color>()
+        {
+            {StatusConditionID.none, Color.white}, //Ninguno
+            {StatusConditionID.brn, new Color(223f / 255, 134f / 255, 67f / 255)}, //Quemado
+            {StatusConditionID.frz, new Color(168f / 255, 214f / 255, 215f / 255)}, //Congelado
+            {StatusConditionID.par, new Color(241f / 255, 208f / 255, 83f / 255)}, //Paralizado
+            {StatusConditionID.psn, new Color(147f / 255, 73f / 255, 156f / 255)}, //Envenenado
+            {StatusConditionID.slp, new Color(163f / 255, 147f / 255, 234f / 255)}  //Dormido
+        };
+
+        /// <summary>
+        /// Obtiene el color correspondiente a una Status Condition (estado alterado) de un pokemon
+        /// </summary>
+        /// <param name="id">La clave de la Status Condition</param>
+        /// <returns></returns>
+        public static Color GetColorFromStatusCondition(StatusConditionID id)
+        {
+            return colors[id];
+        }
+    }
     
 }
 
