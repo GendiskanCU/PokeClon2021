@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: PantallaHumo
   m_EditorClassIdentifier: 
-  attackName: PantallaHumo
+  attackName: Pantalla Humo
   description: "Crea una pantalla de humo reduciendo la precisi\xF3n del ataque del
     enemigo"
   type: 1
@@ -25,6 +25,8 @@ MonoBehaviour:
     - stat: 4
       boost: -1
       target: 1
+    status: 0
+    volatileStatus: 0
   target: 1
   power: 0
   accuracy: 100

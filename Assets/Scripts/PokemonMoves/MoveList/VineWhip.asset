@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: VineWhip
   m_EditorClassIdentifier: 
-  attackName: "L\xE1tigoCepa"
+  attackName: "L\xE1tigo Cepa"
   description: "Inflinge da\xF1o al enemigo"
   type: 5
   typeOfMove: 1
   effects:
     boostings: []
+    status: 0
+    volatileStatus: 0
   target: 1
   power: 45
   accuracy: 100

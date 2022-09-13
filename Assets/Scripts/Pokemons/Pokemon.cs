@@ -49,6 +49,14 @@ public class Pokemon
     //Para guardar el número de turnos que alguno de los estados alterados, como el de dormido, van a durar
     public int StatusNumTurns { get; set; }
     
+    
+    //Para guardar el estado de tipo volátil del pokemon 
+    public StatusCondition VolatileStatusCondition { get; set; }
+    
+    //Para guardar el número de turnos que alguno de los estados volátiles va a durar
+    public int VolatileStatusNumTurns { get; set; }
+    
+    
     //Evento para que el pokemon indique que su condición de estado ha cambiado
     public event Action OnStatusConditionChanged;
 
@@ -147,6 +155,9 @@ public class Pokemon
         //Para forzar que al inicio de una batalla la barra de vida de la UI muestre bien los valores iniciales
         HasHPChanged = true;
         
+        //Inicializa el estado alterado y volátil
+        StatusCondition = null;
+        VolatileStatusCondition = null;
     }
 
 
@@ -372,6 +383,30 @@ public class Pokemon
         OnStatusConditionChanged?.Invoke();
     }
     
+    
+    /// <summary>
+    /// Aplica un estado volátil al pokemon
+    /// </summary>
+    /// <param name="id">La id del estado volátil a aplicar</param>
+    public void SetVolatileConditionStatus(StatusConditionID id)
+    {
+        //A un pokemon solo puede afectarle un estado volátil. Si ya tiene uno aplicado, no puede aplicársele otro
+        if (VolatileStatusCondition != null)
+        {
+            return;
+        }
+        
+        VolatileStatusCondition = StatusConditionFactory.StatusConditions[id];
+        //Añade un nuevo mensaje a la cola de strings informando del cambio de estado del pokemon
+        StatusChangeMessages.Enqueue($"{Base.PokemonName} {VolatileStatusCondition.StartMessage}");
+        
+        //Invoca el evento que efectúa alguna acción adicional al aplicarse un estado volátil, siempre que en el
+        //estado volátil actual esté definido este evento (ver que se ponen los "?"). Esto ocurre, por ejemplo,
+        //en estados que al ser aplicados se establece el número de turnos que va a durar
+        VolatileStatusCondition?.OnApplyStatusCondition?.Invoke(this);
+    }
+    
+    
 
     /// <summary>
     /// Devuelve un movimiento (ataque) aleatorio de entre los que el pokemon tiene disponibles en su lista
@@ -466,6 +501,9 @@ public class Pokemon
     {
         //Vuelve a dejar los boost de las stats a cero
         ResetBoostings();
+        
+        //Si hay algún estado volátil activo, éste desaparece al terminar la batalla
+        VolatileStatusCondition = null;
     }
 
 
@@ -475,26 +513,51 @@ public class Pokemon
     public void CureStatusCondition()
     {
         StatusCondition = null;
+        //Invoca el evento que indica que el estado alterado del pokemon ha cambiado
         OnStatusConditionChanged?.Invoke();
+    }
+    
+    
+    /// <summary>
+    /// Implementa la "curación" del pokemon del efecto de algún estado volátil
+    /// </summary>
+    public void CureVolatileStatusCondition()
+    {
+        VolatileStatusCondition = null;
     }
 
 
     /// <summary>
     /// Realiza las acciones adicionales necesarias sobre un pokemon al inicio de cada turno, como
-    /// la activación de los efectos de estados alterados de parálisis, dormido, etc.
+    /// la activación de los efectos de estados alterados y/o volátiles
     /// </summary>
     /// <returns>True si el pokemon puede atacar en este turno, false en caso contrario</returns>
     public bool OnStartTurn()
     {
+        bool canPerformMovement = true;//Por defecto el pokemon podrá atacar
+        
         //Activa el evento OnStartTurn para comprobar si el pokemon no puede atacar por estar afectado por un
         //estado alterado de parálisis, dormido, etc.
         if (StatusCondition?.OnStartTurn != null) //Si hay asignado un estado alterado que deba aplicarse al StartTurn
         {
-            return StatusCondition.OnStartTurn(this);//Devolverá el booleano correspondiente
+            if (!StatusCondition.OnStartTurn(this))//Si el estado alterado no permite atacar al pokemon
+            {
+                canPerformMovement = false;
+            }
+        }
+        
+        //Activa el evento OnStartTurn para comprobar si el pokemon no puede atacar por estar afectado por un
+        //estado volátil.
+        if (VolatileStatusCondition?.OnStartTurn != null) //Si hay asignado un estado volátil
+        {
+            if (!VolatileStatusCondition.OnStartTurn(this))//Si el estado volátil no permite atacar al pokemon
+            {
+                canPerformMovement = false;
+            }
         }
 
-        //Si no había ningún estado alterado que deba aplicarse al inicio del turno
-        return true;
+        //Devuelve el resultado final tras las comprobaciones realizadas
+        return canPerformMovement;
     }
     
     
@@ -507,9 +570,11 @@ public class Pokemon
         //Invoca el evento OnFinishTurn de StatusCondition para que puedan aplicarse los efectos de estado alterado
         //que el pokemon pueda haber sufrido en el turno tras el última ataque recibido
         StatusCondition?.OnFinishTurn?.Invoke(this);
+        
+        //Invoca el evento OnFinishTurn de VolatileStatusCondition para que puedan aplicarse los efectos de estado
+        //volátil que pueda estar afectando al pokemon
+        VolatileStatusCondition?.OnFinishTurn?.Invoke(this);
     }
-    
-    
 }
 
 

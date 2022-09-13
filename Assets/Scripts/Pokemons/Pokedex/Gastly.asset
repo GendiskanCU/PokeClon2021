@@ -28,6 +28,8 @@ MonoBehaviour:
   _learnableMoves:
   - _move: {fileID: 11400000, guid: ad026c0812f10f44ca518f6932adafce, type: 2}
     level: 3
+  - _move: {fileID: 11400000, guid: 2b4e9015b91fe2a42b6f18023670b9e4, type: 2}
+    level: 4
   - _move: {fileID: 11400000, guid: 28931cc9b81d167428046e3f5ef3985c, type: 2}
     level: 5
   catchRate: 255

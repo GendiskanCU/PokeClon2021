@@ -553,9 +553,14 @@ public class BattleManager : MonoBehaviour
       //Al inicio del turno se comprueba si hay algún estado alterado que impida atacar al pokemon, como
       //el de parálisis, dormido, etc.
       bool canRunMovement = attacker.Pokemon.OnStartTurn();
-      if (!canRunMovement) //Si el pokemon atacante no puede atacar, sale sin hacer nada más que mostrar un mensaje
+      if (!canRunMovement) //Si el pokemon atacante no puede atacar
       {
+         //Hace una actualización de su barra de vida, porque es posible que no pueda atacar por estar afectado
+         //por un efecto de estado volátil o alterado que provoca que se haga daño a sí mismo
+         yield return attacker.HUD.UpdatePokemonData();
+         //Muestra los mensajes correspondientes
          yield return ShowStatsMessages(attacker.Pokemon);
+         //Sale sin hacer nada más
          yield break;
       }
       
@@ -655,7 +660,21 @@ public class BattleManager : MonoBehaviour
          }
       }
       
-      //Muestra los mensajes informando de los cambios en las stats y los estados alterados que se hayan producido
+      //También aplica el estado volátil, si lo hubiera, sobre el pokemon que recibe el ataque
+      if (move.Base.Effects.VolatileStatus != StatusConditionID.none)
+      {
+         if (move.Base.Target == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
+         {
+            target.SetVolatileConditionStatus(move.Base.Effects.VolatileStatus);
+         }
+         else //Si el objetivo del ataque es el propio pokemon que ejecuta el ataque
+         {
+            attacker.SetVolatileConditionStatus(move.Base.Effects.VolatileStatus);
+         }
+      }
+      
+      
+      //Muestra los mensajes informando de los cambios en las stats y los estados que se hayan producido
       yield return ShowStatsMessages(attacker);
       yield return ShowStatsMessages(target);
    }

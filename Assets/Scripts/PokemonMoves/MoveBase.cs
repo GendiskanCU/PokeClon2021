@@ -78,7 +78,8 @@ public class MoveBase : ScriptableObject
 
 
 //Clase para definir las estadísticas que podrían sufrir un boost de mejora o empeoramiento al ejecutarse un ataque
-//Y también si puede provocar un estado alterado (envenenado, congelado, etc.) sobre el pokemon que recibe el ataque
+//Y también si puede provocar un estado alterado (envenenado, congelado, etc.) o un estado volátil
+//sobre el pokemon que recibe el ataque
 [Serializable]
 public class MoveStatEffect
 {
@@ -87,9 +88,13 @@ public class MoveStatEffect
     public List<StatBoosting> Boostings => boostings;
 
     
-    [SerializeField] [Tooltip("Estado alterado que provoca el ataque sobre el pokemon objetivo")]
+    [SerializeField] [Tooltip("Estado alterado que provoca el ataque sobre el pokemon objetivo, si lo hay")]
     private StatusConditionID status;
     public StatusConditionID Status => status;
+    
+    [SerializeField] [Tooltip("Estado volátil que provoca el ataque sobre el pokemon objetivo, si lo hay")]
+    private StatusConditionID volatileStatus;
+    public StatusConditionID VolatileStatus => volatileStatus;
 }
 
 

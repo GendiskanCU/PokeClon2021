@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
   m_Name: BlazeKick
   m_EditorClassIdentifier: 
-  attackName: "Patada\xCDgnea"
+  attackName: "Patada \xCDgnea"
   description: "Patada \xEDgnea. Provoca el estado alterado \"quemado\""
   type: 2
   typeOfMove: 2
   effects:
     boostings: []
     status: 1
+    volatileStatus: 0
   target: 1
   power: 85
   accuracy: 90

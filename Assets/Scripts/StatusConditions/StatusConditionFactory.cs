@@ -2,24 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//GESTIONA LOS ESTADOS ALTERADOS QUE PUEDEN AFECTAR A UN POKEMON DURANTE LA BATALLA
+//GESTIONA LOS ESTADOS ALTERADOS O VOLÁTILES QUE PUEDEN AFECTAR A UN POKEMON DURANTE LA BATALLA
 
 
 //Identificador de los diversos estados
 public enum StatusConditionID
 {
     none, //Ninguno
-    brn, //Quemado
-    frz, //Congelado
-    par, //Paralizado
-    psn, //Envenenado
-    slp //Dormido
+    brn, //Quemado (estado alterado)
+    frz, //Congelado (estado alterado)
+    par, //Paralizado (estado alterado)
+    psn, //Envenenado (estado alterado)
+    slp, //Dormido (estado alterado)
+    
+    cnf //Confundido (estado volátil)
 }
 
 public class StatusConditionFactory
 {
     /// <summary>
-    /// Inicializa la factoría de StatusConditions
+    /// Inicializa la factoría de StatusConditions, creando los diversos estados que pueden afectar a un pokemon
     /// </summary>
     public static void InitFactory()
     {
@@ -126,7 +128,66 @@ public class StatusConditionFactory
                         return false;
                     }
                 }
+            },
+            //Estados volátiles:
+            { //Estado confundido
+                StatusConditionID.cnf,
+                new StatusCondition()
+                {
+                    Name = "Confusión",
+                    Description = "Hace que el pokemon esté confundido y pueda atarcarse a sí mismo",
+                    StartMessage = "ha sido confundido",
+                    //Código (Método) que se ejecutará al activarse el evento OnApplyStatusCondition del StatusCondition
+                    //lo cual se hará cuando el estado sea aplicado desde RunMovement  en el BattleManager
+                    OnApplyStatusCondition = (Pokemon pokemon) =>
+                    {
+                        //Establece aleatoriamente, entre 1 y 5, el número de turnos que durará el estado confusión
+                        pokemon.VolatileStatusNumTurns = Random.Range(1, 6);
+                        Debug.Log($"El pokemon estará confundido {pokemon.VolatileStatusNumTurns} turnos");
+                    },
+                    //Código que se ejecutará al activarse el evento OnStartTurn del StatusCondition
+                    OnStartTurn = (Pokemon pokemon) =>
+                    {
+                        if (pokemon.VolatileStatusNumTurns <= 0) //Si ya se han terminado los turnos
+                        {
+                            //Cura al pokemon del estado volátil
+                            pokemon.CureVolatileStatusCondition();
+                            //Añade un nuevo mensaje a la cola de strings del pokemon que se mostrarán en la UI 
+                            pokemon.StatusChangeMessages.
+                                Enqueue($"¡{pokemon.Base.PokemonName} ya no está confundido!");
+                            //El pokemon podrá atacar
+                            return true;
+                        }
+                      
+                        //Si el pokemon todavía está confundido
+                        //Descuenta el número de turnos que el pokemon permanecerá confundido
+                        pokemon.VolatileStatusNumTurns--;
+                        //Añade un nuevo mensaje a la cola de strings del pokemon que se mostrarán en la UI 
+                        pokemon.StatusChangeMessages.Enqueue($"{pokemon.Base.PokemonName} sigue confundido");
+                        
+                        //Calcula si el estado confundido provoca que el pokemon se ataque a sí mismo (50% probabilidad)
+                        if (Random.Range(0, 2) == 0)
+                        {
+                            //El pokemon podrá atacar
+                            return true;
+                        }
+                        else
+                        {
+                            //El pokemon se dañará a sí mismo debido al efecto de la confusión. Se utiliza una fórmula
+                            //fija, que depende de la vida máxima del pokemon.
+                            pokemon.UpdateHP(pokemon.MaxHP / 6 );
+                            
+                            //Añade un nuevo mensaje a la cola de strings del pokemon que se mostrarán en la UI 
+                            pokemon.StatusChangeMessages.Enqueue("¡Tan confuso que se hiere a sí mismo!");
+                            
+                            //Y no puede atacar
+                            return false;
+                            
+                        }
+                    }
+                }
             }
+            
         };
 
 
