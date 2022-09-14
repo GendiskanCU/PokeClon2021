@@ -620,6 +620,63 @@ public class BattleManager : MonoBehaviour
 
 
    /// <summary>
+   /// Calcula si un movimiento tendrá éxito, en función de la probabilidad dada por la tasa de acierto del mismo
+   /// y teniendo en cuenta además las propias tasas de acierto y evasión del pokemon atacante y el objetivo
+   /// </summary>
+   /// <param name="move">Movimiento o ataque que ejecuta el pokemon atacante</param>
+   /// <param name="attacker">Pokemon atacante</param>
+   /// <param name="target">Pokemom objetivo del ataque</param>
+   /// <returns>True si el movimiento tiene éxito, False si el movimiento falla</returns>
+   private bool MoveHits(Move move, Pokemon attacker, Pokemon target)
+   {
+      //Si el ataque es de los que siempre acertarán, sin verse afectado por tasas de acierto ni evasión
+      if (move.Base.AlwaysHit)
+      {
+         return true;
+      }
+      
+      //Si el ataque puede verse afectado por las tasas de acierto/evasión:
+      
+      //Cálculo de la tasa de acierto en función de la tasa de acierto del ataque ejecutado:
+      float moveAcc = move.Base.Accuracy;//Tasa de acierto del movimiento
+
+      //La tasa de acierto calculada podrá ser mejorada o empeorada por las estadísticas propias, de acierto y
+      //evasión, del pokemon que ejecuta el ataque y el pokemon que lo recibe
+      float accuracy = attacker.StatsBoosted[Stat.Accuracy];
+      float evasion = target.StatsBoosted[Stat.Evasion];
+      
+      //Se calculan los multiplicadores de mejora de la tasa de acierto, según la fórmula extraída de la bulbapedia:
+      float multiplierAccuracy =  1 + Mathf.Abs(accuracy) / 3.0f;
+      float multiplierEvasion =  1 + Mathf.Abs(evasion) / 3.0f;
+      
+      //Se aplican los multiplicadores, teniendo en cuenta si son positivos o negativos y con efecto contrario si
+      //es el de acierto del atacante o el de la evasión del objetivo
+      if (accuracy > 0)
+      {
+         moveAcc *= multiplierAccuracy;
+      }
+      else
+      {
+         moveAcc /= multiplierAccuracy;
+      }
+
+      if (evasion > 0)
+      {
+         moveAcc /= multiplierEvasion;
+      }
+      else
+      {
+         moveAcc *= multiplierEvasion;
+      }
+      
+      //Se calcula aleatoriamente si el ataque tendrá éxito en función de la tasa de acierto calculada
+      float rnd = Random.Range(0, 100);
+      
+      return rnd < moveAcc;//Devuelve el resultado final
+   }
+   
+   
+   /// <summary>
    /// Aplica los boosts correspondientes sobre las stats del pokemon atacanta o defensor, cuando el movimiento
    /// ejecutado es de los que modifican estadísticas
    /// También aplica un estado alterado sobre el pokemon si el movimiento ejecutado lo puede producir

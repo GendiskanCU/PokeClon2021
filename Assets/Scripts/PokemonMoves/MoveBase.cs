@@ -53,9 +53,13 @@ public class MoveBase : ScriptableObject
     private int power;
     public int Power => power;
 
-    [SerializeField] [Tooltip("Precisión del ataque")]
+    [SerializeField] [Tooltip("Precisión del ataque (tasa de acierto)")][Range(0, 100)]
     private int accuracy;
     public int Accuracy => accuracy;
+    
+    [SerializeField] [Tooltip("¿El ataque siempre acierta? (no se verá afectado por tasa de acierto o evasión")]
+    private bool alwaysHit;
+    public bool AlwaysHit => alwaysHit;
 
     [SerializeField] [Tooltip("Número de puntos de poder (veces que puede ser utilizado antes de recargar) del ataque")]
     private int pp;

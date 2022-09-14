@@ -173,7 +173,9 @@ public class Pokemon
             {Stat.Defense, 0},
             {Stat.SpAttack, 0},
             {Stat.spDefense, 0},
-            {Stat.Speed, 0}
+            {Stat.Speed, 0},
+            {Stat.Accuracy, 0},
+            {Stat.Evasion, 0}
         };
 
         StatusChangeMessages = new Queue<string>();

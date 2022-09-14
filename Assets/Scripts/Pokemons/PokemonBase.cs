@@ -45,7 +45,9 @@ public enum Stat
     Defense,
     SpAttack,
     spDefense,
-    Speed
+    Speed,
+    Accuracy, //Tasa de acierto del ataque que ejecute el pokemon (no es estadística permanente como las anteriores)
+    Evasion  //Capacidad del pokemon de esquivar un ataque recibido (no es estadística permanente como las anteriores)
 }
 
 //Matriz de tipos. Para establecer el daño que cada tipo de ataque hace a cada tipo de defensa
