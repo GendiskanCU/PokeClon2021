@@ -49,6 +49,11 @@ public class MoveBase : ScriptableObject
     private MoveTarget target;
     public MoveTarget Target => target;
 
+    [SerializeField] [Tooltip("Lista de efectos secundarios adicionales que el ataque puede provocar")]
+    private List<SecondaryMoveStatEffect> secondaryEffects;
+    public List<SecondaryMoveStatEffect> SecondaryEffects => secondaryEffects;
+
+    
     [SerializeField] [Tooltip("Poder del ataque")]
     private int power;
     public int Power => power;
@@ -96,9 +101,27 @@ public class MoveStatEffect
     private StatusConditionID status;
     public StatusConditionID Status => status;
     
+    
     [SerializeField] [Tooltip("Estado volátil que provoca el ataque sobre el pokemon objetivo, si lo hay")]
     private StatusConditionID volatileStatus;
     public StatusConditionID VolatileStatus => volatileStatus;
+}
+
+
+/// <summary>
+/// Clase para definir los posibles efectos secundarios que un movimiento o ataque puede ocasionar. Serán también
+/// estados alterados, pero los definimos aparte de estos porque estos efectos secundarios no se producirán siempre,
+/// sino que tendrán una probabilidad de que sucedan. Por ello, heredará de la clase MoveStatEffect
+/// </summary>
+[Serializable] public class SecondaryMoveStatEffect : MoveStatEffect
+{
+    [SerializeField] [Tooltip("Probabilidad de que el ataque provoque efecto secundario")]
+    [Range(0, 100)] private int chance;
+    public int Chance => chance;
+
+    [SerializeField] [Tooltip("Pokemon que sufrirá el efecto secundario")]
+    private MoveTarget target;
+    public MoveTarget Target => target;
 }
 
 

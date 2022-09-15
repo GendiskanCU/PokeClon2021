@@ -22,12 +22,18 @@ MonoBehaviour:
     - stat: 5
       boost: -1
       target: 1
+    status: 0
+    volatileStatus: 0
+  target: 1
+  secondaryEffects:
+  - boostings:
     - stat: 5
       boost: -1
       target: 0
     status: 0
     volatileStatus: 0
-  target: 1
+    chance: 33
+    target: 0
   power: 0
   accuracy: 100
   alwaysHit: 1

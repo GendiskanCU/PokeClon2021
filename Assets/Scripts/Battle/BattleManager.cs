@@ -587,12 +587,12 @@ public class BattleManager : MonoBehaviour
          if (move.Base.TypeOfMove == MoveType.Stats)
          {
             //Aplica los cambios correspondientes sobre las stats
-            yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
+            yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move.Base.Effects, move.Base.Target);
          }
          else //Si el ataque es de otro tipo (físico o especial)
          {
 
-            //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
+            //Daña al pokemon enemigo y se obtiene el resultado
             DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
 
             //Actualiza la información del pokemon atacado en el HUD
@@ -600,6 +600,28 @@ public class BattleManager : MonoBehaviour
 
             yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
          }
+         
+         //Tras el ataque también se comprueba si el mismo puede ocasionar algún efecto secundario adicional
+         if (move.Base.SecondaryEffects != null && move.Base.SecondaryEffects.Count > 0)
+         {
+            //Se recorre la lista de efectos secundarios
+            foreach (var sec in move.Base.SecondaryEffects)
+            {
+               //Si el efecto afecta al pokemon enemigo, y a éste todavía le queda vida, o bien el efecto afecta
+               //al pokemon atacante y éste tiene vida todavía, se aplicaría, o no, el efecto, una vez calculada
+               //aleatoriamente la concurrencia en función de la probabilidad definida para el mismo
+               if ((sec.Target == MoveTarget.Other && target.Pokemon.Hp > 0) || 
+                   (sec.Target == MoveTarget.Self && attacker.Pokemon.Hp > 0))
+               {
+                  int rnd = Random.Range(0, 100);
+                  if (rnd < sec.Chance)
+                  {
+                     yield return RunMoveStats(attacker.Pokemon, target.Pokemon, sec, sec.Target);
+                  }
+               }
+            }
+         }
+         
 
          if (target.Pokemon.Hp <= 0) //Si tras el ataque el pokemon atacado es debilitado
          {
@@ -694,15 +716,17 @@ public class BattleManager : MonoBehaviour
    /// </summary>
    /// <param name="attacker">El pokemon que ejecuta el ataque o movimiento que afecta a estadisticas</param>
    /// <param name="target">El pokemon que recibe el ataque o movimiento que afecta a estadísticas</param>
-   /// <param name="move">El ataque o movimiento que afecta a estadísticas</param>
+   /// <param name="move">Efecto alterado, volátil o secundario queu se va a aplicar</param>
+   /// /// <param name="targetEffect">Pokemon sobre el que se aplica el efecto</param>
    /// <returns></returns>
-   private IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, Move move)
+   private IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, MoveStatEffect effect,
+      MoveTarget targetEffect)
    {
       //Primero aplica los boosts en las stats
-      if (move.Base.Effects.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
+      if (effect.Boostings != null)//Siempre y cuando en el ataque estén definidos los boosts
       {
          //Se recorre la lista de boost que puede provocar el ataque
-         foreach (var boost in move.Base.Effects.Boostings)
+         foreach (var boost in effect.Boostings)
          {
             if (boost.target == MoveTarget.Self)//Si el boost afecta al propio pokemon que realiza el ataque
             {
@@ -716,28 +740,28 @@ public class BattleManager : MonoBehaviour
       }
       
       //Después aplica el estado alterado, si lo hubiera, sobre el pokemon que recibe el ataque
-      if (move.Base.Effects.Status != StatusConditionID.none)
+      if (effect.Status != StatusConditionID.none)
       {
-         if (move.Base.Target == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
+         if (targetEffect == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
          {
-            target.SetConditionStatus(move.Base.Effects.Status);
+            target.SetConditionStatus(effect.Status);
          }
          else //Si el objetivo del ataque es el propio pokemon que ejecuta el ataque
          {
-            attacker.SetConditionStatus(move.Base.Effects.Status);
+            attacker.SetConditionStatus(effect.Status);
          }
       }
       
       //También aplica el estado volátil, si lo hubiera, sobre el pokemon que recibe el ataque
-      if (move.Base.Effects.VolatileStatus != StatusConditionID.none)
+      if (effect.VolatileStatus != StatusConditionID.none)
       {
-         if (move.Base.Target == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
+         if (targetEffect == MoveTarget.Other)//Si el objetivo del ataque es el otro pokemon
          {
-            target.SetVolatileConditionStatus(move.Base.Effects.VolatileStatus);
+            target.SetVolatileConditionStatus(effect.VolatileStatus);
          }
          else //Si el objetivo del ataque es el propio pokemon que ejecuta el ataque
          {
-            attacker.SetVolatileConditionStatus(move.Base.Effects.VolatileStatus);
+            attacker.SetVolatileConditionStatus(effect.VolatileStatus);
          }
       }
       

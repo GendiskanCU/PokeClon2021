@@ -18,7 +18,16 @@ MonoBehaviour:
   typeOfMove: 1
   effects:
     boostings: []
+    status: 0
+    volatileStatus: 0
   target: 1
+  secondaryEffects:
+  - boostings: []
+    status: 1
+    volatileStatus: 0
+    chance: 20
+    target: 1
   power: 40
   accuracy: 100
+  alwaysHit: 0
   pp: 25
