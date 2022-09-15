@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c327b74115b2c3a469d38941afa8c589, type: 3}
+  m_Name: SandStorm
+  m_EditorClassIdentifier: 
+  attackName: Tormenta Arena
+  description: "Disminuye la visibilidad reduciendo la precisi\xF3n de ataque tanto
+    del pokemon enemigo como de s\xED mismo"
+  type: 1
+  typeOfMove: 2
+  effects:
+    boostings:
+    - stat: 5
+      boost: -1
+      target: 1
+    - stat: 5
+      boost: -1
+      target: 0
+    status: 0
+    volatileStatus: 0
+  target: 1
+  power: 0
+  accuracy: 100
+  alwaysHit: 1
+  pp: 10

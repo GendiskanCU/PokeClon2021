@@ -576,34 +576,44 @@ public class BattleManager : MonoBehaviour
       yield return battleDialogBox.SetDialog(String.Format("{0} ha usado {1}",
          attacker.Pokemon.Base.PokemonName, move.Base.AttackName));
 
-      //Reproduce las animaciones correspondientes
-      yield return RunMoveAnims(attacker, target);
-
-      //Si el ataque ejecutado es del tipo de los que modifican los estados (stats) con un boost
-      if (move.Base.TypeOfMove == MoveType.Stats)
+      //Se comprueba si el ataque tiene éxito, y en caso afirmativo se aplica la lógica de los efectos del mismo
+      if (MoveHits(move, attacker.Pokemon, target.Pokemon))
       {
-         //Aplica los cambios correspondientes sobre las stats
-         yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
+
+         //Reproduce las animaciones correspondientes
+         yield return RunMoveAnims(attacker, target);
+
+         //Si el ataque ejecutado es del tipo de los que modifican los estados (stats) con un boost
+         if (move.Base.TypeOfMove == MoveType.Stats)
+         {
+            //Aplica los cambios correspondientes sobre las stats
+            yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
+         }
+         else //Si el ataque es de otro tipo (físico o especial)
+         {
+
+            //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
+            DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
+
+            //Actualiza la información del pokemon atacado en el HUD
+            yield return target.HUD.UpdatePokemonData();
+
+            yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
+         }
+
+         if (target.Pokemon.Hp <= 0) //Si tras el ataque el pokemon atacado es debilitado
+         {
+            //Implementa las acciones que suceden cuando un pokemon es vencido
+            yield return HandlePokemonFainted(target);
+         }
       }
-      else //Si el ataque es de otro tipo (físico o especial)
+      else//Si el ataque no ha tenido éxito se muestra el mensaje informativo
       {
-         
-         //Daña al pokemon enemigo y se obtiene el resultado y si ha sido vencido
-         DamageDescription damageDesc = target.Pokemon.ReceiveDamage(move, attacker.Pokemon);
-
-         //Actualiza la información del pokemon atacado en el HUD
-         yield return target.HUD.UpdatePokemonData();
-
-         yield return ShowDamageDescription(damageDesc); //Muestra información adicional en el HUD
+         yield return battleDialogBox.SetDialog($"El ataque de {attacker.Pokemon.Base.PokemonName} ha fallado");
       }
+
       
-      if (target.Pokemon.Hp <= 0)//Si tras el ataque el pokemon atacado es debilitado
-      {
-         //Implementa las acciones que suceden cuando un pokemon es vencido
-         yield return HandlePokemonFainted(target);
-      }
-
-      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él,
+      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él mismo,
       //tales como aplicar los efectos de estado alterado que pudiera haber sufrido
       attacker.Pokemon.OnFinishTurn();
       //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
@@ -640,10 +650,11 @@ public class BattleManager : MonoBehaviour
       //Cálculo de la tasa de acierto en función de la tasa de acierto del ataque ejecutado:
       float moveAcc = move.Base.Accuracy;//Tasa de acierto del movimiento
 
-      //La tasa de acierto calculada podrá ser mejorada o empeorada por las estadísticas propias, de acierto y
-      //evasión, del pokemon que ejecuta el ataque y el pokemon que lo recibe
+      //La tasa de acierto calculada podrá ser mejorada o empeorada por el boost de las estadísticas propias de acierto
+      //y evasión tanto del propio pokemon que ejecuta el ataque como del que lo recibe
       float accuracy = attacker.StatsBoosted[Stat.Accuracy];
       float evasion = target.StatsBoosted[Stat.Evasion];
+      
       
       //Se calculan los multiplicadores de mejora de la tasa de acierto, según la fórmula extraída de la bulbapedia:
       float multiplierAccuracy =  1 + Mathf.Abs(accuracy) / 3.0f;
