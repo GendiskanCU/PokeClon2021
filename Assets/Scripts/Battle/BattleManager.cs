@@ -35,6 +35,15 @@ public enum BattleType
    Leader
 }
 
+//Acciones que se pueden llevar a cabo durante una batalla
+public enum BattleAction
+{
+   Move, //Elegir movimiento
+   SwitchPokemon,  //Cambiar de pokemon
+   UseItem, //Usar un item
+   Run  //Ejecutar un movimiento
+}
+
 public class BattleManager : MonoBehaviour
 {
    [SerializeField] [Tooltip("Battle Unit / Unidad (pokemon) del player que participa en la batalla")]
@@ -174,10 +183,6 @@ public class BattleManager : MonoBehaviour
       {
          HandlePlayerPartySelection();
       }
-      else if (state == BattleState.LoseTurn)//Estado: el player ha perdido su turno, es turno del enemigo
-      {
-         StartCoroutine(PerfomEnemyMovement());
-      }
       else if (state == BattleState.ForgetMovement)//Estado: hay que elegir un movimiento a olvidar
       {
          //Abre la pantalla de selección, actuando en función del valor devuelto por el evento correspondiente
@@ -218,42 +223,12 @@ public class BattleManager : MonoBehaviour
       //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
       yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
-
-      //Inicia el ataque del player o del enemigo, dependiendo de a cuál le toque el primer turno 
-      yield return ChooseFirstTurn(true);
+      
+      //El player selecciona la acción a realizar
+      HandlePlayerActionSelection();
    }
 
 
-   /// <summary>
-   /// Decide cuál de los Pokemon de la batalla comenzará atacando primero, comparando la velocidad de ambos
-   /// </summary>
-   /// <param name="showFirstMessage">Indica si se debe mostrar el mensaje inicial de la batalla</param>
-   /// <returns></returns>
-   private IEnumerator ChooseFirstTurn(bool showFirstMessage = false)
-   {
-      //Se comparan las velocidades de ambos contendientes
-      //(enemyUnit, playerUnit) para decidir quién atacará primero
-      if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
-      {
-         //Activa/desactiva los paneles correspondientes
-         battleDialogBox.ToggleDialogText(true);
-         battleDialogBox.ToggleActions(false);
-         battleDialogBox.ToggleMovements(false);
-         //Muestra un mensaje y ejecuta la acción del enemigo
-         if (showFirstMessage)
-         {
-            yield return battleDialogBox.SetDialog("El enemigo ataca primero");
-         }
-
-         yield return PerfomEnemyMovement();
-      }
-      else
-      {
-         PlayerActionSelection();
-      }
-   }
-
-   
    /// <summary>
    /// Finaliza una batalla
    /// </summary>
@@ -464,7 +439,7 @@ public class BattleManager : MonoBehaviour
          battleDialogBox.SelectMovement(currentSelectedMovement,
             playerUnit.Pokemon.Moves[currentSelectedMovement]);
       }
-      //Si se pulsa el botón de acción, se ejecutará el ataque seleccionado por el player
+      //Si se pulsa el botón de acción, comenzará el turno de ataques con el movimiento seleccionado por el player
       if (Input.GetAxisRaw("Submit") != 0)
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
@@ -474,7 +449,8 @@ public class BattleManager : MonoBehaviour
          //Muestra el diálogo
          battleDialogBox.ToggleDialogText(true);
 
-         StartCoroutine(PerformPlayerMovement());
+         //Comienza el siguiente turno
+         StartCoroutine(RunTurns(BattleAction.Move));
       }
       
       //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
@@ -485,62 +461,76 @@ public class BattleManager : MonoBehaviour
    }
 
    /// <summary>
-   /// Ejecuta el ataque seleccionado por el player mostrando los mensajes poco a poco
+   /// Ejecuta las acciones del turno actual, tanto del player o del enemigo
    /// </summary>
+   /// <param name="playerAction">Acción que ha elegido el player</param>
    /// <returns></returns>
-   private IEnumerator PerformPlayerMovement()
+   private IEnumerator RunTurns(BattleAction playerAction)
    {
-      //Cambia de estado para que no se pueda realizar otra acción hasta finalizar el movimiento del player
-      state = BattleState.PerformMovement;
+      //Se cambia el estado de la batalla. Por defecto, player pierde turno hasta que se averigüe quién
+      //ataca primero o qué acciones se van a realizar antes
+      state = BattleState.LoseTurn;
       
-      //Movimiento que se debe ejecutar
-      Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
-
-      if (move.Pp <= 0) //Si se han agotado los PP del ataque, no se podrá ejecutar
+      //Caso 1: Si el player ha escogido ejecutar un movimiento
+      if (playerAction == BattleAction.Move)
       {
-         //Vuelve al estado de selección de movimiento del player
-         PlayerMovementSelection();
-         yield break;//Y sale de la corutina sin hacer nada más
+         //Guarda el movimiento que va ejecutar el player
+         playerUnit.Pokemon.CurrentMove = playerUnit.Pokemon.Moves[currentSelectedMovement];
+         
+         //Guarda el movimiento que va a ejecutar el enemigo (se elige aleatoriamente)
+         enemyUnit.Pokemon.CurrentMove = enemyUnit.Pokemon.RandonMove();
+         
+         //Se decide quién ataca primero (el que más velocidad tiene)
+         bool playerGoesFirst = playerUnit.Pokemon.Speed >= enemyUnit.Pokemon.Speed;
+         
+         //Guarda temporalmente el pokemon que ataca primero y el que ataca después
+         var firstUnit = playerGoesFirst ? playerUnit : enemyUnit;
+         var secondUnit = !playerGoesFirst ? enemyUnit : playerUnit;
+         //El primer pokemon ataca
+         yield return RunMovement(firstUnit, secondUnit, firstUnit.Pokemon.CurrentMove);
+         //Se comprueba si el primer atacante sufre daños tras su turno
+         yield return RunAfterTurn(firstUnit);
+         //Se comprueba si el ataque provoca el fin de la batalla
+         if (state == BattleState.FinishBattle)
+         {
+            yield break;
+         }
+         //Si la batalla sigue, el segundo pokemon lanza su ataque
+         yield return RunMovement(secondUnit, firstUnit, firstUnit.Pokemon.CurrentMove);
+         //Se comprueba si el segundo atacante sufre daños tras su turno
+         yield return RunAfterTurn(secondUnit);
+         //Se comprueba nuevamente si el ataque provoca el fin de la batalla
+         if (state == BattleState.FinishBattle)
+         {
+            yield break;
+         }
       }
-      
-      //Ejecuta el ataque
-      yield return RunMovement(playerUnit, enemyUnit, move);
-      
-      //Solo si el estado de la batalla se mantiene sin modificar, se da el control al enemigo
-      if (state == BattleState.PerformMovement)
+      else if (playerAction == BattleAction.SwitchPokemon)  //Caso 2: el player ha escogido cambiar de pokemon
       {
-         StartCoroutine(PerfomEnemyMovement());
+         //Guarda el pokemon seleccionado actualmente
+         Pokemon selectedPokemon = playerParty.Pokemons[currentSelectedPokemon];
+         //Entra en el estado ocupado, para que no se pueda realizar otra acción mientras dura ésta
+         state = BattleState.Busy;
+         //Inicia la corutina de intercambio de pokemon
+         yield return SwitchPokemon(selectedPokemon);
+         
+         //Una vez que el player ha intercambiado el pokemon, llega el turno del enemigo:
+         //Guarda el movimiento que va a ejecutar el enemigo (se elige aleatoriamente)
+         var enemyMove = enemyUnit.Pokemon.RandonMove();
+         //El enemigo lanza su ataque
+         yield return RunMovement(enemyUnit, playerUnit, enemyMove);
+         //Se comprueba si el enemigo sufre daños tras ejecutar su ataque
+         yield return RunAfterTurn(enemyUnit);
+         //Se comprueba si el ataque provoca el fin de la batalla (el pokemon atacado ha sido vencido)
+         if (state == BattleState.FinishBattle)
+         {
+            yield break;
+         }
+         
       }
    }
 
    
-   
-   
-   /// <summary>
-   /// Implementa las acciones de ataque del enemigo
-   /// </summary>
-   private IEnumerator PerfomEnemyMovement()
-   {
-      //Cambia el estado de la batalla
-      state = BattleState.PerformMovement;
-      
-      //El enemigo decide el ataque a ejecutar aleatoriamente
-      Move move = enemyUnit.Pokemon.RandonMove();
-
-      if (move != null)//Si al enemigo no le quedan ataques con Pp, no podrá atacar
-      {
-         //Ejecuta el ataque
-         yield return RunMovement(enemyUnit, playerUnit, move);
-      }
-
-      //Solo si el estado de la batalla se mantiene sin modificar, se da el control al player
-      if (state == BattleState.PerformMovement)
-      {
-         PlayerActionSelection();
-      }
-   }
-
-
    /// <summary>
    /// Ejecuta un movimiento de ataque
    /// </summary>
@@ -625,7 +615,7 @@ public class BattleManager : MonoBehaviour
 
          if (target.Pokemon.Hp <= 0) //Si tras el ataque el pokemon atacado es debilitado
          {
-            //Implementa las acciones que suceden cuando un pokemon es vencido
+            //Implementa las acciones que suceden cuando el pokemon atacado es vencido
             yield return HandlePokemonFainted(target);
          }
       }
@@ -633,23 +623,8 @@ public class BattleManager : MonoBehaviour
       {
          yield return battleDialogBox.SetDialog($"El ataque de {attacker.Pokemon.Base.PokemonName} ha fallado");
       }
-
-      
-      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él mismo,
-      //tales como aplicar los efectos de estado alterado que pudiera haber sufrido
-      attacker.Pokemon.OnFinishTurn();
-      //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
-      yield return ShowStatsMessages(attacker.Pokemon);
-      //Y se actualiza la información de su vida en el HUD, si se ha visto modificada
-      yield return attacker.HUD.UpdatePokemonData();
-      //Si tras el turno el pokemon que ataca es debilitado como consecuencia de los estados alterados anteriores
-      if (attacker.Pokemon.Hp <= 0)
-      {
-         //Implementa las acciones que suceden cuando el pokemon atacante es vencido
-         yield return HandlePokemonFainted(attacker);
-      }
    }
-
+  
 
    /// <summary>
    /// Calcula si un movimiento tendrá éxito, en función de la probabilidad dada por la tasa de acierto del mismo
@@ -813,6 +788,35 @@ public class BattleManager : MonoBehaviour
          yield return battleDialogBox.SetDialog(message);
       }
    }
+
+
+   /// <summary>
+   /// Efectúa comprobaciones del estado del pokemon atacante tras finalizar su turno en la batalla
+   /// </summary>
+   /// <param name="attacker">El pokemon atacante</param>
+   /// <returns></returns>
+   private IEnumerator RunAfterTurn(BattleUnit attacker)
+   {
+      //Si la batalla ya ha finalizado (p.ej. el atacante ha debilitado al otro pokemon) no hace falta comprobar nada
+      if (state == BattleState.FinishBattle)
+      {
+         yield break;
+      }
+      
+      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él mismo,
+      //tales como aplicar los efectos de estado alterado que pudiera haber sufrido
+      attacker.Pokemon.OnFinishTurn();
+      //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
+      yield return ShowStatsMessages(attacker.Pokemon);
+      //Y se actualiza la información de su vida en el HUD, si se ha visto modificada
+      yield return attacker.HUD.UpdatePokemonData();
+      //Si tras el turno el pokemon que ataca es debilitado como consecuencia de los estados alterados anteriores
+      if (attacker.Pokemon.Hp <= 0)
+      {
+         //Implementa las acciones que suceden cuando el pokemon atacante es vencido
+         yield return HandlePokemonFainted(attacker);
+      }
+   }
    
    
    /// <summary>
@@ -944,49 +948,26 @@ public class BattleManager : MonoBehaviour
    /// <returns></returns>
    private IEnumerator SwitchPokemon(Pokemon newPokemon)
    {
-      //¿El pokemon que sale de la batalla ha sido vencido? (por defecto, sí)
-      bool currentPokemonFainted = true;
-      
-      //Se comprueba si el pokemon de la batalla todavía no había sido vencido (aún tiene vida)
+      //Solo si el pokemon que se va a retirar todavía tenía vida se realizan estas acciones
       if (playerUnit.Pokemon.Hp > 0)
       {
-         currentPokemonFainted = false;
+         //Muestra un mensaje de retirada
+         yield return battleDialogBox.SetDialog($"¡Vuelve, {playerUnit.Pokemon.Base.PokemonName}!");
+         //Reproduce la animación de retirada del pokemon actual
+         playerUnit.PlayFaintAnimation();
+         //Espera un instante para que finalice la animación
+         yield return new WaitForSeconds(1.5f);
       }
 
-      string switchMessage;
-      //Nota: este mensaje solo se mostrará si el pokemon actual que va a salir de la batalla todavía tenía vida:
-      if (!currentPokemonFainted)
-      {
-         switchMessage = String.Format("¡Vuelve, {0}!", playerUnit.Pokemon.Base.PokemonName);
-         yield return battleDialogBox.SetDialog(switchMessage);
-      }
-
-      //Reproduce la animación de retirada del pokemon actual
-      playerUnit.PlayFaintAnimation();
-
-      //Espera un instante para que finalice la animación
-      yield return new WaitForSeconds(1.5f);
-      
-      //Configura el pokemon que se incorpora a la batalla
+      //Configura el pokemon que se va a incorporar a la batalla
       playerUnit.SetupPokemon(newPokemon);
-
-      //Se actualizan los movimientos
+      //Se actualizan sus movimientos en la UI
       battleDialogBox.SetPokemonMovements(newPokemon.Moves);
-
       //Muestra el mensaje de entrada del nuevo pokemon
-      switchMessage = String.Format("¡Adelante, {0}!", newPokemon.Base.PokemonName);
-      yield return battleDialogBox.SetDialog(switchMessage);
+      yield return battleDialogBox.SetDialog($"¡Adelante, {newPokemon.Base.PokemonName}!");
       
-      //Si el pokemon que sale de la batalla había sido vencido, se decide si al salir el nuevo
-      //le corresponde a él atacar primero, o si le corresponde al pokemon enemigo
-      if (currentPokemonFainted)
-      {
-         yield return ChooseFirstTurn();
-      }
-      else //Si el pokemon retirado aún tenía vida, siempre le tocará atacar al pokemon enemigo
-      {
-         yield return PerfomEnemyMovement();
-      }
+      //El player pierde el turno tras el cambio de pokemon
+      state = BattleState.LoseTurn;
    }
 
    /// <summary>

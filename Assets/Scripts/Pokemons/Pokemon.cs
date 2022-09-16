@@ -104,6 +104,11 @@ public class Pokemon
         set => _moves = value;
     }
     
+    /// <summary>
+    /// Para guardar el próximo movimiento que el pokemon va a ejecutar
+    /// </summary>
+    public Move CurrentMove { get; set; }
+    
     
     /// <summary>
     /// Constructor de un nuevo pokemon que se puede utilizar para copiar un pokemon en otro
