@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Tooltip("Capa/s a la/s que está/n asignado/s los Tilemap de zonas de aparición de pokemon")]
     private LayerMask pokemonLayer;
 
+    [SerializeField] [Tooltip("Capa/s en la/s que está/n los objetos con los que puede interactura el player")]
+    private LayerMask interactableLayer;
+
     //Evento de la clase Action de Unity para indicar que se ha encontrado un pokemon y ha de iniciarse la batalla
     public event Action OnPokemonEncountered;
     
@@ -41,11 +44,19 @@ public class PlayerController : MonoBehaviour
 
     
     /// <summary>
-    /// Método que iniciará el movimiento del player en el update cuando sea invocado desde el GameManager
+    /// Método que inicia el movimiento del player en el update, cuando sea invocado desde el GameManager,
+    /// y también la interactuación con NPC u otros objetos
     /// </summary>
     public void HandleUpdate()
     {
+        //Movimiento del player
         MovePlayer();
+
+        //Si se pulsa la tecla de acción, si es posible iniciará una interactuación
+        if (Input.GetAxisRaw("Submit") != 0)
+        {
+            Interact();
+        }
     }
 
     private void LateUpdate()
@@ -148,11 +159,40 @@ public class PlayerController : MonoBehaviour
         //mitad de la "caja" que representaría al player, se produciría colisión con la capa de objetos físicos
         //Nota: para que funcione correctamente, el componente Composite Collider de la capa de objetos físicos
         //debe tener la propiedad "Geometry Type" en "Polygons"
-        if (Physics2D.OverlapCircle(target, 0.2f, solidObjectsLayer) != null)
+        //Comprueba igualmente si el movimiento produciría colisión con algún NPC u objeto que pertenezca
+        //a la capa de objetos con los que el player puede interactuar
+        if (Physics2D.OverlapCircle(target, 0.2f, solidObjectsLayer | interactableLayer)
+            != null)
+        {
             return false;
+        }
 
         return true;
     }
+
+
+    /// <summary>
+    /// Comprueba si el player está lo suficientemente cerca de un objeto con el que puede interactuar y que además
+    /// está "mirando" hacia el mismo. En caso afirmativo, inicia la interactuación
+    /// </summary>
+    private void Interact()
+    {
+        //Obtiene hacia dónde "mira" el player, aprovechando que el valor se guarda en los parámetros de su animación
+        var facingDirection = new Vector3(_animator.GetFloat("MoveX"), _animator.GetFloat("MoveY"), 0);
+        
+        //Se calcula la posición contra la cual se quiere interactuar, sumando 1 unidad a la posición actual
+        //en la dirección hacia la que se está mirando
+        var interactPosition = transform.position + facingDirection;
+        Debug.DrawLine(transform.position, interactPosition, Color.magenta, 1.0f);
+        
+        //Se comprueba si en un pequeño radio alrededor de la posición de posible interactuación hay algún
+        //objeto de la capa de objetos con los que se puede interactuar
+        if (Physics2D.OverlapCircle(interactPosition, 0.2f, interactableLayer) != null)
+        {
+            Debug.Log("Se puede interactuar");
+        }
+    }
+    
 
     /// <summary>
     /// Comprueba si el player se encuentra en una zona pokemon y en caso afirmativo lanza la
