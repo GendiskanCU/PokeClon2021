@@ -70,6 +70,10 @@ public class MoveBase : ScriptableObject
     private int pp;
     public int PP => pp;
 
+    [SerializeField] [Tooltip("Prioridad del movimiento o ataque")] [Range(-1, 1)]
+    private int priority = 0;
+    public int Priority => priority;
+
     //Para definir si el movimiento es especial
     private bool isSpecialMove;
     public bool IsSpecialMove => typeOfMove == MoveType.Special;

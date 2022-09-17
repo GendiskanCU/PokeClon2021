@@ -469,9 +469,21 @@ public class BattleManager : MonoBehaviour
          //Guarda el movimiento que va a ejecutar el enemigo (se elige aleatoriamente)
          enemyUnit.Pokemon.CurrentMove = enemyUnit.Pokemon.RandonMove();
          
-         //Se decide quién ataca primero (el que más velocidad tiene)
-         bool playerGoesFirst = playerUnit.Pokemon.Speed >= enemyUnit.Pokemon.Speed;
-         
+         //Se decide quién ataca primero, teniendo en cuenta la prioridad de los ataques y la velocidad de los pokemon
+         //Guarda las prioridades en variables temporales
+         int enemyPriority = enemyUnit.Pokemon.CurrentMove.Base.Priority;
+         int playerPriority = playerUnit.Pokemon.CurrentMove.Base.Priority;
+         bool playerGoesFirst = true;//Por defecto el player ataca antes
+         //Se comprueba si el enemigo ha seleccionado un ataque de mayor prioridad que el player
+         if (enemyPriority > playerPriority )
+         {
+            playerGoesFirst = false;//En cuyo caso, el enemigo será el que ataca antes
+         }
+         else if(enemyPriority == playerPriority)
+         {
+            //Si los dos ataques tienen la misma prioridad, el enemigo atacará antes solo si es más rápido que player
+            playerGoesFirst = playerUnit.Pokemon.Speed >= enemyUnit.Pokemon.Speed;   
+         }
          //Guarda temporalmente el pokemon que ataca primero y el que ataca después
          var firstUnit = playerGoesFirst ? playerUnit : enemyUnit;
          var secondUnit = playerGoesFirst ? enemyUnit : playerUnit;
