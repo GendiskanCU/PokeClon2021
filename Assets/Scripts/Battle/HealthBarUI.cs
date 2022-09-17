@@ -35,7 +35,9 @@ public class HealthBarUI : MonoBehaviour
       
       //Cambia el color de la barra en función de su tamaño actual
       healthBar.GetComponent<Image>().color = ColorManager.SharedInstance.BarColor(normalizedValue);
-      
+
+      //Actualiza el texto que muestra la cantidad de vida actual del pokemon
+      currentHPText.text = pokemon.Hp.ToString();
       //Actualiza el texto que muestra la cantidad de vida máxima del pokemon
       maxHPText.text = $"/{pokemon.MaxHP}";
    }

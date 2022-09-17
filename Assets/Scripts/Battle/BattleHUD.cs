@@ -66,11 +66,12 @@ public class BattleHUD : MonoBehaviour
     {
         //Guarda el pokemon recibido para poder ser utilizado a partir de ahora en otros métodos de esta misma clase
         _pokemon = pokemon;
-        
+
         pokemonName.text = pokemon.Base.PokemonName;
         SetLevelText();
         
         //Inicializa la barra de vida con la vida actual del pokemon del player
+        //healthBar.SetSmoothHP(_pokemon);
         healthBar.SetHP(_pokemon);
         
         

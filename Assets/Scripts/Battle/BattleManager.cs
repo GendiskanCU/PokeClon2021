@@ -18,12 +18,11 @@ public enum BattleState
    StartBattle,//Inicio de la batalla
    ActionSelection,//El player tiene que hacer la selección de movimiento
    MovementSelection,//Se ejecuta el movimiento del player
-   PerformMovement,//El player o el enemigo está realizando un movimiento
    Busy,//No se puede hacer nada
    PartySelectScreen,//En la pantalla de selección de pokemon de la party
-   ItemSelectScreen,//En la pantalla de selección de items (inventario o mochila)
+   ItemSelectScreen,//En la pantalla de selección de items (inventario o mochila). Por implementar
    ForgetMovement,//En la pantalla de selección de movimiento a olvidar al superar el límite de movs. aprendidos
-   LoseTurn,//El player pierde su turno
+   RunTurn,//El player ejecuta su turno
    FinishBattle//La batalla ha finalizado
 }
 
@@ -68,8 +67,12 @@ public class BattleManager : MonoBehaviour
    //Para establecer el tipo de batalla
    private BattleType battleType;
    
-   //Para controlar el estado actual de la batalla
+   //Para guardar el estado actual de la batalla
    private BattleState state;
+   
+   //Para guardar el estado previo al actual
+   //El interrogante se pone para que pueda tomar un valor nulo aunque ese valor no esté entre los enumerados
+   private BattleState? previousState;
    
    //Para guardar la party de pokemons del player disponible al entrar en la batalla
    private PokemonParty playerParty;
@@ -223,9 +226,9 @@ public class BattleManager : MonoBehaviour
       //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
       yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
          , enemyUnit.Pokemon.Base.PokemonName));
-      
+
       //El player selecciona la acción a realizar
-      HandlePlayerActionSelection();
+      PlayerActionSelection();
    }
 
 
@@ -317,15 +320,17 @@ public class BattleManager : MonoBehaviour
                break;
             case 1:
                //El player escoge pokemon. Se abre la UI de selección de pokemon de la party del player
+               previousState = state;//Guarda el estado anterior
                OpenPartySelectionScreen();
                break;
             case 2:
                //TODO: El player revisa mochila. Se abre la UI del inventario del player
-               OpenInventoryScreen();
+               //Inicia un turno especificando que la acción elegida por el player es la de usar un ítem
+               StartCoroutine(RunTurns(BattleAction.UseItem));
                break;
             case 3:
-               //El player intenta huir de la batalla.
-               StartCoroutine(TryToEscapeFromBattle());
+               //Se inicia el turno especificando que el player ha elegido la acción de intentar huir
+               StartCoroutine(RunTurns(BattleAction.Run));
                break;
             default:
                break;
@@ -371,22 +376,6 @@ public class BattleManager : MonoBehaviour
    }
    
    
-   /// <summary>
-   /// Abre la interfaz de inventario del player
-   /// </summary>
-   private void OpenInventoryScreen()
-   {
-      //TODO: pendiente de implementar el inventario del player
-      Debug.Log("Inventario");
-      
-      //Desactiva el panel de elección de acciones
-      battleDialogBox.ToggleActions(false);
-      
-      //El player lanza una pokeball
-      StartCoroutine(ThrowPokeball());
-   }
-   
-
    /// <summary>
    /// Implementa la lógica de acción de ataque del player
    /// </summary>
@@ -469,7 +458,7 @@ public class BattleManager : MonoBehaviour
    {
       //Se cambia el estado de la batalla. Por defecto, player pierde turno hasta que se averigüe quién
       //ataca primero o qué acciones se van a realizar antes
-      state = BattleState.LoseTurn;
+      state = BattleState.RunTurn;
       
       //Caso 1: Si el player ha escogido ejecutar un movimiento
       if (playerAction == BattleAction.Move)
@@ -485,7 +474,11 @@ public class BattleManager : MonoBehaviour
          
          //Guarda temporalmente el pokemon que ataca primero y el que ataca después
          var firstUnit = playerGoesFirst ? playerUnit : enemyUnit;
-         var secondUnit = !playerGoesFirst ? enemyUnit : playerUnit;
+         var secondUnit = playerGoesFirst ? enemyUnit : playerUnit;
+         
+         //Guarda temporalmente en pokemon de la unidad que atacará en segundo lugar
+         var secondPokemon = secondUnit.Pokemon;
+         
          //El primer pokemon ataca
          yield return RunMovement(firstUnit, secondUnit, firstUnit.Pokemon.CurrentMove);
          //Se comprueba si el primer atacante sufre daños tras su turno
@@ -495,26 +488,49 @@ public class BattleManager : MonoBehaviour
          {
             yield break;
          }
-         //Si la batalla sigue, el segundo pokemon lanza su ataque
-         yield return RunMovement(secondUnit, firstUnit, firstUnit.Pokemon.CurrentMove);
-         //Se comprueba si el segundo atacante sufre daños tras su turno
-         yield return RunAfterTurn(secondUnit);
-         //Se comprueba nuevamente si el ataque provoca el fin de la batalla
-         if (state == BattleState.FinishBattle)
+         
+         //Después del ataque del primer pokemon, se comprueba también si al segundo le queda vida, porque
+         //en caso contrario la batalla ya no continuará
+         if (secondPokemon.Hp > 0)
          {
-            yield break;
+            //Si la batalla sigue, el segundo pokemon lanza su ataque
+            yield return RunMovement(secondUnit, firstUnit, secondUnit.Pokemon.CurrentMove);
+            //Se comprueba si el segundo atacante sufre daños tras su turno
+            yield return RunAfterTurn(secondUnit);
+            //Se comprueba nuevamente si el ataque provoca el fin de la batalla
+            if (state == BattleState.FinishBattle)
+            {
+               yield break;
+            }
          }
       }
-      else if (playerAction == BattleAction.SwitchPokemon)  //Caso 2: el player ha escogido cambiar de pokemon
+      else //Si el player ha escogido una acción diferente a la de lanzar un ataque o movimiento
       {
-         //Guarda el pokemon seleccionado actualmente
-         Pokemon selectedPokemon = playerParty.Pokemons[currentSelectedPokemon];
-         //Entra en el estado ocupado, para que no se pueda realizar otra acción mientras dura ésta
-         state = BattleState.Busy;
-         //Inicia la corutina de intercambio de pokemon
-         yield return SwitchPokemon(selectedPokemon);
-         
-         //Una vez que el player ha intercambiado el pokemon, llega el turno del enemigo:
+         //Caso 2: el player ha escogido cambiar de pokemon
+         if (playerAction == BattleAction.SwitchPokemon)
+         {
+            //Guarda el pokemon seleccionado actualmente
+            Pokemon selectedPokemon = playerParty.Pokemons[currentSelectedPokemon];
+            //Entra en el estado ocupado, para que no se pueda realizar otra acción mientras dura ésta
+            state = BattleState.Busy;
+            //Inicia la corutina de intercambio de pokemon
+            yield return SwitchPokemon(selectedPokemon);
+         }
+         //Caso 3: el player ha escogido usar un ítem de la mochila
+         else if (playerAction == BattleAction.UseItem)
+         {
+            //Se oculta el panel de selección de acciones
+            battleDialogBox.ToggleActions(false);
+            //El player lanza una pokeball
+            yield return ThrowPokeball();
+         }
+         //Caso 4: el player ha escogido intentar huir de la batalla
+         else if (playerAction == BattleAction.Run)
+         {
+            yield return TryToEscapeFromBattle();
+         }
+
+         //Una vez que el player ha finalizado su acción, llegará el turno del enemigo:
          //Guarda el movimiento que va a ejecutar el enemigo (se elige aleatoriamente)
          var enemyMove = enemyUnit.Pokemon.RandonMove();
          //El enemigo lanza su ataque
@@ -526,7 +542,13 @@ public class BattleManager : MonoBehaviour
          {
             yield break;
          }
-         
+      }
+      
+      //Al finalizar el turno, si la batalla no ha terminado se iniciará un nuevo turno
+      //con una nueva selección de acción por parte del player
+      if (state != BattleState.FinishBattle)
+      {
+         PlayerActionSelection();
       }
    }
 
@@ -802,8 +824,11 @@ public class BattleManager : MonoBehaviour
       {
          yield break;
       }
+
+      //Espera hasta que haya finalizado totalmente el turno y el estado de batalla se haya cambiado
+      yield return new WaitUntil(() => state == BattleState.RunTurn);
       
-      //Tras finalizar el turno del atacante, se realizan acciones adicionales sobre él mismo,
+      //Tras finalizar el turno, se realizan acciones y comprobaciones adicionales sobre el pokemon atacante,
       //tales como aplicar los efectos de estado alterado que pudiera haber sufrido
       attacker.Pokemon.OnFinishTurn();
       //Además, se muestran los mensajes informativos de los cambios en sus stats y estado alterado sufridos en el turno
@@ -903,7 +928,7 @@ public class BattleManager : MonoBehaviour
       //Muestra el pokemon seleccionado con un color diferente
       partyHUD.UpdateSelectedPokemon(currentSelectedPokemon);
       
-      //Si se pulsa el botón de acción, saldrá al combate el pokemon seleccionado, salvo que éste ya no tenga vida 
+      //Si se pulsa el botón de acción 
       if (Input.GetAxisRaw("Submit") != 0)
       {
          //Reinicia el contador de tiempo para permitir una nueva pulsación
@@ -922,14 +947,26 @@ public class BattleManager : MonoBehaviour
             partyHUD.SetMessage("El pokemon seleccionado ya está en batalla");
             return; //También sale sin hacer nada
          }
-
-         state = BattleState.Busy;//Mientras se hace el cambio de pokemon, cambia el estado para no permitir movimientos
          
-         //Desactiva el panel de elección de pokemon
+         //Desactiva el panel de elección de pokemon y también el de acciones
          partyHUD.gameObject.SetActive(false);
-         
-         //Intercambia el pokemon actual por el seleccionado
-         StartCoroutine(SwitchPokemon(selectedPokemon));
+         battleDialogBox.ToggleActions(false);
+
+         //Si se ha llegado a la pantalla de selección de pokemon porque el player lo ha elegido así, no porque
+         //el pokemon que estaba en batalla haya sido debilitado (el estado previo es ActionSelection)
+         if (previousState == BattleState.ActionSelection)
+         {
+            previousState = null;//Resetea el estado anterior
+            //Se inicia un nuevo turno indicando que el player ha elegido cambiar de pokemon
+            StartCoroutine(RunTurns(BattleAction.SwitchPokemon));
+         }
+         //Si se ha llegado a la pantalla de selección de pokemon porque el actual ha sido debilitado
+         else
+         {
+            state = BattleState.Busy;//Cambia el estado para no permitir movimientos
+            //Continúa el turno actual intercambiando el pokemon actual por el seleccionado
+            StartCoroutine(SwitchPokemon(selectedPokemon));
+         }
       }
       
       //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
@@ -965,9 +1002,11 @@ public class BattleManager : MonoBehaviour
       battleDialogBox.SetPokemonMovements(newPokemon.Moves);
       //Muestra el mensaje de entrada del nuevo pokemon
       yield return battleDialogBox.SetDialog($"¡Adelante, {newPokemon.Base.PokemonName}!");
+      //Espera un instante para que dé tiempo a que el mensaje finalice correctamente
+      yield return new WaitForSeconds(1f);
       
       //El player pierde el turno tras el cambio de pokemon
-      state = BattleState.LoseTurn;
+      state = BattleState.RunTurn;
    }
 
    /// <summary>
@@ -976,14 +1015,14 @@ public class BattleManager : MonoBehaviour
    /// <returns></returns>
    private IEnumerator ThrowPokeball()
    {
-      //Cambia el estado actual
+      //Cambia el estado actual de la batalla
       state = BattleState.Busy;
 
       //Si se ha lanzado la pokeball contra un pokemon de otro entrenador, no será posible y se perderá el turno
       if (battleType != BattleType.WildPokemon)
       {
          battleDialogBox.SetDialog("¡No puedes robar los pokemon de otros entrenadores!");
-         state = BattleState.LoseTurn;
+         state = BattleState.RunTurn;
          yield break;
       }
 
@@ -1067,7 +1106,7 @@ public class BattleManager : MonoBehaviour
          }
          
          //La batalla entra en el estado de pérdida de turno del player, la batalla pasa a ser control del enemigo
-         state = BattleState.LoseTurn;
+         state = BattleState.RunTurn;
       }
    }
 
@@ -1130,7 +1169,7 @@ public class BattleManager : MonoBehaviour
       if (battleType != BattleType.WildPokemon)
       {
          yield return battleDialogBox.SetDialog("¡No puedes huir de este combate!");
-         state = BattleState.LoseTurn;//Pierde el turno
+         state = BattleState.RunTurn;//Pierde el turno
          yield break;//Sale sin hacer más
       }
       
@@ -1165,7 +1204,7 @@ public class BattleManager : MonoBehaviour
             yield return battleDialogBox.SetDialog("No has logrado huir de la batalla");
             yield return new WaitForSeconds(0.5f);
             //El player pierde el turno
-            state = BattleState.LoseTurn;
+            state = BattleState.RunTurn;
          }
       }
    }
