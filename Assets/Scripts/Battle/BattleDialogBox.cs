@@ -37,10 +37,6 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] [Tooltip("Velocidad a la que se irán mostrando los mensajes, en caracteres/segundo")]
     private float charactersPerSecond;
 
-    //Sonidos
-    [SerializeField] [Tooltip("Lista de sonidos aleatorios que se escucharán al escribirse los caracteres")]
-    private AudioClip[] characterSounds;
-
     private bool isWriting = false;
     public bool IsWriting => isWriting;
 
@@ -63,7 +59,7 @@ public class BattleDialogBox : MonoBehaviour
             //Reproduce un sonido aleatorio al escribir cada carácter, excepto en los espacios en blanco
             if (character != ' ')
             {
-                SoundManager.SharedInstance.RandomSoundEffect(characterSounds);
+                SoundManager.SharedInstance.PlayRandomCharacterSound();
             }
             yield return new WaitForSeconds(1 / charactersPerSecond);
         }

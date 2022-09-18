@@ -15,6 +15,10 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] [Tooltip("Rango (mínimo y máximo) del pitch (tono) del audio")]
     private Vector2 pitchRange = Vector2.zero;
+    
+    [SerializeField] [Tooltip("Lista de sonidos aleatorios que se escucharán al escribir caracteres" +
+                              "en las cajas de diálogo")]
+    private AudioClip[] characterSounds;
 
     public static SoundManager SharedInstance;//Singleton
 
@@ -56,12 +60,20 @@ public class SoundManager : MonoBehaviour
         musicSource.Play();
     }
 
+    /// <summary>
+    /// Reproduce aleatoriamente uno de los efectos de sonidos de escribir una letra de la lista interna characterSounds
+    /// </summary>
+    public void PlayRandomCharacterSound()
+    {
+        RandomSoundEffect(characterSounds);
+    }
+    
 
     /// <summary>
-    /// Reproduce aleatoriamente un efecto de sonido de una lista de efectos, y con un pitch (tono) aleatorio
+    /// Reproduce aleatoriamente un efecto de sonido de una lista, con un pitch (tono) aleatorio
     /// </summary>
     /// <param name="clips">La lista (array) con efectos de sonido</param>
-    public void RandomSoundEffect(params AudioClip [] clips)
+    private void RandomSoundEffect(params AudioClip [] clips)
     {
         int randomIndex = UnityEngine.Random.Range(0, clips.Length);
         float randomPitch = UnityEngine.Random.Range(pitchRange.x, pitchRange.y);
@@ -69,4 +81,7 @@ public class SoundManager : MonoBehaviour
         effectsSource.pitch = randomPitch;
         PlaySound(clips[randomIndex]);
     }
+
+
+   
 }

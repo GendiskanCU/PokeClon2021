@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 //Estados posibles del juego
 public enum GameState
@@ -29,6 +31,9 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] [Tooltip("Música de la batalla (no del mundo)")]
     private AudioClip battleAudioClip;
+
+    [SerializeField] [Tooltip("Panel de la transición animada cuando haya un cambio de escena")]
+    private Image transitionPanel;
     
     
     private GameState _gameState;
@@ -72,11 +77,35 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void StartPokemonBattle()
     {
+        StartCoroutine(FadeInBattle());
+    }
+
+    /// <summary>
+    /// Finaliza la batalla pokemon
+    /// </summary>
+    /// <param name="playerWin">Resultado que devuelve el evento OnBattleFinish del BattleManager</param>
+    private void FinishPokemonBattle(bool playerWin)
+    {
+        StartCoroutine(FadeOutBattle(playerWin));
+    }
+
+    /// <summary>
+    /// Reproduce una animación de transición de escena al entrar en una batalla e inicia la misma
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FadeInBattle()
+    {
         //Comienza a reproducir la música de batalla
         SoundManager.SharedInstance.PlayMusic(battleAudioClip);
         
         //Cambia el estado del juego
         _gameState = GameState.BATTLE;
+        
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(1.0f, 1.5f).WaitForCompletion();
+        
+        //Hace una pequeña pausa
+        yield return new WaitForSeconds(0.5f);
         
         //Activa el gameObject de la batalla
         battleManager.gameObject.SetActive(true);
@@ -96,22 +125,29 @@ public class GameManager : MonoBehaviour
         //lo harán. De ahí que sea necesario hacer una copia del pokemon obtenido cada vez en un nuevo pokemon,
         //pues asegura que son objetos diferentes e independientes
         Pokemon newWildPokemon = new Pokemon(wildPokemon.Base, wildPokemon.Level);
-
+        
         //Inicia la batalla con el nuevo pokemon salvaje            
         battleManager.HandleStartBattle(playerParty, newWildPokemon);
+        
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(0f, 1.5f).WaitForCompletion();
     }
 
+
     /// <summary>
-    /// Finaliza la batalla pokemon
+    /// Reproduce una animación de transición de escena al salir de una batalla pokemon
     /// </summary>
-    /// <param name="playerWin">Resultado que devuelve el evento OnBattleFinish del BattleManager</param>
-    private void FinishPokemonBattle(bool playerWin)
+    /// <param name="playerHasWon">Booleana que indica si la batalla finaliza con victoria del player</param>
+    /// <returns></returns>
+    private IEnumerator FadeOutBattle(bool playerHasWon)
     {
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(1.0f, 1.5f).WaitForCompletion();
+        //Hace una pequeña pausa
+        yield return new WaitForSeconds(0.5f);
+        
         //Comienza a reproducir la música del mundo
         SoundManager.SharedInstance.PlayMusic(worldAudioClip);
-        
-        //Cambia el estado del juego
-        _gameState = GameState.TRAVEL;
         
         //Desactiva el gameObject de la batalla
         battleManager.gameObject.SetActive(false);
@@ -119,10 +155,15 @@ public class GameManager : MonoBehaviour
         //Activa la cámara que funciona cuando el player está moviéndose por el mundo
         worlMainCamera.gameObject.SetActive(true);
 
-        if (!playerWin)
+        if (!playerHasWon)
         {
             //TODO: Faltaría diferenciar entre victoria / derrota del player
         }
 
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(0f, 1.5f).WaitForCompletion();
+        
+        //Cambia el estado del juego
+        _gameState = GameState.TRAVEL;
     }
 }
