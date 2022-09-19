@@ -10,7 +10,8 @@ using UnityEngine.UI;
 public enum GameState
 {
     TRAVEL, //El player está moviéndose por el mundo
-    BATTLE //El player está en una batalla
+    BATTLE, //El player está en una batalla
+    DIALOG //El player está dentro de un diálogo con un NPC o algún objeto interactivo
 }
 
 [RequireComponent(typeof(ColorManager))]
@@ -54,6 +55,22 @@ public class GameManager : MonoBehaviour
         //Suscripción al evento del battleManager para conocer cuándo finaliza una batalla, y con qué resultado
         battleManager.OnBattleFinish += FinishPokemonBattle;
         
+        //Suscripción al evento del DialogManager para conocer cuándo comienza un diálogo con NPC u objeto
+        //Se define aquí directamente el código que se deberá ejecutar cuando el evento se active
+        DialogManager.SharedInstance.OnDialogStart += () =>
+        {
+            _gameState = GameState.DIALOG;//Cambia el estado del juego al de diálogo
+        };
+        
+        //Suscripción al evento del DialogManager para conocer cuándo finaliza un diálogo con NPC u objeto
+        //Se define aquí directamente el código que se deberá ejecutar cuando el evento se active
+        DialogManager.SharedInstance.OnDialogFinish += () =>
+        {
+            if(_gameState == GameState.DIALOG)
+                _gameState = GameState.TRAVEL;//Cambia el estado del juego del diálogo a de andar por el mundo
+            //TODO: si el diálogo es con un entrenador pokemon, hay que volver al estado Battle en vez de a Travel
+        };
+        
         SoundManager.SharedInstance.PlayMusic(worldAudioClip);
         
         //Inicializa la factoría de estados alterados de los pokemon
@@ -62,6 +79,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        //Según el estado en que se encuentre el juego, se llevará a cabo la acción que corresponda
         if (_gameState == GameState.TRAVEL)
         {
             playerController.HandleUpdate();
@@ -69,6 +87,10 @@ public class GameManager : MonoBehaviour
         else if (_gameState == GameState.BATTLE)
         {
             battleManager.HandleUpdate();
+        }
+        else if (_gameState == GameState.DIALOG)
+        {
+            DialogManager.SharedInstance.HandleUpdate();
         }
     }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 
 //GESTIONA LOS DIVERSOS COLORES QUE SE UTILIZARÁN EN LA ESCENA
 
+
 public class ColorManager : MonoBehaviour
 {
     //La instancia de esta clase

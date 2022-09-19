@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class NPCController : MonoBehaviour, Interactable
 {
+
+    [SerializeField] [Tooltip("Diálogo del NPC")]
+    private Dialog dialog;
+    
     //Implementación de la interface Interactable
     public void Interact()
     {
-        Debug.Log("Podemos hablar con el NPC");
+        //Se muestra el diálog del NPC
+        DialogManager.SharedInstance.ShowDialog(dialog);
     }
-
 }

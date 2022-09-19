@@ -27,6 +27,11 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] [Tooltip("Capa/s en la/s que está/n los objetos con los que puede interactura el player")]
     private LayerMask interactableLayer;
+    
+    //Para controlar que no se pueda hacer alguna acción hasta pasado un lapso aunque se mantenga pulsado
+    private float timeSinceLastClick;
+    [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción, ataque, etc.")]
+    private float timeBetweenClicks = 1.0f;
 
     //Evento de la clase Action de Unity para indicar que se ha encontrado un pokemon y ha de iniciarse la batalla
     public event Action OnPokemonEncountered;
@@ -49,13 +54,21 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void HandleUpdate()
     {
+        //Actualiza el contador entre clicks
+        timeSinceLastClick += Time.deltaTime;
+        
+        
         //Movimiento del player
         MovePlayer();
 
         //Si se pulsa la tecla de acción, si es posible iniciará una interactuación
         if (Input.GetAxisRaw("Submit") != 0)
         {
-            Interact();
+            if (timeSinceLastClick >= timeBetweenClicks)//Controla que haya transcurrido el tiempo entre clicks
+            {
+                timeSinceLastClick = 0;//Reinicia el contador entre clicks
+                Interact();
+            }
         }
     }
 
