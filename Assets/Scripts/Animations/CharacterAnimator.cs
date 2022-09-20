@@ -6,8 +6,24 @@ using UnityEngine;
 
 public class CharacterAnimator : MonoBehaviour
 {
-    public float MoveX, MoveY;//Valores del movimiento en los dos ejes
-    public bool isMoving;//Para indicar si el personaje está en movimiento
+    private float moveX, moveY;//Valores del movimiento en los dos ejes
+    public float MoveX
+    {
+        get => moveX;
+        set => moveX = value;
+    }
+    public float MoveY
+    {
+        get => moveY;
+        set => moveY = value;
+    }
+    
+    private bool isMoving;//Para indicar si el personaje está en movimiento
+    public bool IsMoving
+    {
+        get => isMoving;
+        set => isMoving = value;
+    }
 
     //Animators personalizados para cada estado del personaje
     private CustomAnimator walkDownAnim, walkUpAnim, walkLeftAnim, walkRightAnim;
@@ -18,6 +34,9 @@ public class CharacterAnimator : MonoBehaviour
     private SpriteRenderer renderer;//Componente que contiene el sprite a mostrar el cada momento
 
     private CustomAnimator currentAnimator;//Para controlar cuál es el animator activo en cada momento
+
+    //Para controlar si el personaje se estaba moviendo en el anterior frame y compararlo con el frame actual
+    private bool wasPreviouslyMoving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -38,26 +57,26 @@ public class CharacterAnimator : MonoBehaviour
     {
         var previousAnimator = currentAnimator;
         //Cambia el animator activo en función del valor del movimiento actual del personaje
-        if (MoveX == 1)
+        if (moveX == 1)
         {
             currentAnimator = walkRightAnim;
         }
-        else if (MoveX == -1)
+        else if (moveX == -1)
         {
             currentAnimator = walkLeftAnim;
         }
-        else if (MoveY == 1)
+        else if (moveY == 1)
         {
             currentAnimator = walkUpAnim;
         }
-        else if (MoveY == -1)
+        else if (moveY == -1)
         {
             currentAnimator = walkDownAnim;
         }
 
-        if (previousAnimator != currentAnimator)
+        if (previousAnimator != currentAnimator || isMoving != wasPreviouslyMoving)
         {
-            //Si ha cambiado la animación, habrá que reinicializar la nueva
+            //Si ha cambiado la animación o el estado de estar parado/moviéndose, habrá que reinicializar la nueva anim.
             currentAnimator.Start();
         }
         
@@ -70,6 +89,8 @@ public class CharacterAnimator : MonoBehaviour
         {
             renderer.sprite = currentAnimator.AnimFrames[0];
         }
-          
+
+        //De cara a arrancar correctamente la próxima la animación
+        wasPreviouslyMoving = isMoving;
     }
 }

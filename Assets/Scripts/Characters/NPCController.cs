@@ -11,31 +11,30 @@ public class NPCController : MonoBehaviour, Interactable
     [SerializeField] [Tooltip("Diálogo del NPC")]
     private Dialog dialog;
 
-    [SerializeField] [Tooltip("Lista de sprites de la animación del NPC")]
-    private List<Sprite> sprites;
+    //Componente que controla el movimiento y otras posibles acciones del personaje
+    private Character character;
 
     //Animator del NPC de la clase CustomAnimator
     private CustomAnimator animator;
     
+    
     //Implementación de la interface Interactable
     public void Interact()
     {
-        //Se muestra el diálog del NPC
-        DialogManager.SharedInstance.ShowDialog(dialog);
+        //Se muestra el diálogo del NPC
+        //DialogManager.SharedInstance.ShowDialog(dialog);
+
+        StartCoroutine(character.MoveToward(new Vector2(0, 1)));
     }
 
 
-    private void Start()
+    private void Awake()
     {
-        //Se crea el animator personalizado y se inicializa el sistema de animaciones
-        animator = new CustomAnimator(GetComponent<SpriteRenderer>(), sprites);
-        animator.Start();
+        character = GetComponent<Character>();
     }
-
 
     private void Update()
     {
-        //Va reproduciendo las animaciones del NPC
-        animator.HandleUpdate();
+        character.HandleUpdate();
     }
 }
