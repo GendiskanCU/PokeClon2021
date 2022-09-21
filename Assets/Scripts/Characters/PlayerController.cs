@@ -68,10 +68,6 @@ public class PlayerController : MonoBehaviour
             //Solo habrá movimiento si alguno de los dos ejes no es cero
             if (input != Vector2.zero)
             {
-                //El player no se moverá en diagonal, por lo que se opta por
-                //anular el movimiento en vertical cuando ya lo haya en horizontal
-                if (input.x != 0)
-                    input.y = 0;
                 //Se inicia la corutina de movimiento del controlador de movimiento, pasándole el valor del input
                 //y especificando que cuando se invoque el final de movimiento se chequee si ha dado con un pokemon
                 StartCoroutine(_character.MoveToward(input, CheckForPokemon));

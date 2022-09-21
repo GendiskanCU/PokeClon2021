@@ -43,7 +43,14 @@ public class Character : MonoBehaviour
         inferior de la "casilla" inicial del grid. En este caso concreto el valor es de y:0.7*/
         //Se utilizará una corutina para evitar movimientos bruscos que surgen si cada movimiento dura más de 1 frame,
         //lo cual es lo habitual
-        
+
+        //Para evitar movimientos en diagonal, se da prevalencia al movimiento en el eje X. Si hay movimiento en
+        //ese eje, se anula el posible movimiento en el eje Y
+        if (moveVector.x != 0)
+        {
+            moveVector.y = 0;
+        }
+
         //Se asigna valor a la variable del animator que indicará la animación que se debe reproducir al caminar
         //manteniéndola siempre entre -1 y 1, que son los valores adecuados para el animator
         /*_animator.SetFloat("MoveX", input.x);
@@ -92,9 +99,12 @@ public class Character : MonoBehaviour
     }
 
 
+   /// <summary>
+   /// Lleva a cabo acciones sobre un personaje que se vayan a ejecutar en el bucle Update
+   /// </summary>
    public void HandleUpdate()
    {
-       //Sincroniza el estado de movimiento del personaje con su animator
+       //Sincroniza el estado de movimiento del personaje con su animator igualando las booleanas
        _animator.IsMoving = isMoving;
    }
    

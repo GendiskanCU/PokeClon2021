@@ -31,6 +31,11 @@ public class DialogManager : MonoBehaviour
     //Para saber si se está escribiendo alguna línea de diálogo, para evitar comenzar otra antes de que finalice
     private bool isWriting;
 
+    /// <summary>
+    /// Variable pública para indicar que se está mostrando el cuadro de diálogo
+    /// </summary>
+    public bool IsBeingShow;
+
     public static DialogManager SharedInstance;//Singleton
 
 
@@ -82,6 +87,8 @@ public class DialogManager : MonoBehaviour
                     //Invoca el evento que indica que el diálogo ha finalizado. El GameManager volverá a cambiar
                     //el estado del juego para que ya no se ejecute este método HandleUpdate
                     OnDialogFinish?.Invoke();
+                    //También indica que el cuadro de diálogo está cerrado con la variable pública
+                    IsBeingShow = false;
                 }
             }
         }
@@ -97,6 +104,9 @@ public class DialogManager : MonoBehaviour
         //En este caso, el GameManager cambiará el estado del juego para que comience a ejecutarse HandleUpdate
         OnDialogStart?.Invoke();
         
+        //También indica que el cuadro de diálogo está abierto con la variable pública
+        IsBeingShow = true;
+
         //Muestra el cuadro de diálogo
         dialogBox.SetActive(true);
         
