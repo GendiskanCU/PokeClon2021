@@ -48,7 +48,9 @@ public class DialogManager : MonoBehaviour
     /// Evento para indicar que un diálogo ha finalizado
     /// </summary>
     public event Action OnDialogFinish;
-    
+
+    //Acción que se debe ejecutar al cerrarse el diálogo
+    private Action onDialogClose;
     
     private void Awake()
     {
@@ -89,6 +91,8 @@ public class DialogManager : MonoBehaviour
                     OnDialogFinish?.Invoke();
                     //También indica que el cuadro de diálogo está cerrado con la variable pública
                     IsBeingShow = false;
+                    //También se ejecuta la acción que se ha guardado al comienzo, en ShowDialog, si ha sido establecida
+                    onDialogClose?.Invoke();   
                 }
             }
         }
@@ -97,8 +101,9 @@ public class DialogManager : MonoBehaviour
     /// <summary>
     /// Inicia un diálogo mostrando la primera línea del mismo
     /// </summary>
-    /// <param name="dialog"></param>
-    public void ShowDialog(Dialog dialog)
+    /// <param name="dialog">El conjunto de líneas del diálogo</param>
+    /// <param name="OnDialogFinish">Acción a realizar cuando se cierra el diálogo (parámetro opcional)</param>
+    public void ShowDialog(Dialog dialog, Action OnDialogFinish = null)
     {
         //Invoca el evento que indica que el diálogo ha dado comienzo, si al mismo hay alguien suscrito
         //En este caso, el GameManager cambiará el estado del juego para que comience a ejecutarse HandleUpdate
@@ -109,6 +114,10 @@ public class DialogManager : MonoBehaviour
 
         //Muestra el cuadro de diálogo
         dialogBox.SetActive(true);
+        
+        
+        //Guarda la acción a realizar cuando se cierre el diálogo, si se ha pasado como parámetro (es opcional)
+        this.onDialogClose = OnDialogFinish;
         
         //Guarda el diálogo actual y muestra la primera línea del diálogo (currentLine será 0 al llegar aquí
         //porque al terminar cualquier diálogo anterior se resetea)

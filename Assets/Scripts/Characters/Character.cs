@@ -64,9 +64,10 @@ public class Character : MonoBehaviour
         targetPosition.x += moveVector.x;
         targetPosition.y += moveVector.y;
 
-        if (!IsAvailable(targetPosition))
+        if (!IsPathAvailable(targetPosition))
         {
-            //Si la posición de destino calculada no está disponible saldrá de la corutina sin hacer nada más
+            //Si la ruta hasta el destino calculado no está disponible porque hay algún obstáculo entre medias
+            //saldrá de la corutina sin hacer nada más
             yield break;
         }
         
@@ -106,6 +107,35 @@ public class Character : MonoBehaviour
    {
        //Sincroniza el estado de movimiento del personaje con su animator igualando las booleanas
        _animator.IsMoving = isMoving;
+   }
+
+
+   /// <summary>
+   /// Comprueba si en la ruta que debe se debe recorrer hasta llegar al punto de destino hay algún
+   /// obstáculo con el que se vaya a colisionar
+   /// </summary>
+   /// <param name="target">El punto de destino</param>
+   /// <returns>True si la ruta está libre</returns>
+   private bool IsPathAvailable(Vector3 target)
+   {
+       //Calcula el trayecto a recorrer (destino - posición actual)
+       Vector3 path = target - transform.position;
+       //Se normaliza, para obtener la dirección de movimiento
+       Vector3 direction = path.normalized;
+       //Utiliza el motor de físicas 2D para "dibujar" una caja de un pequeño tamaño (0.3x0.3) que parte de la posición
+       //actual a la que se suma una unidad (para que la caja no salga de centro y colisione con el propio carácter),
+       //con un ángulo de 0 grados (es decir, sin rotar) en la dirección calculada al normalizar,
+       //y de una dimensión dada por el trayecto a recorrer (a la que se le resta 1 unidad para
+       //compensar la unidad que se ha sumado a la posición actual del character al principio)
+       //Y se comprueba si la caja "colisionará" con algún objeto que esté en una capa de objetos físicos o interactivos
+       if (Physics2D.BoxCast(transform.position + direction, new Vector2(0.3f, 0.3f), 0f,
+               direction, path.magnitude - 1, GameLayers.SharedInstance.SolidObjectsLayer |
+                                              GameLayers.SharedInstance.InteractableLayer) == true)
+       {
+           return false;//El camino o ruta no está libre
+       }
+
+       return true; //El camino o ruta está libre
    }
    
    

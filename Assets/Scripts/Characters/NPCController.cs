@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 using Random = UnityEngine.Random;
 
 //Estados en los que se puede encontrar el NPC
 public enum NpcState
 {
     Idle, //Quieto
-    Walking //Andando
+    Walking, //Andando
+    Talking //Mostrando un diálogo
 }
 
 public class NPCController : MonoBehaviour, Interactable
@@ -43,9 +45,20 @@ public class NPCController : MonoBehaviour, Interactable
     //Implementación de la interface Interactable
     public void Interact()
     {
+
         //Se muestra el diálogo del NPC solo si éste está parado
-        if(state == NpcState.Idle)
-            DialogManager.SharedInstance.ShowDialog(dialog);
+        if (state == NpcState.Idle)
+        {
+            //Cambia el estado del NPC, para evitar que siga moviéndose
+            state = NpcState.Talking;
+            //Al abrir el diálogo se establece la acción que se realizará cuando sea cerrado (volver a cambiar estado)
+            DialogManager.SharedInstance.ShowDialog(dialog, OnDialogFinish: () =>
+            {
+                print("Diálogo cerrado");
+                state = NpcState.Idle;
+                idleTimer = 0f;//Reinicia el contador para volver a caminar
+            } );     
+        }
     }
 
 
@@ -54,28 +67,28 @@ public class NPCController : MonoBehaviour, Interactable
         character = GetComponent<Character>();
     }
 
+
     private void Update()
     {
         MoveNPC();
         character.HandleUpdate();
     }
 
+    
+    
     /// <summary>
     /// Implanta el movimiento del NPC, haciendo una pausa cada vez que alcanza un punto de destino
     /// </summary>
     private void MoveNPC()
     {
-        if (!DialogManager.SharedInstance.IsBeingShow)//Solo si el NPC no está mostrando el cuadro de diálogo andará
+        if (state == NpcState.Idle) //Cuando el NPC esté en el estado "parado"
         {
-            if (state == NpcState.Idle) //Cuando el NPC esté parado
+            idleTimer += Time.deltaTime;
+            if (idleTimer >= idleTime) //Al superar el tiempo que debe permanecer parado
             {
-                idleTimer += Time.deltaTime;
-                if (idleTimer >= idleTime) //Al superar el tiempo que debe permanecer parado
-                {
-                    idleTimer = 0f; //Resetea el cronómetro
-                    //Inicia el siguiente paso
-                    StartCoroutine(Walk());
-                }
+                idleTimer = 0f; //Resetea el cronómetro
+                //Inicia el siguiente paso
+                StartCoroutine(Walk());
             }
         }
     }

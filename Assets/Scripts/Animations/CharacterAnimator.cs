@@ -31,7 +31,7 @@ public class CharacterAnimator : MonoBehaviour
     [SerializeField] [Tooltip("Lista de sprites para la animación correspondiente del personaje")]
     private List<Sprite> walkDownSprites, walkUpSprites, walkLeftSprites, walkRightSprites;
 
-    private SpriteRenderer renderer;//Componente que contiene el sprite a mostrar el cada momento
+    private SpriteRenderer spriteRend;//Componente que contiene el sprite a mostrar el cada momento
 
     private CustomAnimator currentAnimator;//Para controlar cuál es el animator activo en cada momento
 
@@ -41,12 +41,12 @@ public class CharacterAnimator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        renderer = GetComponent<SpriteRenderer>();
+        spriteRend = GetComponent<SpriteRenderer>();
         //Crea los animators personalizados
-        walkDownAnim = new CustomAnimator(renderer, walkDownSprites);
-        walkUpAnim = new CustomAnimator(renderer, walkUpSprites);
-        walkLeftAnim = new CustomAnimator(renderer, walkLeftSprites);
-        walkRightAnim = new CustomAnimator(renderer, walkRightSprites);
+        walkDownAnim = new CustomAnimator(spriteRend, walkDownSprites);
+        walkUpAnim = new CustomAnimator(spriteRend, walkUpSprites);
+        walkLeftAnim = new CustomAnimator(spriteRend, walkLeftSprites);
+        walkRightAnim = new CustomAnimator(spriteRend, walkRightSprites);
 
         //Primer animator que se pone en marcha
         currentAnimator = walkDownAnim;
@@ -87,7 +87,7 @@ public class CharacterAnimator : MonoBehaviour
         }
         else//Si está parado (estado Idle) siempre se mostrará el primer sprite del último animator activo
         {
-            renderer.sprite = currentAnimator.AnimFrames[0];
+            spriteRend.sprite = currentAnimator.AnimFrames[0];
         }
 
         //De cara a arrancar correctamente la próxima la animación
