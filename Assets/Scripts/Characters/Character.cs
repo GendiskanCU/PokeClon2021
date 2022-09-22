@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//GESTIONA LA LÓGICA COMÚN DE CUALQUIER PERSONAJE DEL JUEGO (PLAYER, NPC, ETC.) COMO LA DEL MOVIMIENTO
 
+/// <summary>
+/// GESTIONA LA LÓGICA COMÚN DE CUALQUIER PERSONAJE DEL JUEGO (PLAYER, NPC, ETC.) COMO LA DEL MOVIMIENTO
+/// </summary>
 public class Character : MonoBehaviour
 {
     [SerializeField] [Tooltip("Velocidad de movimiento del personaje")]
