@@ -124,9 +124,10 @@ public class PlayerController : MonoBehaviour
         {
             if (Random.Range(0, 100) < 10) //% de probabilidad de aparición de un pokemon
             {
-                OnPokemonEncountered();//Activa el evento indicando que la batalla debe dar comienzo
-                //TODO: Puede ser necesario detener la animación del player con IsMoving = false;
-
+                //Detiene la animación del player
+                _character.Animator.IsMoving = false;
+                //Activa el evento indicando que la batalla debe dar comienzo
+                OnPokemonEncountered();
                 //Debug.Log("Aparece un Pokemon. Comienza la batalla pokemon");
             }
         }

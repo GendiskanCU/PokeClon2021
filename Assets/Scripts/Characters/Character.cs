@@ -18,7 +18,11 @@ public class Character : MonoBehaviour
     
     //Para controlar si el personaje se está moviendo
     private bool isMoving;
-    public bool IsMoving => isMoving;
+    public bool IsMoving
+    {
+        get => isMoving;
+        set => isMoving = value;
+    }
 
 
     private void Awake()

@@ -540,6 +540,11 @@ public class BattleManager : MonoBehaviour
          else if (playerAction == BattleAction.Run)
          {
             yield return TryToEscapeFromBattle();
+            //Si el player ha conseguido huir, habrá cambiado el estado y saldrá de la batalla sin hacer más
+            if (state == BattleState.FinishBattle)
+            {
+               yield break;
+            }
          }
 
          //Una vez que el player ha finalizado su acción, llegará el turno del enemigo:
