@@ -8,7 +8,7 @@ using UnityEngine;
 public interface Interactable
 {
    /// <summary>
-   /// Lanza la interacción con el objeto
+   /// Lanza la interacción con un objeto fuente, del que recibe su posición
    /// </summary>
-   void Interact();
+   void Interact(Vector3 source);
 }

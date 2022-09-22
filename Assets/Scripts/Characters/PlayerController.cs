@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
             //Se puede interactuar con el objeto. Se captura su componente Interactable, si la posee y se
             //ejecuta el método que lanza la interacción. Nota: el componente Interactable es una interface
             //implementada en el script que controla el objeto interactivo
-            collider.GetComponent<Interactable>()?.Interact();
+            collider.GetComponent<Interactable>()?.Interact(transform.position);
         }
     }
     

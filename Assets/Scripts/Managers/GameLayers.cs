@@ -18,7 +18,11 @@ public class GameLayers : MonoBehaviour
     [SerializeField] [Tooltip("Capa/s en la/s que está/n los objetos con los que puede interactura el player")]
     private LayerMask interactableLayer;
     public LayerMask InteractableLayer => interactableLayer;
-    
+
+    [SerializeField] [Tooltip("Capa a la que pertenece el propio Player")]
+    private LayerMask playerLayer;
+    public LayerMask PlayerLayer => playerLayer;
+
     //Singleton
     public static GameLayers SharedInstance;
 
@@ -29,4 +33,10 @@ public class GameLayers : MonoBehaviour
             SharedInstance = this;
         }
     }
+
+
+    /// <summary>
+    /// Devuelve las capas que son de tipo colisión, las que el Player o un NPC no podrá atravesar cuando se mueve
+    /// </summary>
+    public LayerMask CollisionLayers => SolidObjectsLayer | InteractableLayer | PlayerLayer;
 }

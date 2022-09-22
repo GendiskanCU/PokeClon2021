@@ -101,6 +101,49 @@ public class Character : MonoBehaviour
 
 
    /// <summary>
+   /// Cambia la orientación del personaje, girándolo para que "mire" hacia el objetivo
+   /// </summary>
+   /// <param name="target">Objetivo hacia el que debe girar el personaje</param>
+   public void LookTowards(Vector3 target)
+   {
+       //Calcula hacia dónde se debe girar, calculando la diferencia entre la posición hacia la que mirar y
+       //la posición del personaje
+       Vector3 difference = target - transform.position;
+       
+       //Guarda el valor X e Y por separado, redondeándolos a número entero
+       int xDiff = Mathf.FloorToInt(difference.x);
+       int yDiff = Mathf.FloorToInt(difference.y);
+
+       //En principio, se ha diseñado el juego para que ningún personaje pueda moverse en diagonal, pero por si
+       //se ha cometido algún error, aquí aseguramos que es así de forma que solo se actúa si alguna de las dos
+       //coordenadas es cero, indicando que la dirección va solo hacia uno de los cuatro puntos cardinales
+       if (xDiff == 0 | yDiff == 0)
+       {
+           //Se establece la dirección hacia la que el personaje debe mirar y se traslada a su animator
+           _animator.MoveX = Mathf.Clamp(xDiff, -1, 1);
+           _animator.MoveY = Mathf.Clamp(yDiff, -1, 1);
+       }
+       else
+       {
+           Debug.LogError("Error de diseño. El personaje no puede moverse ni mirar en diagonal");
+       }   
+
+       /*
+       difference = difference.normalized;
+       if (difference.x == 0 || difference.y == 0)
+       {
+           _animator.MoveX = difference.x;
+           _animator.MoveY = difference.y;
+       }
+       else
+       {
+           Debug.LogError("Error de diseño. El personaje no puede moverse ni mirar en diagonal");
+       }  */
+   }
+   
+   
+
+   /// <summary>
    /// Lleva a cabo acciones sobre un personaje que se vayan a ejecutar en el bucle Update
    /// </summary>
    public void HandleUpdate()
@@ -129,8 +172,7 @@ public class Character : MonoBehaviour
        //compensar la unidad que se ha sumado a la posición actual del character al principio)
        //Y se comprueba si la caja "colisionará" con algún objeto que esté en una capa de objetos físicos o interactivos
        if (Physics2D.BoxCast(transform.position + direction, new Vector2(0.3f, 0.3f), 0f,
-               direction, path.magnitude - 1, GameLayers.SharedInstance.SolidObjectsLayer |
-                                              GameLayers.SharedInstance.InteractableLayer) == true)
+               direction, path.magnitude - 1, GameLayers.SharedInstance.CollisionLayers) == true)
        {
            return false;//El camino o ruta no está libre
        }
