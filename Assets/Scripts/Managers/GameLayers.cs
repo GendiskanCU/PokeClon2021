@@ -23,6 +23,10 @@ public class GameLayers : MonoBehaviour
     private LayerMask playerLayer;
     public LayerMask PlayerLayer => playerLayer;
 
+    [SerializeField] [Tooltip("Capa en la que está el trigger que representa el campo de visión de los entrenadores")]
+    private LayerMask fovLayer;
+    public LayerMask FOVLayer => fovLayer;
+
     //Singleton
     public static GameLayers SharedInstance;
 

@@ -11,7 +11,8 @@ public enum GameState
 {
     TRAVEL, //El player está moviéndose por el mundo
     BATTLE, //El player está en una batalla
-    DIALOG //El player está dentro de un diálogo con un NPC o algún objeto interactivo
+    DIALOG, //El player está dentro de un diálogo con un NPC o algún objeto interactivo
+    CUTSCENE //El player ha activado una secuencia cinemática
 }
 
 [RequireComponent(typeof(ColorManager))]
@@ -69,6 +70,21 @@ public class GameManager : MonoBehaviour
             if(_gameState == GameState.DIALOG)
                 _gameState = GameState.TRAVEL;//Cambia el estado del juego del diálogo a de andar por el mundo
             //TODO: si el diálogo es con un entrenador pokemon, hay que volver al estado Battle en vez de a Travel
+        };
+        
+        //Suscripción al evento del Playercontroller que indica que el player ha entrado dentro del área de visión
+        //de un entrenador pokemon, que activará el código que inicia una batalla con ese entrenador
+        playerController.OnEnterTrainersFoV += (Collider2D trainerFovCollider) =>
+        {
+            //Cambia el estado de juego al de cinemática para que el player no pueda moverse hasta que finalice la misma
+            _gameState = GameState.CUTSCENE;
+            //Inicia la cinemática del entrenador dirigiéndose hacia el player para iniciar una batalla
+            //El Fov que tiene el collider es hijo del mismo, por lo que primero captura al entrenador
+            var trainer = trainerFovCollider.GetComponentInParent<TrainerController>();
+            if (trainer != null)
+            {
+                StartCoroutine(trainer.TriggerTrainerBattle(playerController));
+            }
         };
         
         SoundManager.SharedInstance.PlayMusic(worldAudioClip);

@@ -4,6 +4,17 @@ using UnityEngine;
 
 //GESTIONA LAS ANIMACIONES DE UN PERSONAJE NO CONTROLABLE POR EL PLAYER
 
+/// <summary>
+/// Direcciones hacia las que el personaje está mirando
+/// </summary>
+public enum FacingDirection
+{
+    Down,
+    Up,
+    Left,
+    Right
+}
+
 public class CharacterAnimator : MonoBehaviour
 {
     private float moveX, moveY;//Valores del movimiento en los dos ejes
@@ -31,6 +42,10 @@ public class CharacterAnimator : MonoBehaviour
     [SerializeField] [Tooltip("Lista de sprites para la animación correspondiente del personaje")]
     private List<Sprite> walkDownSprites, walkUpSprites, walkLeftSprites, walkRightSprites;
 
+    [SerializeField] [Tooltip("Dirección hacia la que mira el personaje al inicio de la escena")]
+    private FacingDirection defaultDirection = FacingDirection.Down;
+    public FacingDirection DefaultDirection => defaultDirection;
+
     private SpriteRenderer spriteRend;//Componente que contiene el sprite a mostrar el cada momento
 
     private CustomAnimator currentAnimator;//Para controlar cuál es el animator activo en cada momento
@@ -48,8 +63,11 @@ public class CharacterAnimator : MonoBehaviour
         walkLeftAnim = new CustomAnimator(spriteRend, walkLeftSprites);
         walkRightAnim = new CustomAnimator(spriteRend, walkRightSprites);
 
+        //Coloca al personaje en la dirección establecida por defecto
+        SetFacingDirection(defaultDirection); 
+        
         //Primer animator que se pone en marcha
-        currentAnimator = walkDownAnim;
+        //currentAnimator = walkDownAnim;
     }
 
     // Update is called once per frame
@@ -92,5 +110,31 @@ public class CharacterAnimator : MonoBehaviour
 
         //De cara a arrancar correctamente la próxima la animación
         wasPreviouslyMoving = isMoving;
+    }
+
+
+    /// <summary>
+    /// Ajusta el personaje en función de la dirección hacia la que mira (forzando el cambio al animator adecuado)
+    /// </summary>
+    /// <param name="direction">Dirección hacia la que mira el personaje</param>
+    public void SetFacingDirection(FacingDirection direction)
+    {
+        //Para cambiar al animator adecuado haremos un cambio en las variables de movimiento
+        if (direction == FacingDirection.Down)
+        {
+            moveY = -1;
+        }
+        else if (direction == FacingDirection.Up)
+        {
+            moveY = 1;
+        }
+        else if (direction == FacingDirection.Left)
+        {
+            moveX = -1;
+        }
+        else if (direction == FacingDirection.Right)
+        {
+            moveX = 1;
+        }
     }
 }

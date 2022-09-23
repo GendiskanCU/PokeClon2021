@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     //Evento de la clase Action de Unity para indicar que se ha encontrado un pokemon y ha de iniciarse la batalla
     public event Action OnPokemonEncountered;
     
+    //Evento de la clase Action de Unity para indicar el player ha entrado en el campo de visión de un entrenador
+    //Recibirá un argumento con el collider de ese campo de visión
+    public event Action<Collider2D> OnEnterTrainersFoV;
+    
     //Para guardar los valores de los ejes x/y antes de transmitirlos al player
     private Vector2 input;
 
@@ -70,12 +74,24 @@ public class PlayerController : MonoBehaviour
             {
                 //Se inicia la corutina de movimiento del controlador de movimiento, pasándole el valor del input
                 //y especificando que cuando se invoque el final de movimiento se chequee si ha dado con un pokemon
-                StartCoroutine(_character.MoveToward(input, CheckForPokemon));
+                //o si el player ha quedado dentro del área de visión de un entrenador
+                StartCoroutine(_character.MoveToward(input, OnMoveFinish));
             }
         }
         
         //Se sincroniza el movimiento con la animación
         _character.HandleUpdate();
+    }
+
+
+    /// <summary>
+    /// Realiza acciones adicionales cuando el player termina de moverse, tales como comprobar si ha caído en un
+    /// área pokemon o si se ha quedado dentro del área de visión de un entrenador de pokemons
+    /// </summary>
+    private void OnMoveFinish()
+    {
+        CheckForPokemon();
+        CheckForInTrainerFoV();
     }
 
     /// <summary>
@@ -127,9 +143,35 @@ public class PlayerController : MonoBehaviour
                 //Detiene la animación del player
                 _character.Animator.IsMoving = false;
                 //Activa el evento indicando que la batalla debe dar comienzo
-                OnPokemonEncountered();
+                OnPokemonEncountered?.Invoke();
                 //Debug.Log("Aparece un Pokemon. Comienza la batalla pokemon");
             }
+        }
+    }
+    
+    /// <summary>
+    /// Comprueba si el player se encuentra en el campo de visión de un entrenador pokemon
+    /// </summary>
+    private void CheckForInTrainerFoV()
+    {
+        //Como el player no inicia la partida en una posición centrada como (0.5, 0.5) sino con un pequeño
+        //desplazamiento en el eje y de 0.2,o sea comienza en (0.5, 0.7), hay que tenerlo en cuenta para el
+        //cálculo del área
+        float offsetY = 0.2f;
+        
+        //Utiliza las físicas para trazar un pequeño círculo alrededor del player y comprobar si en algún
+        //momento "colisiona" con un objeto que esté en la capa Fov, a la que se habrán asignado los triggers
+        //que representan el campo de visión de los entrenadores pokemon. En este caso, se captura el collider
+        //para tener ahí la información sobre el entrenador concreto que ha detectado al player
+        var collid = Physics2D.OverlapCircle(transform.position - new Vector3(0, offsetY, 0),
+            0.2f, GameLayers.SharedInstance.FOVLayer);
+        if(collid != null) //Si hay colisión
+        {
+            //Detiene la animación del player, pues se va a detener
+            _character.Animator.IsMoving = false;
+            //Invoca el evento para indicar que ha entrado en el campo de visión del entrenador, pasándole el
+            //collider concreto del FOV correspondiente 
+            OnEnterTrainersFoV?.Invoke(collid);
         }
     }
 }
