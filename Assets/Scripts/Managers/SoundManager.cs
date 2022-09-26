@@ -82,6 +82,4 @@ public class SoundManager : MonoBehaviour
         PlaySound(clips[randomIndex]);
     }
 
-
-   
 }

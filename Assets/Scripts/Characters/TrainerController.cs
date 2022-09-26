@@ -83,7 +83,7 @@ public class TrainerController : MonoBehaviour
             angle = 270f;
         }
         
-        //Rota el fov en el eje Z
+        //Rota el fov en el eje Z, utilizando eulerAngles ya que vamos utilizar datos directamente en grados
         fov.transform.eulerAngles = new Vector3(0, 0, angle);
 
     }

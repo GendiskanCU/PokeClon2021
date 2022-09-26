@@ -77,9 +77,16 @@ public class BattleManager : MonoBehaviour
    //Para guardar la party de pokemons del player disponible al entrar en la batalla
    private PokemonParty playerParty;
    
-   //Para guardar el pokemom salvaje enemigo que aparece en la batalla
-   private Pokemon wildPokemon;
+   //Para guardar la party de pokemons de un entrenador pokemon disponible al entrar en la batalla
+   private PokemonParty trainerParty;
+
+   //Controladores del player y del entrenador pokemon, que se utilizarán en la batalla contra un entrenador
+   private PlayerController player;
+   private TrainerController trainer;
    
+   //Para guardar el pokemom enemigo que aparece en la batalla contra un pokemon salvaje
+   private Pokemon wildPokemon;
+
    //Para controlar la acción seleccionada por el player en el panel de selección de acciones
    private int currentSelectedAction;
    //Para controlar que no se pueda cambiar de acción seleccionada hasta pasado un lapso aunque se mantenga pulsado
@@ -150,12 +157,17 @@ public class BattleManager : MonoBehaviour
    /// <param name="trainerPokemonParty">La party de pokemons del entrenador</param>
    /// <param name="isLeader">True si el entrenador es líder de gimnasio, False si no lo es</param>
    public void HandleStartTrainerBatlle(PokemonParty playerPokemonParty, PokemonParty trainerPokemonParty,
-      bool isLeader)
+      bool isLeader = false)
    {
-      //Establece el tipo de batalla
+      //Establece el tipo de batalla (Nota: de momento, no se implementará la batalla frente a un leader)
       battleType = (isLeader)? BattleType.Leader: BattleType.Trainer;
-      
-      //TODO: implementar el inicio de la batalla contra un NPC entrenador
+
+      playerParty = playerPokemonParty;//Guarda la party del player
+      trainerParty = trainerPokemonParty;//Guarda la party del entrenador
+
+      //Captura los controladores del player y trainer a partir de sus party
+      player = playerParty.GetComponent<PlayerController>();
+      trainer = trainerParty.GetComponent<TrainerController>();
    }
    
    /// <summary>
@@ -204,29 +216,36 @@ public class BattleManager : MonoBehaviour
    }
 
    /// <summary>
-   /// Corutina que realiza la configuración de inicio de una batalla contra un pokemon salvaje
+   /// Corutina que realiza la configuración de inicio de una batalla contra un pokemon salvaje o un entrenador
    /// </summary>
    public IEnumerator SetupBattle()
    {
       //Establece el estado inicial de la batalla
       state = BattleState.StartBattle;
       
-      //Captura y configura el primer pokemon con vida de la party de pokemons del player
-      playerUnit.SetupPokemon(playerParty.GetFirstNonFaintedPokemon());
+      if (battleType == BattleType.WildPokemon)//Si la batalla que se inicia es contra un pokemon salvaje
+      {
+         //Captura y configura el primer pokemon con vida de la party de pokemons del player
+         playerUnit.SetupPokemon(playerParty.GetFirstNonFaintedPokemon());
       
-      //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
-      battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
-      
+         //Rellena también el panel de ataques con los que puede ejecutar el pokemon del player
+         battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
+
+         //Configura el pokemon del enemigo
+         enemyUnit.SetupPokemon(wildPokemon);
+
+         //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
+         yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
+            , enemyUnit.Pokemon.Base.PokemonName));
+      }
+      else //Si la batalla que se inicia es contra un entrenador de pokemon
+      {
+         
+      }
+
       //Inicializa el HUD de selección de pokemon de la party del player
       partyHUD.InitPartyHUD();
       
-      //Configura el pokemon del enemigo
-      enemyUnit.SetupPokemon(wildPokemon);
-
-      //Muestra el primer mensaje en la caja de diálogo de la batalla, esperando hasta que finalice ese proceso
-      yield return battleDialogBox.SetDialog(String.Format("Un {0} salvaje ha aparecido."
-         , enemyUnit.Pokemon.Base.PokemonName));
-
       //El player selecciona la acción a realizar
       PlayerActionSelection();
    }

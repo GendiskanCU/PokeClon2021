@@ -1,0 +1,2072 @@
+fileFormatVersion: 2
+guid: 29324195ec99bf9408720668959cb4cc
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TrainerFemale_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 564
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb39cd81e388cf948b346367a97f07e9
+      internalID: -625812665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_1
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 562
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 294af612d4c1c1843b6d152081685997
+      internalID: 84383792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_2
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 564
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce38ea71911a2ec4ba555e7448427f66
+      internalID: 1239222150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_3
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 562
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85877461ca7542a488d0a5b59c3e519c
+      internalID: 794351637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_4
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 560
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d4fdbe832b53e74ebfdfe7a2dd5ca67
+      internalID: -1408432692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_5
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 560
+        width: 30
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8c627f7542fc634eaa0196a13889d1e
+      internalID: -1645820389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_6
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 560
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9dd7905f1a162c34b94a158c926179b2
+      internalID: -1434964054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_7
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 560
+        width: 32
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0d863b7024fd164db6a915785769d06
+      internalID: -1083560290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_8
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 552
+        width: 40
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c04c49f347d3ab478cb63a1a65966ad
+      internalID: 1326478410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_9
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 554
+        width: 44
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d35f6be289619f245841d7226aae8636
+      internalID: 685710542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_10
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 552
+        width: 40
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb996f0e90cdfee4ab9c8093cc0082bc
+      internalID: 1711637092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_11
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 554
+        width: 44
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d66cc31a13c8e0740a5d7245f1849aaf
+      internalID: -363138553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_12
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 546
+        width: 40
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14e544849ddadb2429d1034d382343f5
+      internalID: 1429508381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_13
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 546
+        width: 40
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0c4ca49979ce5c4c936fdc0d81a08c0
+      internalID: -308458121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_14
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 546
+        width: 40
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb8930d7d2fe62c458821ac378f7dfc0
+      internalID: 1008898191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_15
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 546
+        width: 40
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87963791501bed744861566182892497
+      internalID: 1564847601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_16
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 516
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a962be23101f78748806858a2284bf7a
+      internalID: -122843119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_17
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 514
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7873cb14264947e4a82586615d8ba040
+      internalID: 1877533814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_18
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 516
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca41ca472d5ba674abfe803ab405d906
+      internalID: -131497353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_19
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 514
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a870bb8821586a4087861baf6b40ce7
+      internalID: 718710029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_20
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 512
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 982649f6c3f765c4ca99e36861f646a1
+      internalID: -1342236845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_21
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 512
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb8ecd331b1cdde4796116843da05ef4
+      internalID: 460765541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_22
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 512
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 876c44a0e7845854799f0b3314d9d09b
+      internalID: 1265222820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_23
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 512
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e234b20ef28f5de499e1368b0afd38cb
+      internalID: 307324844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_24
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 492
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d8c365f5f496c84ba31a8b6428b9943
+      internalID: 1736191395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_25
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 490
+        width: 44
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30edf4c730396a34fb4fbd5875213105
+      internalID: -1872370376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_26
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 492
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97a1cf28ad7e4f747a350c739da38ce2
+      internalID: 1956399517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_27
+      rect:
+        serializedVersion: 2
+        x: 617
+        y: 490
+        width: 44
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98e33c757ecb6f24a91268a216efb60a
+      internalID: -1693388975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_28
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 488
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66b8ad3a5c6443843a7a179965700394
+      internalID: 641994506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_29
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 488
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef69559e5bdf808478f48e619abe8342
+      internalID: 131918041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_30
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 488
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 903f539d925d00d43bba0c4e5d7cba67
+      internalID: -1525228474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_31
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 488
+        width: 62
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acb7c105361fbcd4c9e7209c32f1a4b9
+      internalID: -565678242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_32
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 468
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef4944b6193801748827367f3499744b
+      internalID: -1193383452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_33
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 466
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 967859a855f29ca42b56292fd14cddd8
+      internalID: -1174005097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_34
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 468
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4980b9d9e4a7d5f4290aca312cffee5d
+      internalID: -180164270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_35
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 466
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69481d93cc6975943bb85f5ff9467e54
+      internalID: 1139117018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_36
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 464
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed239bc43e6b6e3419bba6ca797648a5
+      internalID: -2069683673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_37
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 464
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6d06329215fa584a984a9adf912a172
+      internalID: -950759176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_38
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 464
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49d16ac7c843d2d4898be8b2ca5ec227
+      internalID: -648530020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_39
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 464
+        width: 44
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e707298a16d09242b99bdca4698d362
+      internalID: 1136980964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_40
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 424
+        width: 44
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec9a904a8bdf37646b813164c5d3f75f
+      internalID: 1099118748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_41
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 426
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c8ad319f1d898448a94dbd661248431
+      internalID: -682041408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_42
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 424
+        width: 44
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c29c2dce79e3414b9763dd96eec5c43
+      internalID: -1944644445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_43
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 426
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 538d4054bc2bec7449fdd22dff4ef845
+      internalID: -1649292783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_44
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 422
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f45db7b9b7ec3543b3b7722ba2d5a28
+      internalID: 1731593513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_45
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 422
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3ea10af075cadf4f92327f0a70a333d
+      internalID: 545022263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_46
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 422
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71b3e440bab863b4da588c09894fd3c4
+      internalID: 1251879121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_47
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 422
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b225b8f974d36c0468c7ee290ad25fd8
+      internalID: 1897577814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_48
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 418
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 620b4cf0fa2dca0428614ef09e3ff8ff
+      internalID: -81285270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_49
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 416
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d03cc9e4a11106c48911ce382179d57f
+      internalID: -1531483439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_50
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 418
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d1976e3f9a29d4458898f8c5c3d2ff2
+      internalID: -2063989464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_51
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 416
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7d54bdb155d2834180dd6e83c2d15cc
+      internalID: 2147154305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_52
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 416
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1aacce61823aa054aa611b2522d3c758
+      internalID: 1483309389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_53
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 416
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f611ab6b4badf114c9eaf58d7243939a
+      internalID: 1868491500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_54
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 416
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ffa76974f078d7498487a8e7c10502e
+      internalID: 617903471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_55
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 416
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7250051f38483c14e8b74ff0115318a6
+      internalID: 646176015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_56
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 356
+        width: 40
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3eaadb1d7c52b4e49a56901e29bcfe11
+      internalID: -437967801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_57
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 358
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2a6f2961199c6f4abdc42534e723b73
+      internalID: -881099564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_58
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 356
+        width: 40
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6648cf82d79417d4a9ebbe294ce39edc
+      internalID: -1832186867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_59
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 358
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf55bf9a3f90d954f8d2938e6f2f5cf4
+      internalID: -438733887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_60
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 351
+        width: 40
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca4aa5277defc4a458bf8d7ea2b2443e
+      internalID: -1804476088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_61
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 351
+        width: 40
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec5eeca5482e7784c8fb3ba9c409a9ca
+      internalID: -1450141374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_62
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 351
+        width: 40
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d733d52e05998f247b83d24f04757e98
+      internalID: 404825754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_63
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 351
+        width: 40
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4dd96407889f1d43a53df988ae5fcd3
+      internalID: 942167844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_64
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 203
+        width: 94
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaf979b5e07b29844a5b5fad7a2610ac
+      internalID: 1711550879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_65
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 203
+        width: 130
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46334b104d80e1344984a4be4d50d724
+      internalID: 240827536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_66
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 203
+        width: 130
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02f8de4041a5bdd48a9fa771a4101663
+      internalID: 976870486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_67
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 203
+        width: 136
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 371db8fd031061943b85e4077b0b6183
+      internalID: 841795039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_68
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 203
+        width: 136
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 557ea79a3778a3d4cb8dd057ab81e134
+      internalID: -1724235916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_69
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 245
+        width: 28
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1aba44b2290358e4bb752c920b088b1d
+      internalID: -703266088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_70
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 245
+        width: 28
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6a3ffdf195cd1047810f1a41f07cec4
+      internalID: 1413882178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_71
+      rect:
+        serializedVersion: 2
+        x: 843
+        y: 245
+        width: 28
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fdd120f23d7e694493a1211184bba89
+      internalID: -815399118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_72
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 245
+        width: 28
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 761ba75f25f83cf489fd319451a829fd
+      internalID: 1104935676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_73
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 203
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1db959845faa6c47a50e179dfc5018d
+      internalID: 1590108372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_74
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 203
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fbb17178a80cfd408daccd17c0d5a16
+      internalID: 1649772661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_75
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 203
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a52d1e7bcd24bb7409d3c3b6cb395fdc
+      internalID: -1070835822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_76
+      rect:
+        serializedVersion: 2
+        x: 885
+        y: 203
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dae45b60062892540bd1fb15affdc1b5
+      internalID: -883774309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_77
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 0
+        width: 136
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95dd19bec9da959419d1a95a36bb3c44
+      internalID: 1021277607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_78
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 143
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ffeed62b78055242b2fc729d5152403
+      internalID: -1923373052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_79
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 143
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73b8a4608eccda245bed4b3a79eb39ad
+      internalID: -1766949795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_80
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 143
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a58f5eaf2d0f5b4ea876a9cfe25554c
+      internalID: -1514373314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_81
+      rect:
+        serializedVersion: 2
+        x: 885
+        y: 143
+        width: 56
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ed95e365e057764784f762b5a26c7b6
+      internalID: -1268405016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_82
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 13
+        width: 256
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1145058897257b0469a176779c8410e6
+      internalID: 1010652051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_83
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 77
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e242dde7e98cfd4384c6d3f02cb021c
+      internalID: -835325011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_84
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 77
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d100510d14dba5b44aaea48d3cfc0099
+      internalID: 617388303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_85
+      rect:
+        serializedVersion: 2
+        x: 843
+        y: 77
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1706a3fccbe0bed44901fedb862065e1
+      internalID: -1791529939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TrainerFemale_86
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 77
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1367b96c692e01b4c95157df965af45d
+      internalID: -1180018114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      TrainerFemale_62: 404825754
+      TrainerFemale_77: 1021277607
+      TrainerFemale_37: -950759176
+      TrainerFemale_19: 718710029
+      TrainerFemale_76: -883774309
+      TrainerFemale_12: 1429508381
+      TrainerFemale_30: -1525228474
+      TrainerFemale_78: -1923373052
+      TrainerFemale_60: -1804476088
+      TrainerFemale_10: 1711637092
+      TrainerFemale_31: -565678242
+      TrainerFemale_16: -122843119
+      TrainerFemale_45: 545022263
+      TrainerFemale_56: -437967801
+      TrainerFemale_73: 1590108372
+      TrainerFemale_42: -1944644445
+      TrainerFemale_82: 1010652051
+      TrainerFemale_22: 1265222820
+      TrainerFemale_80: -1514373314
+      TrainerFemale_71: -815399118
+      TrainerFemale_0: -625812665
+      TrainerFemale_38: -648530020
+      TrainerFemale_4: -1408432692
+      TrainerFemale_66: 976870486
+      TrainerFemale_9: 685710542
+      TrainerFemale_81: -1268405016
+      TrainerFemale_17: 1877533814
+      TrainerFemale_33: -1174005097
+      TrainerFemale_15: 1564847601
+      TrainerFemale_50: -2063989464
+      TrainerFemale_59: -438733887
+      TrainerFemale_25: -1872370376
+      TrainerFemale_35: 1139117018
+      TrainerFemale_39: 1136980964
+      TrainerFemale_64: 1711550879
+      TrainerFemale_34: -180164270
+      TrainerFemale_70: 1413882178
+      TrainerFemale_54: 617903471
+      TrainerFemale_52: 1483309389
+      TrainerFemale_20: -1342236845
+      TrainerFemale_5: -1645820389
+      TrainerFemale_23: 307324844
+      TrainerFemale_29: 131918041
+      TrainerFemale_74: 1649772661
+      TrainerFemale_68: -1724235916
+      TrainerFemale_79: -1766949795
+      TrainerFemale_51: 2147154305
+      TrainerFemale_6: -1434964054
+      TrainerFemale_61: -1450141374
+      TrainerFemale_40: 1099118748
+      TrainerFemale_43: -1649292783
+      TrainerFemale_44: 1731593513
+      TrainerFemale_85: -1791529939
+      TrainerFemale_63: 942167844
+      TrainerFemale_1: 84383792
+      TrainerFemale_57: -881099564
+      TrainerFemale_58: -1832186867
+      TrainerFemale_48: -81285270
+      TrainerFemale_75: -1070835822
+      TrainerFemale_69: -703266088
+      TrainerFemale_14: 1008898191
+      TrainerFemale_41: -682041408
+      TrainerFemale_84: 617388303
+      TrainerFemale_67: 841795039
+      TrainerFemale_7: -1083560290
+      TrainerFemale_46: 1251879121
+      TrainerFemale_36: -2069683673
+      TrainerFemale_49: -1531483439
+      TrainerFemale_8: 1326478410
+      TrainerFemale_28: 641994506
+      TrainerFemale_26: 1956399517
+      TrainerFemale_53: 1868491500
+      TrainerFemale_21: 460765541
+      TrainerFemale_47: 1897577814
+      TrainerFemale_24: 1736191395
+      TrainerFemale_65: 240827536
+      TrainerFemale_72: 1104935676
+      TrainerFemale_11: -363138553
+      TrainerFemale_27: -1693388975
+      TrainerFemale_13: -308458121
+      TrainerFemale_2: 1239222150
+      TrainerFemale_3: 794351637
+      TrainerFemale_55: 646176015
+      TrainerFemale_32: -1193383452
+      TrainerFemale_86: -1180018114
+      TrainerFemale_83: -835325011
+      TrainerFemale_18: -131497353
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
