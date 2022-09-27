@@ -14,6 +14,15 @@ public class TrainerController : MonoBehaviour
 
     [SerializeField] [Tooltip("Diálogo del entrenador pokemon")]
     private Dialog dialog;
+
+    [SerializeField] [Tooltip("Sprite que representa al entrenador pokemon en una batalla contra entrenador")]
+    private Sprite trainerSprite;
+    public Sprite TrainerSprite => trainerSprite;
+
+    [SerializeField] [Tooltip("Nombre del entrenador pokemon")]
+    private String trainerName;
+    public string TrainerName => trainerName;
+
     
     private Character character;
 
@@ -57,7 +66,8 @@ public class TrainerController : MonoBehaviour
         //El trainer abre su diálogo con el player
         DialogManager.SharedInstance.ShowDialog(dialog, () =>
         {
-            //TODO: implementar el inicio de la batalla con el entrenador pokemon cuando finalice el diálogo
+            //Al finalizar el diálogo notifica al GameManager que la batalla con éste entrenador dé comienzo
+            GameManager.SharedInstance.StartTrainerBattle(this);
         });
     }
 

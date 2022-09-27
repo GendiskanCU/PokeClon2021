@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 //Importa la librería del paquete de la Asset Store "DOTween (HOTween v2)" para las animaciones
 using DG.Tweening;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 
@@ -63,6 +64,11 @@ public class BattleManager : MonoBehaviour
    [SerializeField] [Tooltip("Prefab de la Pokeball que el player podrá lanzar")]
    private GameObject pokeBall;
 
+   [SerializeField] [Tooltip("Imagen que representará al player en una batalla contra un entrenador")]
+   private Image playerImage;
+
+   [SerializeField] [Tooltip("Imagen que representará al entrenador en una batalla contra un entrenador")]
+   private Image trainerImage;
 
    //Para establecer el tipo de batalla
    private BattleType battleType;
@@ -168,6 +174,8 @@ public class BattleManager : MonoBehaviour
       //Captura los controladores del player y trainer a partir de sus party
       player = playerParty.GetComponent<PlayerController>();
       trainer = trainerParty.GetComponent<TrainerController>();
+      
+      StartCoroutine(SetupBattle());
    }
    
    /// <summary>
@@ -240,6 +248,16 @@ public class BattleManager : MonoBehaviour
       }
       else //Si la batalla que se inicia es contra un entrenador de pokemon
       {
+         //Muestra la imagen de los dos entrenadores, ocultando la imagen de sus pokemon
+         playerUnit.gameObject.SetActive(false);
+         enemyUnit.gameObject.SetActive(false);
+         playerImage.sprite = player.TrainerSprite;
+         trainerImage.sprite = trainer.TrainerSprite;
+         playerImage.gameObject.SetActive(true);
+         trainerImage.gameObject.SetActive(true);
+         //Muestra el mensaje de comienzo
+         yield return battleDialogBox.SetDialog($"¡{trainer.TrainerName} quiere luchar!");
+         
          
       }
 

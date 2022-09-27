@@ -40,11 +40,22 @@ public class GameManager : MonoBehaviour
     
     private GameState _gameState;
     
-    
+    //Singleton
+    public static GameManager SharedInstance;
 
     private void Awake()
     {
         _gameState = GameState.TRAVEL;
+
+        //Singleton
+        if (SharedInstance == null)
+        {
+            SharedInstance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
     }
     
   
@@ -111,11 +122,21 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicia una batalla pokemon
+    /// Inicia una batalla contra un pokemon salvaje
     /// </summary>
     private void StartPokemonBattle()
     {
         StartCoroutine(FadeInBattle());
+    }
+    
+    
+    /// <summary>
+    /// Inicia un batalla contra un entrenador pokemon
+    /// </summary>
+    /// <param name="trainer">El entrenador contra el que se inicia la batalla</param>
+    public void StartTrainerBattle(TrainerController trainer)
+    {
+        StartCoroutine(FadeInTrainerBattle(trainer));
     }
 
     /// <summary>
@@ -126,9 +147,10 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(FadeOutBattle(playerWin));
     }
+    
 
     /// <summary>
-    /// Reproduce una animación de transición de escena al entrar en una batalla e inicia la misma
+    /// Reproduce una animación de transición de escena al entrar en una batalla pokemon e inicia la misma
     /// </summary>
     /// <returns></returns>
     private IEnumerator FadeInBattle()
@@ -170,6 +192,45 @@ public class GameManager : MonoBehaviour
         //Reproduce la transición de cambio de escena esperando a que finalice
         yield return transitionPanel.DOFade(0f, 1.5f).WaitForCompletion();
     }
+    
+    
+    /// <summary>
+    /// Reproduce una animación de entrada e inicia la batalla contra un entrenador pokemon
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FadeInTrainerBattle(TrainerController trainer)
+    {
+        //Comienza a reproducir la música de batalla
+        SoundManager.SharedInstance.PlayMusic(battleAudioClip);
+        
+        //Cambia el estado del juego
+        _gameState = GameState.BATTLE;
+        
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(1.0f, 1.5f).WaitForCompletion();
+        
+        //Hace una pequeña pausa
+        yield return new WaitForSeconds(0.5f);
+        
+        //Activa el gameObject de la batalla
+        battleManager.gameObject.SetActive(true);
+        
+        //Desactiva la cámara que funciona cuando el player está moviéndose por el mundo
+        worlMainCamera.gameObject.SetActive(false);
+        
+        //Captura la party de pokemons del player
+        PokemonParty playerParty = playerController.GetComponent<PokemonParty>();
+        
+        //Captura la party de pokemons del entrenador rival
+        PokemonParty trainerParty = trainer.GetComponent<PokemonParty>();
+        
+        //Inicia la batalla con el entrenador            
+        battleManager.HandleStartTrainerBatlle(playerParty, trainerParty);
+        
+        //Reproduce la transición de cambio de escena esperando a que finalice
+        yield return transitionPanel.DOFade(0f, 1.5f).WaitForCompletion();
+    }
+    
 
 
     /// <summary>

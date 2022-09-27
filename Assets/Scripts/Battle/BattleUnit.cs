@@ -100,7 +100,7 @@ public class BattleUnit : MonoBehaviour
     /// </summary>
     public void PlayStartAnimation()
     {
-        //Primero "saca" a los dos pokemon de la escena
+        //Primero "saca" a los pokemon de la escena
         pokemonImage.transform.localPosition = new Vector3(initialPosition.x + (isPlayer ? -1 : 1) * 400,
             initialPosition.y, initialPosition.z);
         

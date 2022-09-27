@@ -12,6 +12,14 @@ using Vector3 = UnityEngine.Vector3;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] [Tooltip("Sprite que representa al player en una batalla contra otro entrenador")]
+    private Sprite trainerSprite;
+    public Sprite TrainerSprite => trainerSprite;
+
+    [SerializeField] [Tooltip("Nombre del player")]
+    private String trainerName;
+    public string TrainerName => trainerName;
+    
     //Para controlar que no se pueda hacer alguna acción hasta pasado un lapso aunque se mantenga pulsado
     private float timeSinceLastClick;
     [SerializeField][Tooltip("Tiempo para poder cambiar la elección en los paneles de acción, ataque, etc.")]
