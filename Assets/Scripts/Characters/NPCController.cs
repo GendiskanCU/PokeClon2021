@@ -58,7 +58,6 @@ public class NPCController : MonoBehaviour, Interactable
             //Al abrir el diálogo se establece la acción que se realizará cuando sea cerrado (volver a cambiar estado)
             DialogManager.SharedInstance.ShowDialog(dialog, OnDialogFinish: () =>
             {
-                print("Diálogo cerrado");
                 state = NpcState.Idle;
                 idleTimer = 0f;//Reinicia el contador para volver a caminar
             } );     

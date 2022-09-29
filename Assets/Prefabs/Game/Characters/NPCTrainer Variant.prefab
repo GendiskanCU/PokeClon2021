@@ -218,6 +218,10 @@ PrefabInstance:
       value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 7148900469267294094, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148900469267294094, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
       propertyPath: dialog.lines.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -304,13 +308,14 @@ PrefabInstance:
       objectReference: {fileID: -200602131, guid: a2ea3e15c0225314696220e831a7051e, type: 3}
     - target: {fileID: 7148900469267294099, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
       propertyPath: m_Name
-      value: NPCTrainer (1)
+      value: NPCTrainer Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7148900469267294099, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7148900469267294094, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ee0e57466b5903344ac53f77358042ca, type: 3}
 --- !u!4 &8456571276286605129 stripped
 Transform:

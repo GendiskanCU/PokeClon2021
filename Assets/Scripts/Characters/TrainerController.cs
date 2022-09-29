@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class TrainerController : MonoBehaviour
+public class TrainerController : MonoBehaviour, Interactable
 {
     [SerializeField] [Tooltip("Sprite para representar un símbolo de exclamación")]
     private GameObject exclamationMessage;
@@ -27,6 +27,21 @@ public class TrainerController : MonoBehaviour
     private Character character;
 
 
+    //Implementación de la interface Interactable
+    public void Interact(Vector3 source)
+    {
+        //Al interactuar con un entrenador
+        StartCoroutine(ShowExclamationMark());//Muestra una exclamación
+        //Gira al entrenador hacia la posición de la fuente con la que se va a interactuar
+        character.LookTowards(source);
+        //El trainer abre su diálogo con el player
+        DialogManager.SharedInstance.ShowDialog(dialog, () =>
+        {
+            //Al finalizar el diálogo notifica al GameManager que la batalla con éste entrenador dé comienzo
+            GameManager.SharedInstance.StartTrainerBattle(this);
+        });
+    }
+    
     private void Awake()
     {
         character = GetComponent<Character>();
@@ -47,9 +62,7 @@ public class TrainerController : MonoBehaviour
     public IEnumerator TriggerTrainerBattle(PlayerController player)
     {
         //El trainer muestra un mensaje de exclamación al detectar al player
-        exclamationMessage.SetActive(true);
-        yield return new WaitForSeconds(0.6f);
-        exclamationMessage.SetActive(false);
+        yield return ShowExclamationMark();
         
         //El trainer se moverá hacia el player
         //Se calcula el vector de movimiento como la diferencia entre posiciones de ambos
@@ -96,5 +109,17 @@ public class TrainerController : MonoBehaviour
         //Rota el fov en el eje Z, utilizando eulerAngles ya que vamos utilizar datos directamente en grados
         fov.transform.eulerAngles = new Vector3(0, 0, angle);
 
+    }
+
+
+    /// <summary>
+    /// Muestra un símbolo de exclamación sobre el personaje durante un breve momento
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator ShowExclamationMark()
+    {
+        exclamationMessage.SetActive(true);
+        yield return new WaitForSeconds(0.6f);
+        exclamationMessage.SetActive(false);
     }
 }
