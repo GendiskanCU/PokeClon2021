@@ -71,11 +71,14 @@ public class BattleUnit : MonoBehaviour
 
 
     /// <summary>
-    /// Inicializa el pokemon de batalla
+    /// Inicializa el pokemon cuando es enviado a una batalla
     /// </summary>
     /// <param name="pokemonInBattle">Pokemon del player o del enemigo</param>
     public void SetupPokemon(Pokemon pokemonInBattle)
     {
+        //Activa el HUD, que puede haber sido desactivado al inicio de la batalla contra entrenador
+        hud.gameObject.SetActive(true);
+        
         //Asigna valor al pokemon que participa en la batalla
         Pokemon = pokemonInBattle;
 
@@ -90,7 +93,7 @@ public class BattleUnit : MonoBehaviour
         
         //Actualiza el HUD con la información del pokemon
         hud.SetPokemonData(Pokemon);
-        
+
         //Animación de entrada
         PlayStartAnimation();
     }
@@ -184,6 +187,15 @@ public class BattleUnit : MonoBehaviour
         sequence.Join(transform.DOLocalMoveY(initialPosition.y, capturedTimeAnimation));
         //Espera a que termine la secuencia de animaciones
         yield return sequence.WaitForCompletion();
+    }
+    
+    
+    /// <summary>
+    /// Desactiva el HUD de la unidad de batalla correspondiente
+    /// </summary>
+    public void ClearHUD()
+    {
+        hud.gameObject.SetActive(false);
     }
 }   
 

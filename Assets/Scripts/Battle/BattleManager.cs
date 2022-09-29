@@ -229,8 +229,12 @@ public class BattleManager : MonoBehaviour
    public IEnumerator SetupBattle()
    {
       //Establece el estado inicial de la batalla
-      state = BattleState.StartBattle;
+      state = BattleState.StartBattle;   
       
+      //Desactiva temporalmente los HUD de ambos contendientes
+      playerUnit.ClearHUD();
+      enemyUnit.ClearHUD();
+
       if (battleType == BattleType.WildPokemon)//Si la batalla que se inicia es contra un pokemon salvaje
       {
          //Captura y configura el primer pokemon con vida de la party de pokemons del player
@@ -251,14 +255,46 @@ public class BattleManager : MonoBehaviour
          //Muestra la imagen de los dos entrenadores, ocultando la imagen de sus pokemon
          playerUnit.gameObject.SetActive(false);
          enemyUnit.gameObject.SetActive(false);
+         
          playerImage.sprite = player.TrainerSprite;
          trainerImage.sprite = trainer.TrainerSprite;
          playerImage.gameObject.SetActive(true);
          trainerImage.gameObject.SetActive(true);
+         //Utiliza una animación para mostrar la entrada de los entrenadores a escena
+         var playerInitialPosition = playerImage.transform.localPosition;
+         playerImage.transform.localPosition =  playerInitialPosition - new Vector3(400f, 0, 0);
+         playerImage.transform.DOLocalMoveX(playerInitialPosition.x, 0.5f);
+         var trainerInitialPosition = trainerImage.transform.localPosition;
+         trainerImage.transform.localPosition =  trainerInitialPosition + new Vector3(400f, 0, 0);
+         trainerImage.transform.DOLocalMoveX(trainerInitialPosition.x, 0.5f);
+
          //Muestra el mensaje de comienzo
          yield return battleDialogBox.SetDialog($"¡{trainer.TrainerName} quiere luchar!");
+         yield return new WaitForSeconds(1f);
          
-         
+         //Selecciona el primer pokemon de las party del player y del entrenador enemigo
+         var playerPokemon = playerParty.GetFirstNonFaintedPokemon();
+         var enemyPokemon = trainerParty.GetFirstNonFaintedPokemon();
+
+         //Oculta las imágenes de los dos entrenadores y muestra la de sus pokemon
+         yield return trainerImage.transform.DOLocalMoveX(trainerImage.transform.localPosition.x + 400,
+            0.5f).WaitForCompletion();
+         trainerImage.gameObject.SetActive(false);
+         trainerImage.transform.localPosition = trainerInitialPosition;//Devuelve la imagen a la posición original
+         enemyUnit.gameObject.SetActive(true);
+         enemyUnit.SetupPokemon(enemyPokemon);
+         yield return battleDialogBox.SetDialog(
+            $"{trainer.TrainerName} ha enviado a {enemyPokemon.Base.PokemonName}");
+
+         yield return playerImage.transform.DOLocalMoveX(playerImage.transform.localPosition.x - 400,
+            0.5f).WaitForCompletion();
+         playerImage.gameObject.SetActive(false);
+         playerImage.transform.localPosition = playerInitialPosition;//Devuelve la imagen a la posición original
+         playerUnit.gameObject.SetActive(true);
+         playerUnit.SetupPokemon(playerPokemon);
+         //Rellena el panel de ataques con los que puede ejecutar el pokemon del player
+         battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
+         yield return battleDialogBox.SetDialog($"¡Ven, {playerPokemon.Base.PokemonName}!");
       }
 
       //Inicializa el HUD de selección de pokemon de la party del player
@@ -917,10 +953,49 @@ public class BattleManager : MonoBehaviour
             BattleFinish(false);//Finaliza la batalla con derrota del player
          }
       }
-      else//Si el pokemon vencido es del enemigo
+      else//Si el pokemon vencido es del enemigo, hay que diferencia si la batalla es de entrenador o pokemon salvaje
       {
-         BattleFinish(true);//Finaliza la batalla con victoria del player
+         if (battleType == BattleType.WildPokemon)
+         {
+            BattleFinish(true); //Finaliza la batalla con victoria del player
+         }
+         else
+         {
+            //Comprueba si el entrenador enemigo tiene todavía algún pokemon con vida en su party
+            var nextPokemon = trainerParty.GetFirstNonFaintedPokemon();
+            if (nextPokemon != null)
+            {
+               //Se envía el nuevo pokemon del entrenador enemigo a batalla
+               StartCoroutine(SendNextTrainerPokemonToBattle(nextPokemon));
+            }
+            else
+            {
+               //Finaliza la batalla con victoria del player
+               BattleFinish(true);
+            }
+         }
       }
+   }
+
+
+   /// <summary>
+   /// "Envía" un nuevo pokemon del entrenador enemigo a la batalla contra el player
+   /// </summary>
+   /// <param name="nextPokemon"></param>
+   /// <returns></returns>
+   private IEnumerator SendNextTrainerPokemonToBattle(Pokemon nextPokemon)
+   {
+      state = BattleState.Busy;//Cambia el estado para que no se puedan realizar acciones hasta terminar
+      
+      //Configura el nuevo pokemon del entrenador enemigo
+      enemyUnit.SetupPokemon(nextPokemon);
+      
+      //Muestra un mensaje informativo
+      yield return battleDialogBox.SetDialog(
+         $"{trainer.TrainerName} ha enviado a {nextPokemon.Base.PokemonName}");
+      
+      //Vuelve a cambiar el estado de la batalla para que se inicie un nuevo turno
+      state = BattleState.RunTurn;
    }
    
    
@@ -1427,8 +1502,8 @@ public class BattleManager : MonoBehaviour
       state = BattleState.FinishBattle;
       //TODO: revisar cuando haya entrenadores
    }
-   
-   
+
+
    
    
 }
