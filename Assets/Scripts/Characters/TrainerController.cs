@@ -12,8 +12,11 @@ public class TrainerController : MonoBehaviour, Interactable
     [SerializeField] [Tooltip("Campo de visión del entrenador")]
     private GameObject fov;
 
-    [SerializeField] [Tooltip("Diálogo del entrenador pokemon")]
+    [SerializeField] [Tooltip("Diálogo del entrenador pokemon antes de perder la batalla")]
     private Dialog dialog;
+
+    [SerializeField] [Tooltip("Diálogo del entrenador pokemon después de perder la batalla")]
+    private Dialog afterLostDialog;
 
     [SerializeField] [Tooltip("Sprite que representa al entrenador pokemon en una batalla contra entrenador")]
     private Sprite trainerSprite;
@@ -23,6 +26,8 @@ public class TrainerController : MonoBehaviour, Interactable
     private String trainerName;
     public string TrainerName => trainerName;
 
+    //Para controlar si el entrenador ya ha perdido la batalla, por lo que ya no se deberá repetir
+    private bool trainerLostBattle;
     
     private Character character;
 
@@ -30,16 +35,25 @@ public class TrainerController : MonoBehaviour, Interactable
     //Implementación de la interface Interactable
     public void Interact(Vector3 source)
     {
-        //Al interactuar con un entrenador
-        StartCoroutine(ShowExclamationMark());//Muestra una exclamación
         //Gira al entrenador hacia la posición de la fuente con la que se va a interactuar
         character.LookTowards(source);
-        //El trainer abre su diálogo con el player
-        DialogManager.SharedInstance.ShowDialog(dialog, () =>
+        
+        if (!trainerLostBattle)
         {
-            //Al finalizar el diálogo notifica al GameManager que la batalla con éste entrenador dé comienzo
-            GameManager.SharedInstance.StartTrainerBattle(this);
-        });
+            //Al interactuar con un entrenador que aún no ha perdido la batalla
+            StartCoroutine(ShowExclamationMark()); //Muestra una exclamación
+            
+            //El trainer abre su diálogo con el player
+            DialogManager.SharedInstance.ShowDialog(dialog, () =>
+            {
+                //Al finalizar el diálogo notifica al GameManager que la batalla con éste entrenador dé comienzo
+                GameManager.SharedInstance.StartTrainerBattle(this);
+            });
+        }
+        else //Si el entrenador ya ha sido derrotado muestra el diálogo alternativo sin hacer nada más
+        {
+            DialogManager.SharedInstance.ShowDialog(afterLostDialog);
+        }
     }
     
     private void Awake()
@@ -121,5 +135,17 @@ public class TrainerController : MonoBehaviour, Interactable
         exclamationMessage.SetActive(true);
         yield return new WaitForSeconds(0.6f);
         exclamationMessage.SetActive(false);
+    }
+
+
+    /// <summary>
+    /// Realiza las acciones necesarias cuando un entrenador pokemon pierde la batalla contra el player
+    /// </summary>
+    public void AfterTrainerLostBattle()
+    {
+        //Para evitar que el trainer pueda iniciar una nueva batalla con el player, se desactiva su FOV
+        //Y se cambia el estado de la booleana
+        fov.gameObject.SetActive(false);
+        trainerLostBattle = true;
     }
 }

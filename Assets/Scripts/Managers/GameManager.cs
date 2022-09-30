@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     
     
     private GameState _gameState;
+
+    private TrainerController trainerInBattle;//Para guardar el entrenador rival de una batalla contra entrenador
     
     //Singleton
     public static GameManager SharedInstance;
@@ -136,6 +138,9 @@ public class GameManager : MonoBehaviour
     /// <param name="trainer">El entrenador contra el que se inicia la batalla</param>
     public void StartTrainerBattle(TrainerController trainer)
     {
+        //Guarda el entrenador rival para poder realizar acciones adicionales sobre él al finalizar la batalla
+        trainerInBattle = trainer;
+        
         StartCoroutine(FadeInTrainerBattle(trainer));
     }
 
@@ -145,7 +150,12 @@ public class GameManager : MonoBehaviour
     /// <param name="playerWin">Resultado que devuelve el evento OnBattleFinish del BattleManager</param>
     private void FinishPokemonBattle(bool playerWin)
     {
-        StartCoroutine(FadeOutBattle(playerWin));
+        if (trainerInBattle != null && playerWin)//Si la batalla era con un entrenador y el player ha vencido
+        {
+            trainerInBattle.AfterTrainerLostBattle();//Acciones adicionales sobre el entrenador rival
+            trainerInBattle = null;//Resetea el entrenador para que quede limpio de cara a futuras batallas
+        }
+        StartCoroutine(FadeOutBattle());
     }
     
 
@@ -235,10 +245,9 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Reproduce una animación de transición de escena al salir de una batalla pokemon
-    /// </summary>
-    /// <param name="playerHasWon">Booleana que indica si la batalla finaliza con victoria del player</param>
+    /// </summary> 
     /// <returns></returns>
-    private IEnumerator FadeOutBattle(bool playerHasWon)
+    private IEnumerator FadeOutBattle()
     {
         //Reproduce la transición de cambio de escena esperando a que finalice
         yield return transitionPanel.DOFade(1.0f, 1.5f).WaitForCompletion();
@@ -254,10 +263,6 @@ public class GameManager : MonoBehaviour
         //Activa la cámara que funciona cuando el player está moviéndose por el mundo
         worlMainCamera.gameObject.SetActive(true);
 
-        if (!playerHasWon)
-        {
-            //TODO: Faltaría diferenciar entre victoria / derrota del player
-        }
 
         //Reproduce la transición de cambio de escena esperando a que finalice
         yield return transitionPanel.DOFade(0f, 1.5f).WaitForCompletion();
