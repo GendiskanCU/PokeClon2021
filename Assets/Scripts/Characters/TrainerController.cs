@@ -43,7 +43,7 @@ public class TrainerController : MonoBehaviour, Interactable
             //Al interactuar con un entrenador que aún no ha perdido la batalla
             StartCoroutine(ShowExclamationMark()); //Muestra una exclamación
             
-            //El trainer abre su diálogo con el player
+            //El trainer abre su diálogo prebatalla con el player
             DialogManager.SharedInstance.ShowDialog(dialog, () =>
             {
                 //Al finalizar el diálogo notifica al GameManager que la batalla con éste entrenador dé comienzo

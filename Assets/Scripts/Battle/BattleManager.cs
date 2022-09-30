@@ -931,6 +931,9 @@ public class BattleManager : MonoBehaviour
          //Implementa las acciones que suceden cuando el pokemon atacante es vencido
          yield return HandlePokemonFainted(attacker);
       }
+      
+      //Espera nuevamente hasta que haya finalizado totalmente el turno y el estado de batalla cambie a nuevo turno
+      yield return new WaitUntil(() => state == BattleState.RunTurn);
    }
    
    
@@ -1435,6 +1438,7 @@ public class BattleManager : MonoBehaviour
       CheckForBattleFinish(faintedUnit);
    }
 
+   
    /// <summary>
    /// Lógica de elección del movimiento a olvidar cuando se ha superado el límite de movimientos máximos
    /// </summary>
