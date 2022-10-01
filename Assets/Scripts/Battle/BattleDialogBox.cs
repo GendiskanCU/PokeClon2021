@@ -19,6 +19,9 @@ public class BattleDialogBox : MonoBehaviour
 
     [SerializeField] [Tooltip("Área de descripción del movimiento o ataque")]
     private GameObject moveDescription;
+
+    [SerializeField] [Tooltip("Área de elección Sí/No")]
+    private GameObject yesNoBox;
     
     
     
@@ -33,6 +36,12 @@ public class BattleDialogBox : MonoBehaviour
     
     [SerializeField] [Tooltip("Texto descriptivo del movimiento seleccionado")]
     private Text typeText;
+
+    [SerializeField] [Tooltip("Texto del Sí de la caja Sí/No")]
+    private Text yesText;
+
+    [SerializeField] [Tooltip("Texto del No de la caja Sí/No")]
+    private Text noText;
     
     [SerializeField] [Tooltip("Velocidad a la que se irán mostrando los mensajes, en caracteres/segundo")]
     private float charactersPerSecond;
@@ -99,6 +108,16 @@ public class BattleDialogBox : MonoBehaviour
         moveDescription.SetActive(activated);
     }
 
+
+    /// <summary>
+    /// Activa/desactiva la caja de elección "Sí/No"
+    /// </summary>
+    /// <param name="activated">nuevo estado de activación</param>
+    public void ToggleYesNoBox(bool activated)
+    {
+        yesNoBox.SetActive(activated);
+    }
+
     /// <summary>
     ///  Resalta en un color diferente la acción seleccionada por el player en el panel de acciones
     /// </summary>
@@ -107,7 +126,8 @@ public class BattleDialogBox : MonoBehaviour
     {
         for (int i = 0; i < actionTexts.Count; i++)
         {
-            actionTexts[i].color = i == selectedAction ? ColorManager.SharedInstance.SelectedColor : Color.black;
+            actionTexts[i].color = i == selectedAction ? ColorManager.SharedInstance.SelectedColor : 
+                ColorManager.SharedInstance.DefaultColor;;
         }
     }
 
@@ -140,7 +160,8 @@ public class BattleDialogBox : MonoBehaviour
     {
         for (int i = 0; i < movementTexts.Count; i++)
         {
-            movementTexts[i].color = i == selectedMovement ? ColorManager.SharedInstance.SelectedColor : Color.black;
+            movementTexts[i].color = i == selectedMovement ? ColorManager.SharedInstance.SelectedColor : 
+                    ColorManager.SharedInstance.DefaultColor;
         }
         
         //Actualiza la información con los PP y tipo
@@ -153,5 +174,24 @@ public class BattleDialogBox : MonoBehaviour
         
         //Se modifica el color del texto los PP en la UI en función del % de PP restantes
         ppText.color = ColorManager.SharedInstance.PPColor((float)move.Pp / move.Base.PP);
+    }
+    
+    
+    /// <summary>
+    /// Resalta en un color diferente la opción seleccionada por el player en la caja de "Sí/No"
+    /// </summary>
+    /// <param name="yesSelected">Para indicar si el Yes está seleccionado</param>
+    public void SelectYesNoAction(bool yesSelected)
+    {
+        if (yesSelected)
+        {
+            yesText.color = ColorManager.SharedInstance.SelectedColor;
+            noText.color = ColorManager.SharedInstance.DefaultColor;
+        }
+        else
+        {
+            noText.color = ColorManager.SharedInstance.SelectedColor;
+            yesText.color = ColorManager.SharedInstance.DefaultColor;
+        }
     }
 }

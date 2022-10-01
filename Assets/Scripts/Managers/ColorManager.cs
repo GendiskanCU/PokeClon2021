@@ -11,9 +11,13 @@ public class ColorManager : MonoBehaviour
     //La instancia de esta clase
     public static ColorManager SharedInstance;
     
-    [SerializeField][Tooltip("Color que utilizado para resaltar elementos seleccionados en la UI")]
+    [SerializeField][Tooltip("Color que será utilizado para resaltar elementos seleccionados en la UI")]
     Color selectedColor;
     public Color SelectedColor => selectedColor;
+
+    [SerializeField] [Tooltip("Color por defecto de los elementos de la UI")]
+    private Color defaultColor = Color.black;
+    public Color DefaultColor => defaultColor;
 
 
     private void Awake()
