@@ -68,6 +68,12 @@ public class TrainerController : MonoBehaviour, Interactable
     }
 
 
+    private void Update()
+    {
+        character.HandleUpdate();
+    }
+
+
     /// <summary>
     /// Inicia la batalla con un entrenador pokemon cuando éste detecta al player dentro de campo de visión
     /// </summary>

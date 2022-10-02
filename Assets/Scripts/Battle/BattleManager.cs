@@ -191,7 +191,7 @@ public class BattleManager : MonoBehaviour
    private IEnumerator YesNoChoice(Pokemon newTrainerPokemon)
    {
       state = BattleState.Busy;//Cambia el estado de batalla para que el player no pueda hacer nada
-      yield return battleDialogBox.SetDialog($"{trainer.TrainerName} va a sacar a" +
+      yield return battleDialogBox.SetDialog($"{trainer.TrainerName} va a sacar a " +
                                 $"{newTrainerPokemon.Base.PokemonName}. ¿Quieres cambiar tu pokemon?");
       state = BattleState.YesNoChoice;//Cambia al estado de selección
       
@@ -549,6 +549,9 @@ public class BattleManager : MonoBehaviour
    }
 
 
+   /// <summary>
+   /// Implementa la lógica de elección en el panel Sí/No
+   /// </summary>
    private void HandleYesNoChoice()
    {
       if (Input.GetAxis("Vertical") != 0)
@@ -556,14 +559,34 @@ public class BattleManager : MonoBehaviour
          timeSinceLastClick = 0;
          //Cambia entre el Sí y el No
          currentSelectedChoice = !currentSelectedChoice;
-         //Resalta la opción escogida
-         battleDialogBox.SelectYesNoAction(currentSelectedChoice);
       }
+      
+      //Resalta la opción escogida
+      battleDialogBox.SelectYesNoAction(currentSelectedChoice);
 
-      if (Input.GetAxisRaw("Submit") != 0)
+      if (Input.GetAxisRaw("Submit") != 0)//Cuando el player confirme su selección
       {
          timeSinceLastClick = 0;
-         //TODO: implementar la lógica en función de la accción seleccionada
+         battleDialogBox.ToggleYesNoBox(false);//Desactiva el panel de elección Sí/no
+
+         if (currentSelectedChoice)
+         {
+            previousState = BattleState.YesNoChoice;//Indica que el cambio de pokemon viene desde esta situación
+            //Si el player ha elegido "Sí", accederá a la pantalla para cambiar su pokemon
+            OpenPartySelectionScreen();
+         }
+         else
+         {
+            //Si el player ha elegido no cambiar de pokemon, simplementa entra en batalla el nuevo del entrenador rival
+            StartCoroutine(SendNextTrainerPokemonToBattle());
+         }
+      }
+
+      if (Input.GetAxisRaw("Cancel") != 0)//Si el player cancela la selección
+      {
+         timeSinceLastClick = 0;
+         battleDialogBox.ToggleYesNoBox(false);//Desactiva el panel de elección Sí/no
+         StartCoroutine(SendNextTrainerPokemonToBattle());//Entra el batalla el nuevo pokemon del entrenador
       }
    }
    
@@ -1031,11 +1054,13 @@ public class BattleManager : MonoBehaviour
    /// <summary>
    /// "Envía" un nuevo pokemon del entrenador enemigo a la batalla contra el player
    /// </summary>
-   /// <param name="nextPokemon"></param>
    /// <returns></returns>
-   private IEnumerator SendNextTrainerPokemonToBattle(Pokemon nextPokemon)
+   private IEnumerator SendNextTrainerPokemonToBattle()
    {
       state = BattleState.Busy;//Cambia el estado para que no se puedan realizar acciones hasta terminar
+      
+      //Captura el nuevo pokemon que se debe enviar a la batalla
+      var nextPokemon = trainerParty.GetFirstNonFaintedPokemon();
       
       //Configura el nuevo pokemon del entrenador enemigo
       enemyUnit.SetupPokemon(nextPokemon);
@@ -1148,11 +1173,28 @@ public class BattleManager : MonoBehaviour
          }
       }
       
-      //Si se pulsa el botón de cancelar, se regresa a la pantalla anterior (la de selección de acción)
+      //Si se pulsa el botón Cancelar
       if (Input.GetAxisRaw("Cancel") != 0)
       {
+         //Si el pokemon del player que está en batalla no tiene vida, no podrá cancelar el cambio de pokemon
+         if (playerUnit.Pokemon.Hp <= 0)
+         {
+            partyHUD.SetMessage("Tienes que seleccionar un pokemon para continuar...");
+            return;
+         }
+         
          partyHUD.gameObject.SetActive(false);
-         PlayerActionSelection();
+         //Si se venía de haber seleccionado Sí en el panel de elección Sí/No que aparecerá cuando el entrenador
+         //rival haya cambiado su pokemon, se continúa sin más la batalla, con ese pokemon enviado a la misma
+         if (previousState == BattleState.YesNoChoice)
+         {
+            previousState = null;
+            StartCoroutine(SendNextTrainerPokemonToBattle());
+         }
+         else //En caso contrario, se volverá a escoger la acción del player
+         {
+            PlayerActionSelection();
+         }
       }
    }
    
@@ -1184,8 +1226,18 @@ public class BattleManager : MonoBehaviour
       //Espera un instante para que dé tiempo a que el mensaje finalice correctamente
       yield return new WaitForSeconds(1f);
       
-      //El player pierde el turno tras el cambio de pokemon
-      state = BattleState.RunTurn;
+      //Finaliza el turno tras el cambio de pokemon, salvo en el caso de que este cambio venga de la
+      //elección de cambio en el panel de elección "Sí/No", que aparecerá cuando un entrenador rival haya cambiado
+      //su pokemon. En este caso, tras cambiar también el del player, se procede a mandar a batalla al del entrenador
+      if (previousState == null)
+      {
+         state = BattleState.RunTurn;
+      }
+      else if (previousState == BattleState.YesNoChoice)
+      {
+         //Es posible que aquí debamos poner nuevamente previousState = null
+         yield return SendNextTrainerPokemonToBattle();
+      }
    }
 
    /// <summary>
